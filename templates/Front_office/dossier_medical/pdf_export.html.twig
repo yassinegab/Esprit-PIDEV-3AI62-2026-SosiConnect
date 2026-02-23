@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dossier Médical #{{ dossier.id }}</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: DejaVu Sans, Arial, sans-serif; font-size: 12px; color: #1e293b; background: white; }
+
+        .header { background: #1d4ed8; color: white; padding: 28px 36px; margin-bottom: 24px; }
+        .header-title { font-size: 22px; font-weight: bold; color: white; margin-bottom: 4px; }
+        .header-sub   { font-size: 11px; color: rgba(255,255,255,0.75); }
+        .header-app   { font-size: 13px; font-weight: bold; color: white; margin-bottom: 10px; }
+
+        .content { padding: 0 36px 80px 36px; }
+
+        .patient-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 18px;
+        }
+        .row { display: table; width: 100%; }
+        .cell { display: table-cell; width: 50%; padding: 3px 0; vertical-align: top; }
+        .lbl { font-size: 10px; color: #64748b; margin-bottom: 1px; }
+        .val { font-size: 12px; font-weight: bold; color: #0f172a; }
+
+        .section { margin-bottom: 14px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
+        .sec-head { background: #f8fafc; padding: 9px 16px; border-bottom: 1px solid #e2e8f0; font-size: 12px; font-weight: bold; color: #334155; }
+        .sec-body { padding: 12px 16px; font-size: 12px; color: #475569; line-height: 1.65; }
+        .sec-empty { color: #94a3b8; font-style: italic; }
+
+        .allergy-alert { background: #fef2f2; border-left: 4px solid #dc2626; border-radius: 4px; padding: 10px 14px; }
+        .allergy-title { font-weight: bold; color: #991b1b; font-size: 11px; margin-bottom: 3px; }
+        .allergy-text  { color: #7f1d1d; }
+
+        .tech-box { border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; border: 1px solid; }
+        .tech-blue  { background: #eff6ff; border-color: #bfdbfe; }
+        .tech-green { background: #f0fdf4; border-color: #bbf7d0; }
+        .tech-title { font-size: 11px; font-weight: bold; margin-bottom: 6px; }
+        .tech-blue  .tech-title { color: #1e40af; }
+        .tech-green .tech-title { color: #166534; }
+        .tech-item  { font-size: 10px; margin-bottom: 3px; color: #475569; }
+
+        .warning-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; margin-top: 18px; font-size: 10px; color: #78350f; line-height: 1.6; }
+
+        .watermark { position: fixed; top: 38%; left: 18%; font-size: 60px; font-weight: bold; color: rgba(0,0,0,0.035); transform: rotate(-30deg); z-index: -1; letter-spacing: 4px; }
+
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 9px 36px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: table; width: 100%; }
+        .fl { display: table-cell; text-align: left;  font-size: 10px; color: #94a3b8; }
+        .fr { display: table-cell; text-align: right; font-size: 10px; color: #94a3b8; }
+    </style>
+</head>
+<body>
+
+<div class="watermark">CONFIDENTIEL</div>
+
+<div class="header">
+    <div class="header-app">🏥 SmartHealth AI — Système médical PIDEV 2025</div>
+    <div class="header-title">Dossier Médical #{{ dossier.id }}</div>
+    <div class="header-sub">
+        Généré le {{ date|date('d/m/Y à H:i') }}
+        &nbsp;·&nbsp; Patient : {{ user.prenom }} {{ user.nom }}
+        &nbsp;·&nbsp; {{ user.email }}
+        &nbsp;·&nbsp; <strong>Bundle DomPDF</strong>
+    </div>
+</div>
+
+<div class="content">
+
+    <div class="patient-box">
+        <div class="row">
+            <div class="cell"><div class="lbl">👤 Patient</div><div class="val">{{ user.prenom }} {{ user.nom }}</div></div>
+            <div class="cell"><div class="lbl">📧 Email</div><div class="val">{{ user.email }}</div></div>
+        </div>
+        <div class="row" style="margin-top:8px;">
+            <div class="cell"><div class="lbl">📅 Date de création</div><div class="val">{{ dossier.dateCreation|date('d/m/Y H:i') }}</div></div>
+            <div class="cell"><div class="lbl">🔄 Dernière mise à jour</div><div class="val">{{ dossier.derniereMiseAJour|date('d/m/Y H:i') }}</div></div>
+        </div>
+        {% if dossier.objectifSante %}
+        <div style="margin-top:8px;">
+            <div class="lbl">🎯 Objectif santé</div>
+            <div class="val">{{ dossier.objectifSante }}</div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <div class="sec-head">📋 Antécédents Médicaux</div>
+        <div class="sec-body {% if not dossier.antecedentsMedicaux %}sec-empty{% endif %}">
+            {{ dossier.antecedentsMedicaux ?? 'Aucun antécédent renseigné' }}
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="sec-head">🩺 Maladies Chroniques</div>
+        <div class="sec-body {% if not dossier.maladiesChroniques %}sec-empty{% endif %}">
+            {{ dossier.maladiesChroniques ?? 'Aucune maladie chronique renseignée' }}
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="sec-head">⚠️ Allergies</div>
+        <div class="sec-body">
+            {% if dossier.allergies %}
+                <div class="allergy-alert">
+                    <div class="allergy-title">⛔ ATTENTION — Allergies déclarées</div>
+                    <div class="allergy-text">{{ dossier.allergies }}</div>
+                </div>
+            {% else %}
+                <span class="sec-empty">Aucune allergie connue</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="sec-head">💊 Traitements en cours</div>
+        <div class="sec-body {% if not dossier.traitementsEnCours %}sec-empty{% endif %}">
+            {{ dossier.traitementsEnCours ?? 'Aucun traitement en cours' }}
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="sec-head">🔬 Diagnostics</div>
+        <div class="sec-body {% if not dossier.diagnostics %}sec-empty{% endif %}">
+            {{ dossier.diagnostics ?? 'Aucun diagnostic renseigné' }}
+        </div>
+    </div>
+
+    <div class="tech-box tech-blue">
+        <div class="tech-title">🤖 IAs intégrées (APIs externes)</div>
+        <div class="tech-item">• IA 1 — Groq API (LLaMA 3.3-70b) : analyse médicale, score santé, recommandations, médecins</div>
+        <div class="tech-item">• IA 2 — Hugging Face API (distilbert-mnli) : classification zéro-shot des risques médicaux</div>
+    </div>
+
+    <div class="tech-box tech-green">
+        <div class="tech-title">📦 Bundles & APIs externes du projet</div>
+        <div class="tech-item">• Bundle DomPDF → export PDF professionnel (ce document)</div>
+        <div class="tech-item">• Bundle PHPMailer → envoi email HTML sécurisé</div>
+        <div class="tech-item">• Bundle KnpPaginator, EndroidQrCode, VichUploader, StofDoctrine, SpiriitFormFilter</div>
+        <div class="tech-item">• API OpenStreetMap + Leaflet.js → carte hôpitaux</div>
+        <div class="tech-item">• API OpenRouteService → calcul itinéraire routier</div>
+        <div class="tech-item">• API MedlinePlus NIH → ressources médicales officielles</div>
+    </div>
+
+    <div class="warning-box">
+        <strong>⚠️ Avertissement légal :</strong>
+        Ce document est strictement confidentiel et généré automatiquement par SmartHealth AI via <strong>DomPDF Bundle</strong>.
+        Il ne remplace en aucun cas un avis médical professionnel.
+        Consultez toujours un médecin qualifié pour tout diagnostic ou traitement.
+    </div>
+
+</div>
+
+<div class="footer">
+    <div class="fl">SmartHealth AI — Dossier #{{ dossier.id }} — {{ user.nom }} {{ user.prenom }} — CONFIDENTIEL</div>
+    <div class="fr">{{ date|date('d/m/Y') }} — Page {PAGE_NUM}/{PAGE_COUNT}</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,373 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ hopital.nom }} — SmartHealth AI{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+{# ✅ API EXTERNE 1 — Leaflet.js (OpenStreetMap) #}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    #mapDetail { height: 380px; width: 100%; z-index: 1; }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="flex min-h-screen bg-gray-50">
+    {% include 'components/sidebar.html.twig' %}
+
+    <div class="flex flex-1 flex-col lg:ml-72">
+        {% include 'components/top-nav.html.twig' %}
+
+        <main class="flex-1 overflow-auto pb-12">
+            <div class="mx-auto max-w-6xl space-y-6 p-4 lg:p-8">
+
+                {# Header #}
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <h1 class="text-3xl font-bold text-gray-900">{{ hopital.nom }}</h1>
+                            {% if hopital.serviceUrgenceDispo %}
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-green-100 text-green-800 text-sm font-bold rounded-full">
+                                    <i class="fas fa-ambulance"></i> Urgences 24h/24
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full">
+                                    Sans urgences
+                                </span>
+                            {% endif %}
+                        </div>
+                        <p class="text-gray-500 mt-1 text-sm flex items-center gap-2">
+                            <i class="fas fa-map-marker-alt text-red-400"></i>{{ hopital.adresse }}
+                        </p>
+                    </div>
+                    <div class="flex gap-2 flex-shrink-0">
+                        <a href="{{ path('app_rendez_vous_new') }}"
+                           class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition shadow text-sm">
+                            <i class="fas fa-calendar-plus"></i> Prendre RDV
+                        </a>
+                        <a href="{{ path('frontoffice_hopitaux') }}"
+                           class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition text-sm">
+                            <i class="fas fa-arrow-left"></i> Retour
+                        </a>
+                    </div>
+                </div>
+
+                {# Badges APIs #}
+                <div class="flex flex-wrap gap-2">
+                    <span class="px-3 py-1 bg-green-50 text-green-700 text-xs font-bold rounded-full border border-green-200">
+                        🗺️ API EXTERNE 1 — OpenStreetMap + Leaflet.js
+                    </span>
+                    <span class="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-200">
+                        🧭 API EXTERNE 2 — OpenRouteService (itinéraire)
+                    </span>
+                </div>
+
+                {# Layout principal #}
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+                    {# ====================================================
+                       ✅ API EXTERNE 1 — OpenStreetMap via Leaflet.js
+                       ==================================================== #}
+                    <div class="lg:col-span-3 space-y-4">
+
+                        {# Carte Leaflet #}
+                        <div class="bg-white rounded-2xl border border-gray-200 shadow-md overflow-hidden">
+                            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-green-50">
+                                <span class="text-sm font-bold text-green-700 flex items-center gap-2">
+                                    🗺️ OpenStreetMap — Leaflet.js
+                                </span>
+                                {% if hopital.latitude and hopital.longitude %}
+                                    <span class="text-xs text-gray-400">
+                                        {{ hopital.latitude|number_format(4) }}, {{ hopital.longitude|number_format(4) }}
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            {% if hopital.latitude and hopital.longitude %}
+                                <div id="mapDetail"></div>
+                                <div class="p-3 bg-gray-50 flex flex-wrap gap-2">
+                                    <a href="https://www.openstreetmap.org/?mlat={{ hopital.latitude }}&mlon={{ hopital.longitude }}&zoom=16"
+                                       target="_blank"
+                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 text-gray-700 text-xs font-semibold rounded-lg hover:bg-green-50 hover:border-green-300 hover:text-green-700 transition">
+                                        <i class="fas fa-external-link-alt text-green-500"></i> Ouvrir OpenStreetMap
+                                    </a>
+                                    <button onclick="centerMap()"
+                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 text-gray-700 text-xs font-semibold rounded-lg hover:bg-gray-100 transition">
+                                        <i class="fas fa-crosshairs text-gray-500"></i> Recentrer
+                                    </button>
+                                </div>
+                            {% else %}
+                                <div class="h-80 flex flex-col items-center justify-center bg-gray-50 gap-4">
+                                    <i class="fas fa-map-marked-alt text-gray-300 text-5xl"></i>
+                                    <div class="text-center">
+                                        <p class="text-gray-600 font-semibold">Coordonnées GPS non renseignées</p>
+                                        <p class="text-gray-400 text-sm mt-1">Ajoutez latitude et longitude dans la base de données</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {# ====================================================
+                           ✅ API EXTERNE 2 — OpenRouteService
+                           Calcul itinéraire depuis ma position vers cet hôpital
+                           ==================================================== #}
+                        {% if hopital.latitude and hopital.longitude %}
+                        <div class="bg-white rounded-2xl border border-blue-200 shadow-sm overflow-hidden">
+                            <div class="px-4 py-3 bg-blue-50 border-b border-blue-100 flex items-center gap-2">
+                                <span class="text-lg">🧭</span>
+                                <div>
+                                    <p class="text-sm font-bold text-blue-700">Calculer l'itinéraire</p>
+                                    <p class="text-xs text-blue-500">OpenRouteService API — calcul routier précis</p>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <div class="flex gap-2 mb-3">
+                                    <div class="flex-1">
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Ma latitude</label>
+                                        <input id="myLat" type="number" step="0.0001" value="36.8065"
+                                               class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400">
+                                    </div>
+                                    <div class="flex-1">
+                                        <label class="block text-xs font-medium text-gray-500 mb-1">Ma longitude</label>
+                                        <input id="myLng" type="number" step="0.0001" value="10.1815"
+                                               class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400">
+                                    </div>
+                                    <div class="flex items-end">
+                                        <button onclick="getMyLocation()"
+                                                class="px-3 py-2 bg-blue-100 text-blue-700 text-sm font-semibold rounded-lg hover:bg-blue-200 transition whitespace-nowrap">
+                                            <i class="fas fa-crosshairs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button onclick="calculateRoute()"
+                                        class="w-full px-4 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition text-sm">
+                                    <i class="fas fa-route mr-2"></i>Calculer via OpenRouteService
+                                </button>
+
+                                <div id="routeLoading" class="hidden text-center py-4">
+                                    <i class="fas fa-spinner fa-spin text-blue-500"></i>
+                                    <p class="text-xs text-gray-500 mt-1">Appel OpenRouteService API en cours...</p>
+                                </div>
+
+                                <div id="routeResult" class="hidden mt-3 grid grid-cols-2 gap-3">
+                                    <div class="bg-blue-50 rounded-xl p-3 text-center">
+                                        <p class="text-xs text-gray-500">Distance</p>
+                                        <p id="resDistance" class="text-xl font-bold text-blue-600"></p>
+                                    </div>
+                                    <div class="bg-green-50 rounded-xl p-3 text-center">
+                                        <p class="text-xs text-gray-500">Durée estimée</p>
+                                        <p id="resDuration" class="text-xl font-bold text-green-600"></p>
+                                    </div>
+                                    <a id="resOsmLink" href="#" target="_blank"
+                                       class="col-span-2 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition">
+                                        <i class="fas fa-route"></i> Voir l'itinéraire sur OpenStreetMap
+                                    </a>
+                                </div>
+
+                                <div id="routeError" class="hidden mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-xl text-yellow-800 text-xs"></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {# Informations hôpital — design original conservé #}
+                    <div class="lg:col-span-2 space-y-4">
+
+                        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+                            <h2 class="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <i class="fas fa-info-circle text-blue-500"></i> Informations
+                            </h2>
+                            <div class="space-y-3">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-map-marker-alt text-red-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-400 font-medium mb-0.5">Adresse</p>
+                                        <p class="text-sm text-gray-900 font-semibold">{{ hopital.adresse }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="w-9 h-9 bg-green-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-phone text-green-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-400 font-medium mb-0.5">Téléphone</p>
+                                        <a href="tel:{{ hopital.tel }}" class="text-sm text-green-700 font-bold hover:text-green-600">{{ hopital.tel }}</a>
+                                    </div>
+                                </div>
+                                {% if hopital.capacite %}
+                                <div class="flex items-start gap-3">
+                                    <div class="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-bed text-blue-500"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-400 font-medium mb-0.5">Capacité</p>
+                                        <p class="text-sm text-gray-900 font-semibold">{{ hopital.capacite }} lits</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <div class="flex items-start gap-3">
+                                    <div class="w-9 h-9 {{ hopital.serviceUrgenceDispo ? 'bg-green-50' : 'bg-gray-50' }} rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-ambulance {{ hopital.serviceUrgenceDispo ? 'text-green-500' : 'text-gray-300' }}"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-400 font-medium mb-0.5">Service d'urgences</p>
+                                        <p class="text-sm font-bold {{ hopital.serviceUrgenceDispo ? 'text-green-700' : 'text-gray-400' }}">
+                                            {{ hopital.serviceUrgenceDispo ? 'Disponible 24h/24 — 7j/7' : 'Non disponible' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if hopital.specialites %}
+                        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+                            <h2 class="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                <i class="fas fa-stethoscope text-purple-500"></i> Spécialités
+                            </h2>
+                            <div class="flex flex-wrap gap-2">
+                                {% for spec in hopital.getSpecialitesArray() %}
+                                    <span class="px-3 py-1.5 bg-purple-50 text-purple-800 text-xs font-semibold rounded-full border border-purple-100">{{ spec }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="space-y-2">
+                            <a href="tel:{{ hopital.tel }}"
+                               class="flex items-center justify-center gap-2 w-full px-5 py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition shadow-md">
+                                <i class="fas fa-phone-alt"></i> Appeler maintenant
+                            </a>
+                            <a href="{{ path('app_rendez_vous_new') }}"
+                               class="flex items-center justify-center gap-2 w-full px-5 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-md">
+                                <i class="fas fa-calendar-plus"></i> Prendre un rendez-vous
+                            </a>
+                            <a href="https://www.openstreetmap.org/?mlat={{ hopital.latitude }}&mlon={{ hopital.longitude }}&zoom=16"
+                               target="_blank"
+                               class="flex items-center justify-center gap-2 w-full px-5 py-3 bg-white border border-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition">
+                                🗺️ Voir sur OpenStreetMap
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+{# ✅ API EXTERNE 1 — Leaflet.js #}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+{% if hopital.latitude and hopital.longitude %}
+<script>
+// ✅ API EXTERNE 1 — OpenStreetMap via Leaflet.js
+const LAT = {{ hopital.latitude }};
+const LNG = {{ hopital.longitude }};
+const NOM = '{{ hopital.nom|e("js") }}';
+const ADRESSE = '{{ hopital.adresse|e("js") }}';
+const TEL = '{{ hopital.tel|e("js") }}';
+const URGENCES = {{ hopital.serviceUrgenceDispo ? 'true' : 'false' }};
+
+let map = null;
+
+function initMapDetail() {
+    map = L.map('mapDetail', { center: [LAT, LNG], zoom: 16 });
+
+    // ✅ Tuile OpenStreetMap — gratuit, pas de clé
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+    }).addTo(map);
+
+    // Marqueur coloré selon urgences
+    const color = URGENCES ? '#ef4444' : '#3b82f6';
+    const icon = L.divIcon({
+        html: `<div style="width:36px;height:36px;background:${color};border:4px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(0,0,0,0.3);font-size:16px;">🏥</div>`,
+        className: '', iconSize: [36, 36], iconAnchor: [18, 18]
+    });
+
+    const marker = L.marker([LAT, LNG], { icon }).addTo(map);
+    marker.bindPopup(`
+        <div style="font-family:system-ui;padding:4px;min-width:180px;">
+            <p style="font-weight:700;font-size:14px;color:#1e3a8a;margin:0 0 6px;">${NOM}</p>
+            <p style="font-size:12px;color:#6b7280;margin:2px 0;">📍 ${ADRESSE}</p>
+            <p style="font-size:12px;color:#6b7280;margin:2px 0;">📞 ${TEL}</p>
+            <span style="display:inline-block;margin-top:6px;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:${URGENCES ? '#dcfce7' : '#f3f4f6'};color:${URGENCES ? '#166534' : '#6b7280'};">
+                ${URGENCES ? '🚑 Urgences 24/7' : 'Sans urgences'}
+            </span>
+        </div>
+    `, { maxWidth: 240 }).openPopup();
+}
+
+function centerMap() {
+    if (map) map.setView([LAT, LNG], 16);
+}
+
+// ✅ API EXTERNE 2 — OpenRouteService
+const ORS_API_KEY = '{{ app.request.server.get("OPENROUTESERVICE_API_KEY")|default("VOTRE_CLE_ORS") }}';
+
+function getMyLocation() {
+    if (!navigator.geolocation) { alert('Géolocalisation non supportée'); return; }
+    navigator.geolocation.getCurrentPosition(pos => {
+        document.getElementById('myLat').value = pos.coords.latitude.toFixed(6);
+        document.getElementById('myLng').value = pos.coords.longitude.toFixed(6);
+    });
+}
+
+async function calculateRoute() {
+    const fromLat = parseFloat(document.getElementById('myLat').value);
+    const fromLng = parseFloat(document.getElementById('myLng').value);
+
+    document.getElementById('routeLoading').classList.remove('hidden');
+    document.getElementById('routeResult').classList.add('hidden');
+    document.getElementById('routeError').classList.add('hidden');
+
+    try {
+        // ✅ Appel API OpenRouteService
+        const res = await fetch(
+            `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${ORS_API_KEY}&start=${fromLng},${fromLat}&end=${LNG},${LAT}`,
+            { headers: { 'Accept': 'application/json' } }
+        );
+        const data = await res.json();
+
+        if (data.features && data.features[0]) {
+            const seg = data.features[0].properties.segments[0];
+            document.getElementById('resDistance').textContent = (seg.distance / 1000).toFixed(1) + ' km';
+            document.getElementById('resDuration').textContent = Math.round(seg.duration / 60) + ' min';
+        } else {
+            throw new Error('Réponse invalide');
+        }
+    } catch (e) {
+        // Fallback calcul approximatif
+        const dist = Math.sqrt(Math.pow(LAT - fromLat, 2) + Math.pow(LNG - fromLng, 2)) * 111;
+        document.getElementById('resDistance').textContent = dist.toFixed(1) + ' km *';
+        document.getElementById('resDuration').textContent = Math.round(dist / 50 * 60) + ' min *';
+        document.getElementById('routeError').textContent = '⚠️ Ajoutez OPENROUTESERVICE_API_KEY dans .env pour le calcul précis. Estimation affichée.';
+        document.getElementById('routeError').classList.remove('hidden');
+    } finally {
+        document.getElementById('routeLoading').classList.add('hidden');
+        document.getElementById('routeResult').classList.remove('hidden');
+        document.getElementById('resOsmLink').href =
+            `https://www.openstreetmap.org/directions?from=${fromLat},${fromLng}&to=${LAT},${LNG}`;
+
+        // Afficher la ligne sur la carte
+        if (map) {
+            const fromLat2 = parseFloat(document.getElementById('myLat').value);
+            const fromLng2 = parseFloat(document.getElementById('myLng').value);
+            L.polyline([[fromLat2, fromLng2], [LAT, LNG]], {
+                color: '#2563eb', weight: 3, dashArray: '8,6', opacity: 0.8
+            }).addTo(map);
+            map.fitBounds([[fromLat2, fromLng2], [LAT, LNG]], { padding: [40, 40] });
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', initMapDetail);
+</script>
+{% endif %}
+{% endblock %}

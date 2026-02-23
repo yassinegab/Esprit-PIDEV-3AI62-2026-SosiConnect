@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votre Dossier Médical — SmartHealth AI</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #f1f5f9; font-family: Arial, sans-serif; font-size: 14px; color: #334155; }
+        .wrapper { max-width: 600px; margin: 32px auto; }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1d4ed8, #2563eb);
+            border-radius: 16px 16px 0 0;
+            padding: 32px 36px;
+            text-align: center;
+        }
+        .header-app  { font-size: 20px; font-weight: bold; color: white; margin-bottom: 6px; }
+        .header-sub  { font-size: 12px; color: rgba(255,255,255,0.7); }
+        .header-badge {
+            display: inline-block;
+            margin-top: 14px;
+            padding: 5px 16px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        /* Corps */
+        .body { background: white; padding: 36px; }
+
+        .greeting { font-size: 16px; font-weight: bold; color: #1e293b; margin-bottom: 8px; }
+        .intro { font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 24px; }
+
+        /* Card dossier */
+        .dossier-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        .dossier-card-header {
+            background: #1d4ed8;
+            padding: 14px 20px;
+            display: table;
+            width: 100%;
+        }
+        .dossier-card-title { display: table-cell; color: white; font-size: 14px; font-weight: bold; vertical-align: middle; }
+        .dossier-card-id    { display: table-cell; text-align: right; color: rgba(255,255,255,0.8); font-size: 13px; font-weight: bold; vertical-align: middle; }
+        .dossier-card-body  { padding: 20px; }
+
+        .field { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9; }
+        .field:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+        .field-label { font-size: 11px; font-weight: bold; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+        .field-value { font-size: 13px; color: #334155; line-height: 1.6; }
+        .field-empty { font-size: 13px; color: #cbd5e1; font-style: italic; }
+
+        /* Alerte allergie */
+        .allergy-box {
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+            border-radius: 4px;
+            padding: 10px 14px;
+        }
+        .allergy-warn { font-weight: bold; color: #991b1b; font-size: 12px; margin-bottom: 2px; }
+        .allergy-text { color: #7f1d1d; font-size: 13px; }
+
+        /* Boutons */
+        .btn-section { text-align: center; margin-bottom: 28px; }
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            margin: 4px;
+        }
+        .btn-primary { background: #7c3aed; color: white; }
+        .btn-danger  { background: #dc2626; color: white; }
+        .btn-info    { background: #0891b2; color: white; }
+
+        /* Tech badges */
+        .tech-section {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+        }
+        .tech-title { font-size: 12px; font-weight: bold; color: #0369a1; margin-bottom: 10px; }
+        .tech-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+        .tech-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .tb-purple { background: #ede9fe; color: #6d28d9; }
+        .tb-orange { background: #fff7ed; color: #c2410c; }
+        .tb-green  { background: #f0fdf4; color: #15803d; }
+        .tb-red    { background: #fef2f2; color: #b91c1c; }
+        .tb-cyan   { background: #ecfeff; color: #0e7490; }
+
+        /* Warning */
+        .warning-box {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 11px;
+            color: #78350f;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #f8fafc;
+            border-radius: 0 0 16px 16px;
+            border-top: 1px solid #e2e8f0;
+            padding: 20px 36px;
+            text-align: center;
+            font-size: 11px;
+            color: #94a3b8;
+            line-height: 1.7;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    {# ── HEADER ── #}
+    <div class="header">
+        <div class="header-app">🏥 SmartHealth AI</div>
+        <div class="header-sub">Système de gestion médicale — PIDEV 2025</div>
+        <div class="header-badge">📧 Envoyé via Bundle PHPMailer</div>
+    </div>
+
+    {# ── CORPS ── #}
+    <div class="body">
+
+        <p class="greeting">Bonjour {{ user.prenom }} {{ user.nom }},</p>
+        <p class="intro">
+            Vous trouverez ci-dessous votre dossier médical <strong>#{{ dossier.id }}</strong>
+            extrait de SmartHealth AI. Ce résumé vous est envoyé pour consultation et archivage personnel.
+        </p>
+
+        {# ── CARD DOSSIER ── #}
+        <div class="dossier-card">
+            <div class="dossier-card-header">
+                <span class="dossier-card-title">📋 Dossier Médical</span>
+                <span class="dossier-card-id">#{{ dossier.id }}</span>
+            </div>
+            <div class="dossier-card-body">
+
+                <div class="field">
+                    <div class="field-label">📅 Date de création</div>
+                    <div class="field-value">{{ dossier.dateCreation|date('d/m/Y à H:i') }}</div>
+                </div>
+
+                <div class="field">
+                    <div class="field-label">🔄 Dernière mise à jour</div>
+                    <div class="field-value">{{ dossier.derniereMiseAJour|date('d/m/Y à H:i') }}</div>
+                </div>
+
+                {% if dossier.objectifSante %}
+                <div class="field">
+                    <div class="field-label">🎯 Objectif santé</div>
+                    <div class="field-value">{{ dossier.objectifSante }}</div>
+                </div>
+                {% endif %}
+
+                <div class="field">
+                    <div class="field-label">📋 Antécédents médicaux</div>
+                    {% if dossier.antecedentsMedicaux %}
+                        <div class="field-value">{{ dossier.antecedentsMedicaux }}</div>
+                    {% else %}
+                        <div class="field-empty">Aucun antécédent renseigné</div>
+                    {% endif %}
+                </div>
+
+                <div class="field">
+                    <div class="field-label">🩺 Maladies chroniques</div>
+                    {% if dossier.maladiesChroniques %}
+                        <div class="field-value">{{ dossier.maladiesChroniques }}</div>
+                    {% else %}
+                        <div class="field-empty">Aucune maladie chronique renseignée</div>
+                    {% endif %}
+                </div>
+
+                <div class="field">
+                    <div class="field-label">⚠️ Allergies</div>
+                    {% if dossier.allergies %}
+                        <div class="allergy-box">
+                            <div class="allergy-warn">⛔ ATTENTION</div>
+                            <div class="allergy-text">{{ dossier.allergies }}</div>
+                        </div>
+                    {% else %}
+                        <div class="field-empty">Aucune allergie connue</div>
+                    {% endif %}
+                </div>
+
+                <div class="field">
+                    <div class="field-label">💊 Traitements en cours</div>
+                    {% if dossier.traitementsEnCours %}
+                        <div class="field-value">{{ dossier.traitementsEnCours }}</div>
+                    {% else %}
+                        <div class="field-empty">Aucun traitement en cours</div>
+                    {% endif %}
+                </div>
+
+                <div class="field">
+                    <div class="field-label">🔬 Diagnostics</div>
+                    {% if dossier.diagnostics %}
+                        <div class="field-value">{{ dossier.diagnostics }}</div>
+                    {% else %}
+                        <div class="field-empty">Aucun diagnostic renseigné</div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+        {# ── BOUTONS ── #}
+        <div class="btn-section">
+            <a href="#" class="btn btn-primary">🤖 Analyse IA Groq</a>
+            <a href="#" class="btn btn-danger">📄 Télécharger PDF</a>
+            <a href="#" class="btn btn-info">🤗 Analyse HuggingFace</a>
+        </div>
+
+        {# ── BADGES TECH ── #}
+        <div class="tech-section">
+            <div class="tech-title">🛠️ Technologies intégrées dans SmartHealth AI</div>
+            <div class="tech-badges">
+                <span class="tech-badge tb-purple">🤖 IA 1 — Groq LLaMA 3.3</span>
+                <span class="tech-badge tb-orange">🤗 IA 2 — Hugging Face</span>
+                <span class="tech-badge tb-red">📄 DomPDF Bundle</span>
+                <span class="tech-badge tb-green">📧 PHPMailer Bundle</span>
+                <span class="tech-badge tb-cyan">🗺️ OpenStreetMap API</span>
+                <span class="tech-badge tb-cyan">🧭 OpenRouteService API</span>
+                <span class="tech-badge tb-green">🏥 MedlinePlus NIH API</span>
+            </div>
+        </div>
+
+        {# ── AVERTISSEMENT ── #}
+        <div class="warning-box">
+            <strong>⚠️ Avertissement :</strong>
+            Ce message et son contenu sont strictement confidentiels. Les informations médicales présentées
+            ne remplacent pas un avis médical professionnel. Consultez votre médecin pour tout diagnostic.
+            Email envoyé via <strong>Bundle PHPMailer</strong> (bundle externe Symfony).
+        </div>
+
+    </div>
+
+    {# ── FOOTER ── #}
+    <div class="footer">
+        <strong>SmartHealth AI</strong> — Projet PIDEV 2025<br>
+        Cet email a été envoyé à <strong>{{ user.email }}</strong><br>
+        Ne pas répondre à cet email automatique.
+    </div>
+
+</div>
+</body>
+</html>

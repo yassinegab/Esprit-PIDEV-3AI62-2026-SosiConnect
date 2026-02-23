@@ -1,0 +1,58 @@
+<header class="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 lg:px-6">
+    
+    <div class="flex items-center gap-4">
+        {# Mobile Menu Toggle #}
+        <button type="button"
+                class="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-gray-100 lg:hidden">
+            <i class="fas fa-bars text-xl"></i>
+        </button>
+        
+        {# Search Bar #}
+        <div class="relative hidden md:block">
+            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input type="search"
+                   placeholder="Rechercher..."
+                   class="h-10 w-80 rounded-lg border border-gray-200 bg-gray-50 px-10 py-2 text-sm">
+        </div>
+    </div>
+    
+    <div class="flex items-center gap-3">
+        
+        {# Notifications #}
+        <button class="relative h-10 w-10 rounded-lg hover:bg-gray-100">
+            <i class="fas fa-bell text-gray-600 text-lg"></i>
+            <span class="absolute right-1 top-1 h-2.5 w-2.5 rounded-full bg-red-500 border-2 border-white"></span>
+        </button>
+        
+        {# User Profile #}
+        <div class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100">
+            <div class="h-9 w-9 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
+                {# ✅ Initiales de l'utilisateur connecté #}
+                {% if app.user %}
+                    {{ app.user.prenom[:1]|upper }}{{ app.user.nom[:1]|upper }}
+                {% else %}
+                    ?
+                {% endif %}
+            </div>
+            <div class="hidden md:block text-left">
+                {# ✅ Nom complet de l'utilisateur connecté #}
+                <p class="text-sm font-medium text-gray-900">
+                    {% if app.user %}
+                        {{ app.user.prenom }} {{ app.user.nom }}
+                    {% else %}
+                        Invité
+                    {% endif %}
+                </p>
+                <p class="text-xs text-gray-500">
+                    {% if app.user %}
+                        {{ app.user.email }}
+                    {% else %}
+                        Non connecté
+                    {% endif %}
+                </p>
+            </div>
+            <i class="fas fa-chevron-down text-gray-400 text-xs hidden md:block"></i>
+        </div>
+        
+    </div>
+</header>

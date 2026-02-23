@@ -1,0 +1,13 @@
+fos_ck_editor:
+    default_config: default
+    configs:
+        default:
+            toolbar: standard
+            language: fr
+            height: 400
+        
+        medical_notes:
+            toolbar: full
+            language: fr
+            height: 600
+            extraPlugins: 'justify,colorbutton,font'

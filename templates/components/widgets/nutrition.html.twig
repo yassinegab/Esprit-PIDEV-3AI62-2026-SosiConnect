@@ -1,0 +1,34 @@
+<div class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+    <div class="mb-4 flex items-center justify-between">
+        <h3 class="font-bold text-gray-900">Nutrition</h3>
+        <a href="{{ path('user_meal_new') }}" class="text-sm font-medium text-green-600 hover:text-green-700">Journal</a>
+    </div>
+    
+    <div class="space-y-4">
+        <div class="flex items-center gap-4">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">
+                <i class="fas fa-apple-alt text-xl"></i>
+            </div>
+            <div>
+                <p class="font-medium text-gray-900">Déjeuner</p>
+                <p class="text-sm text-gray-500">540 Kcal • Protéiné</p>
+            </div>
+            <button class="ml-auto rounded-full bg-gray-50 p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                <i class="fas fa-tint text-xl"></i>
+            </div>
+            <div>
+                <p class="font-medium text-gray-900">Eau</p>
+                <p class="text-sm text-gray-500">4 verres aujourd'hui</p>
+            </div>
+            <button class="ml-auto rounded-full bg-blue-50 p-2 text-blue-600 hover:bg-blue-100">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+    </div>
+</div>

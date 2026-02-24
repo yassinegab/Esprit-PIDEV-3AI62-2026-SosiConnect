@@ -12,7 +12,9 @@
     "private": true,
     "dependencies": {
         "@symfony/stimulus-bridge": "^4.0.1",
-        "@symfony/ux-turbo": "^2.32.0"
+        "@symfony/ux-chartjs": "^2.32.0",
+        "@symfony/ux-turbo": "^2.32.0",
+        "chart.js": "^4.5.1"
     },
     "devDependencies": {
         "@babel/core": "^7.17.0",

@@ -1,108 +1,71 @@
-{% set stats = [
-  {
-    'id': 'calories',
-    'label': 'Calories consommées',
-    'value': '1,842',
-    'unit': 'kcal',
-    'target': '/ 2,000',
-    'subtitle': null,
-    'icon': '🔥',
-    'color': 'text-orange-500',
-    'barColor': 'bg-orange-500',
-    'bgColor': 'bg-orange-50',
-    'progress': 92
-  },
-  {
-    'id': 'stress',
-    'label': 'Niveau de stress',
-    'value': 'Faible',
-    'unit': null,
-    'target': null,
-    'subtitle': 'Score: 28/100',
-    'icon': '🧠',
-    'color': 'text-primary',
-    'barColor': 'bg-primary',
-    'bgColor': 'bg-primary/10',
-    'progress': 28
-  },
-  {
-    'id': 'activity',
-    'label': 'Activité physique',
-    'value': '8,456',
-    'unit': 'pas',
-    'target': '/ 10,000',
-    'subtitle': null,
-    'icon': '👣',
-    'color': 'text-secondary',
-    'barColor': 'bg-secondary',
-    'bgColor': 'bg-secondary/10',
-    'progress': 85
-  },
-  {
-    'id': 'mood',
-    'label': 'Humeur du jour',
-    'value': 'Joyeuse',
-    'unit': null,
-    'target': null,
-    'subtitle': 'Énergie: Haute',
-    'icon': '😊',
-    'color': 'text-yellow-500',
-    'barColor': null,
-    'bgColor': 'bg-yellow-50',
-    'progress': null
-  },
-  {
-    'id': 'cycle',
-    'label': 'Cycle menstruel',
-    'value': 'Phase folliculaire',
-    'unit': null,
-    'target': null,
-    'subtitle': 'Jour 8 sur 28',
-    'icon': '🌸',
-    'color': 'text-pink-500',
-    'barColor': 'bg-pink-500',
-    'bgColor': 'bg-pink-50',
-    'progress': 29
-  }
-] %}
-<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-  {% for stat in stats %}
-    <div class="overflow-hidden rounded-lg border border-border bg-card">
-      <div class="p-4">
-        <div class="flex items-start justify-between">
-          <div class="flex-1">
-            <p class="text-xs font-medium text-muted-foreground">{{ stat.label }}</p>
-            <div class="mt-2 flex items-baseline gap-1">
-              <span class="text-2xl font-bold text-card-foreground">{{ stat.value }}</span>
-              {% if stat.unit %}
-                <span class="text-sm text-muted-foreground">{{ stat.unit }}</span>
-              {% endif %}
+<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4 animate-fadeIn" style="animation-delay: 0.1s;">
+    {# Health Score Card #}
+    <div class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all hover:shadow-md">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Score Santé</p>
+                <p class="text-3xl font-bold text-gray-900 mt-2">85<span class="text-sm font-normal text-gray-400">/100</span></p>
             </div>
-            
-            {# This handles both target and subtitle without errors #}
-            {% if stat.target or stat.subtitle %}
-              <p class="text-xs text-muted-foreground">
-                {{ stat.target }} {{ stat.subtitle }}
-              </p>
-            {% endif %}
-          </div>
-          
-          <div class="rounded-lg p-2.5 {{ stat.bgColor }}">
-            <span class="{{ stat.color }}">{{ stat.icon }}</span>
-          </div>
+            <div class="rounded-full bg-green-50 p-3 text-green-600">
+                <i class="fas fa-heartbeat text-xl"></i>
+            </div>
         </div>
-
-        {% if stat.progress %}
-          <div class="mt-3">
-            <div class="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-              {# CSS Variable trick to avoid IDE warnings on the style tag #}
-              <div class="h-full rounded-full transition-all {{ stat.barColor }}"
-                   style="--width: {{ stat.progress }}%; width: var(--width);">
-              </div>
-            </div>
-          </div>
-        {% endif %}
-      </div>
+        <div class="mt-4 flex items-center text-sm text-green-600">
+            <i class="fas fa-arrow-up mr-1"></i>
+            <span class="font-medium">2.5%</span>
+            <span class="ml-2 text-gray-400">vs semaine dernière</span>
+        </div>
     </div>
-  {% endfor %}
+
+    {# Active Calories Card #}
+    <div class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all hover:shadow-md">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Calories Actives</p>
+                <p class="text-3xl font-bold text-gray-900 mt-2">1,240</p>
+            </div>
+            <div class="rounded-full bg-orange-50 p-3 text-orange-600">
+                <i class="fas fa-fire text-xl"></i>
+            </div>
+        </div>
+        <div class="mt-4 flex items-center text-sm text-orange-600">
+            <i class="fas fa-arrow-up mr-1"></i>
+            <span class="font-medium">12%</span>
+            <span class="ml-2 text-gray-400">vs hier</span>
+        </div>
+    </div>
+
+    {# Sleep Quality Card #}
+    <div class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all hover:shadow-md">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Sommeil</p>
+                <p class="text-3xl font-bold text-gray-900 mt-2">7h 20m</p>
+            </div>
+            <div class="rounded-full bg-indigo-50 p-3 text-indigo-600">
+                <i class="fas fa-moon text-xl"></i>
+            </div>
+        </div>
+        <div class="mt-4 flex items-center text-sm text-gray-400">
+            <span class="font-medium text-indigo-600">Qualité: Bonne</span>
+        </div>
+    </div>
+
+    {# Stress Level Card #}
+    <div class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all hover:shadow-md">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Niveau Stress</p>
+                <p class="text-3xl font-bold text-gray-900 mt-2">Bas</p>
+            </div>
+            <div class="rounded-full bg-blue-50 p-3 text-blue-600">
+                <i class="fas fa-brain text-xl"></i>
+            </div>
+        </div>
+        <div class="mt-4 flex items-center text-sm text-blue-600">
+            <i class="fas fa-arrow-down mr-1"></i>
+            <span class="font-medium">5%</span>
+            <span class="ml-2 text-gray-400">vs moyenne</span>
+        </div>
+    </div>
 </div>

@@ -177,6 +177,9 @@ class UserWellBeingDataFrontController extends AbstractController
             'calChart' => $calChart,
             'activityChart' => $activityChart,
             'stressChart' => $stressChart,
+            'hasPredictions' => count($predictions) > 0,
+            'hasData' => count($data) > 0,
+            'hasMeals' => count($meals) > 0,
         ]);
     }
 

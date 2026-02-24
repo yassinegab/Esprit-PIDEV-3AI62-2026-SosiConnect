@@ -79,7 +79,15 @@
                     </div>
                     
                     <div class="h-[400px]">
-                        {{ render_chart(stressChart) }}
+                        {% if hasPredictions %}
+                            {{ render_chart(stressChart) }}
+                        {% else %}
+                            <div class="h-full flex flex-col items-center justify-center text-gray-400">
+                                <i class="fas fa-chart-area text-4xl mb-3 opacity-20"></i>
+                                <p>No stress analysis data yet.</p>
+                                <a href="{{ path('user_wellbeing_new') }}" class="mt-2 text-indigo-500 hover:text-indigo-600 text-sm">Log your first entry</a>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -91,7 +99,13 @@
                             <i class="fas fa-chart-line text-indigo-500"></i> Mood Trends
                         </h3>
                         <div class="h-64">
-                            {{ render_chart(moodChart) }}
+                            {% if hasData %}
+                                {{ render_chart(moodChart) }}
+                            {% else %}
+                                <div class="h-full flex flex-col items-center justify-center text-gray-400">
+                                    <p>No mood data available</p>
+                                </div>
+                            {% endif %}
                         </div>
                         <p class="mt-4 text-xs text-gray-500 italic">Tracking your anxiety and tension levels over the last 7 logs.</p>
                     </div>
@@ -102,7 +116,13 @@
                             <i class="fas fa-fire text-emerald-500"></i> Calorie History
                         </h3>
                         <div class="h-64">
-                            {{ render_chart(calChart) }}
+                            {% if hasMeals %}
+                                {{ render_chart(calChart) }}
+                            {% else %}
+                                <div class="h-full flex flex-col items-center justify-center text-gray-400">
+                                    <p>No meal data available</p>
+                                </div>
+                            {% endif %}
                         </div>
                         <p class="mt-4 text-xs text-gray-500 italic">Total daily calories tracked from your meal logs.</p>
                     </div>
@@ -113,7 +133,13 @@
                             <i class="fas fa-calendar-check text-amber-500"></i> Log Frequency
                         </h3>
                         <div class="h-64">
-                            {{ render_chart(activityChart) }}
+                            {% if hasData %}
+                                {{ render_chart(activityChart) }}
+                            {% else %}
+                                <div class="h-full flex flex-col items-center justify-center text-gray-400">
+                                    <p>No activity data available</p>
+                                </div>
+                            {% endif %}
                         </div>
                         <p class="mt-4 text-xs text-gray-500 italic">Frequency of your wellness logs per day.</p>
                     </div>

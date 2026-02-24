@@ -123,6 +123,19 @@
                         <p class="text-gray-500 col-span-full text-center">No records found.</p>
                     {% endfor %}
                 </div>
+                
+                {% if dataPagination is defined %}
+                    {% include 'components/pagination.html.twig' with {
+                        page: dataPagination.page,
+                        total_pages: dataPagination.totalPages,
+                        route: 'user_wellbeing_index',
+                        pageParam: 'page_data',
+                        paramsBase: {
+                            page_meals: mealPagination.page,
+                            page_journals: journalPagination.page
+                        }
+                    } %}
+                {% endif %}
 
                 <!-- Detailed Analysis Section -->
                 <div class="mt-12">
@@ -199,6 +212,19 @@
                              </div>
                         {% endfor %}
                     </div>
+                    
+                    {% if mealPagination is defined %}
+                        {% include 'components/pagination.html.twig' with {
+                            page: mealPagination.page,
+                            total_pages: mealPagination.totalPages,
+                            route: 'user_wellbeing_index',
+                            pageParam: 'page_meals',
+                            paramsBase: {
+                                page_data: dataPagination.page,
+                                page_journals: journalPagination.page
+                            }
+                        } %}
+                    {% endif %}
                 </div>
 
                 {# Journal Section #}
@@ -245,6 +271,19 @@
                              </div>
                         {% endfor %}
                     </div>
+                    
+                    {% if journalPagination is defined %}
+                        {% include 'components/pagination.html.twig' with {
+                            page: journalPagination.page,
+                            total_pages: journalPagination.totalPages,
+                            route: 'user_wellbeing_index',
+                            pageParam: 'page_journals',
+                            paramsBase: {
+                                page_data: dataPagination.page,
+                                page_meals: mealPagination.page
+                            }
+                        } %}
+                    {% endif %}
                 </div>
 
         </div>

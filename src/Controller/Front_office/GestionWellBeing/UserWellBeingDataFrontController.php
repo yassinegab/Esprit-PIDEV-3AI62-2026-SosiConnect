@@ -23,11 +23,13 @@ class UserWellBeingDataFrontController extends AbstractController
 {
     #[Route('/', name: 'index')]
     public function index(
+        Request $request,
         UserWellBeingDataRepository $repo,
         MealRepository $mealRepo,
         JournalRepository $journalRepo,
         EntityManagerInterface $em,
-        \App\Service\StressPredictionService $predictionService
+        \App\Service\StressPredictionService $predictionService,
+        \App\Service\Paginator $paginator
     ): Response {
         // Get the logged-in user
         $user = $this->getUser();
@@ -36,18 +38,40 @@ class UserWellBeingDataFrontController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        // 1. Fetch Current User Data
-        $userData = $repo->findBy(['user' => $user], ['createdAt' => 'DESC']);
-        $userMeals = $mealRepo->findBy(['user' => $user], ['createAt' => 'DESC']);
-        $userJournals = $journalRepo->findBy(['user' => $user], ['createdAt' => 'DESC']);
+        $pageData = max(1, (int) $request->query->get('page_data', 1));
+        $pageMeals = max(1, (int) $request->query->get('page_meals', 1));
+        $pageJournals = max(1, (int) $request->query->get('page_journals', 1));
+
+        $perPageCards = 6;
+
+        $dataQb = $repo->createQueryBuilder('d')
+            ->where('d.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('d.createdAt', 'DESC');
+        $dataPage = $paginator->paginate($dataQb, $pageData, $perPageCards);
+
+        $mealsQb = $mealRepo->createQueryBuilder('m')
+            ->where('m.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('m.createAt', 'DESC');
+        $mealsPage = $paginator->paginate($mealsQb, $pageMeals, $perPageCards);
+
+        $journalsQb = $journalRepo->createQueryBuilder('j')
+            ->where('j.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('j.createdAt', 'DESC');
+        $journalsPage = $paginator->paginate($journalsQb, $pageJournals, $perPageCards);
 
         // 2. AI Trend Interpretation
         $aiTrends = $predictionService->interpretTrends($user);
 
         return $this->render('user_wellbeing/index.html.twig', [
-            'dataList' => $userData,
-            'meals' => $userMeals,
-            'journals' => $userJournals,
+            'dataList' => $dataPage['items'],
+            'meals' => $mealsPage['items'],
+            'journals' => $journalsPage['items'],
+            'dataPagination' => $dataPage,
+            'mealPagination' => $mealsPage,
+            'journalPagination' => $journalsPage,
             'aiTrends' => $aiTrends,
         ]);
     }

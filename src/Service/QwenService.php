@@ -78,6 +78,9 @@ class QwenService
 
         } catch (\Symfony\Component\HttpClient\Exception\ClientException $e) {
             $statusCode = $e->getResponse()->getStatusCode();
+            if ($statusCode === 402) {
+                return json_encode(['analysis' => "AI Analysis failed: Insufficient credits. Please check your OpenRouter account balance."]);
+            }
             if ($statusCode === 401 || $statusCode === 403) {
                 return json_encode(['analysis' => "AI Analysis failed: Authentication error. Please check your OPENROUTER_API_KEY."]);
             }

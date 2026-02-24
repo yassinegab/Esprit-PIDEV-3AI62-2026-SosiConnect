@@ -3,6 +3,7 @@ import "chart.js/auto";
 import ChartController from "@symfony/ux-chartjs";
 
 app.register("symfony--ux-chartjs--chart", ChartController);
+
 /*
  * Welcome to your app's main JavaScript file!
  *

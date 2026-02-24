@@ -1,0 +1,436 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Services - SmartHealth AI{% endblock %}
+
+{% block body %}
+
+{# ✅ PAS DE SIDEBAR — top-nav uniquement, pas de lg:ml-72 #}
+{% include 'components/top-nav.html.twig' %}
+
+<main class="flex-1 overflow-auto pb-12 bg-gray-50 min-h-screen">
+    <div class="mx-auto max-w-7xl space-y-6 p-4 lg:p-8">
+
+        {# ============================================ #}
+        {# HEADER #}
+        {# ============================================ #}
+        <div class="bg-gradient-to-r from-amber-100 via-orange-50 to-yellow-50 rounded-xl shadow-lg p-8 border border-amber-200">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                <div>
+                    <h1 class="text-4xl font-bold mb-2 text-gray-800">
+                        <i class="fas fa-hospital-alt text-amber-600 mr-3"></i>Services Médicaux
+                    </h1>
+                    <p class="text-gray-600 text-lg">Recherchez et filtrez parmi nos établissements et rendez-vous</p>
+                </div>
+                <div class="flex flex-wrap gap-3 flex-shrink-0">
+                    <a href="{{ path('app_rendez_vous_new') }}"
+                       class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 transition shadow-md">
+                        <i class="fas fa-plus"></i> Nouveau RDV
+                    </a>
+                    <a href="{{ path('dossier_medical_index') }}"
+                       class="inline-flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white text-sm font-bold rounded-xl hover:bg-green-700 transition shadow-md">
+                        <i class="fas fa-file-medical"></i> Dossier Médical
+                    </a>
+                </div>
+            </div>
+
+            {# Mini statistiques #}
+            <div class="grid grid-cols-3 gap-4 mt-6">
+                <div class="bg-white/80 backdrop-blur rounded-lg p-4 border border-amber-200">
+                    <p class="text-sm text-gray-600">Médecins</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ medecin_count }}</p>
+                </div>
+                <div class="bg-white/80 backdrop-blur rounded-lg p-4 border border-amber-200">
+                    <p class="text-sm text-gray-600">Patients</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ patient_count }}</p>
+                </div>
+                <div class="bg-white/80 backdrop-blur rounded-lg p-4 border border-amber-200">
+                    <p class="text-sm text-gray-600">Hôpitaux</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ hopital_count }}</p>
+                </div>
+            </div>
+        </div>
+
+        {# Flash Messages #}
+        {% for message in app.flashes('success') %}
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl text-sm">
+                <i class="fas fa-check-circle mr-2"></i>{{ message }}
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl text-sm">
+                <i class="fas fa-exclamation-circle mr-2"></i>{{ message }}
+            </div>
+        {% endfor %}
+
+        {# ============================================ #}
+        {# TABS DE NAVIGATION #}
+        {# ============================================ #}
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="flex border-b border-gray-200">
+                <a href="{{ path('app_service_home', {filter: 'all'}) }}#section-all"
+                   class="flex-1 px-6 py-4 text-center font-semibold transition-colors {{ filter == 'all' ? 'bg-blue-600 text-white' : 'bg-gray-50 text-gray-700 hover:bg-gray-100' }}">
+                    <i class="fas fa-th-large mr-2"></i>Tout voir
+                </a>
+                <a href="{{ path('app_service_home', {filter: 'hopital'}) }}#section-hopitaux"
+                   class="flex-1 px-6 py-4 text-center font-semibold transition-colors {{ filter == 'hopital' ? 'bg-purple-600 text-white' : 'bg-gray-50 text-gray-700 hover:bg-gray-100' }}">
+                    <i class="fas fa-hospital mr-2"></i>Hôpitaux ({{ total_hopitaux }})
+                </a>
+                <a href="{{ path('app_service_home', {filter: 'rdv'}) }}#section-rdv"
+                   class="flex-1 px-6 py-4 text-center font-semibold transition-colors {{ filter == 'rdv' ? 'bg-green-600 text-white' : 'bg-gray-50 text-gray-700 hover:bg-gray-100' }}">
+                    <i class="fas fa-calendar-check mr-2"></i>Rendez-vous ({{ total_rdv }})
+                </a>
+            </div>
+        </div>
+
+        {# ============================================ #}
+        {# SECTION HÔPITAUX #}
+        {# ============================================ #}
+        {% if filter in ['hopital', 'all'] and pagination_hopitaux %}
+        <div id="section-hopitaux" class="space-y-4 scroll-mt-20">
+
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-gray-900">
+                    <i class="fas fa-hospital text-purple-600 mr-2"></i>Hôpitaux disponibles
+                </h2>
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-1 bg-purple-50 text-purple-600 text-xs font-bold rounded border border-purple-200">SpiriitFormFilterBundle</span>
+                    <span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded border border-blue-200">KnpPaginatorBundle</span>
+                    <span class="px-4 py-2 bg-purple-100 text-purple-800 rounded-full font-semibold">{{ total_hopitaux }} résultat(s)</span>
+                </div>
+            </div>
+
+            {# Formulaire filtrage hôpitaux #}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="px-4 py-3 border-b border-gray-100 bg-purple-50">
+                    <span class="text-sm font-semibold text-purple-700">
+                        <i class="fas fa-filter mr-1"></i>Filtres multicritères avancés
+                    </span>
+                </div>
+                {{ form_start(form_hopital, {'action': path('app_service_home', {filter: 'hopital'}) ~ '#section-hopitaux', 'attr': {'class': 'px-4 py-4', 'id': 'form-hopital'}}) }}
+                <div class="flex flex-wrap items-end gap-3">
+                    <div class="flex flex-col gap-1" style="width: 160px">
+                        <label class="text-xs font-medium text-gray-600"><i class="fas fa-search mr-1"></i>Nom hôpital</label>
+                        {{ form_widget(form_hopital.nom, {'attr': {'class': 'w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-purple-500', 'placeholder': 'Ex: CHU...'}}) }}
+                    </div>
+                    <div class="flex flex-col gap-1" style="width: 140px">
+                        <label class="text-xs font-medium text-gray-600"><i class="fas fa-map-marker-alt mr-1"></i>Adresse</label>
+                        {{ form_widget(form_hopital.adresse, {'attr': {'class': 'w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-purple-500', 'placeholder': 'Ville...'}}) }}
+                    </div>
+                    <div class="flex flex-col gap-1" style="width: 130px">
+                        <label class="text-xs font-medium text-gray-600"><i class="fas fa-ambulance mr-1"></i>Urgences</label>
+                        {{ form_widget(form_hopital.serviceUrgenceDispo, {'attr': {'class': 'w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-purple-500'}}) }}
+                    </div>
+                    <div class="flex flex-col gap-1" style="width: 150px">
+                        <label class="text-xs font-medium text-gray-600"><i class="fas fa-stethoscope mr-1"></i>Spécialité</label>
+                        {{ form_widget(form_hopital.specialites, {'attr': {'class': 'w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-purple-500', 'placeholder': 'Cardio...'}}) }}
+                    </div>
+                    <div class="flex flex-col gap-1" style="width: 90px">
+                        <label class="text-xs font-medium text-gray-600"><i class="fas fa-bed mr-1"></i>Lits min</label>
+                        <input type="number" name="capacite_min" value="{{ capacite_min }}" placeholder="0" min="0" form="form-hopital"
+                               class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-purple-500">
+                    </div>
+                    <div class="flex flex-col gap-1" style="width: 90px">
+                        <label class="text-xs font-medium text-gray-600">Lits max</label>
+                        <input type="number" name="capacite_max" value="{{ capacite_max }}" placeholder="999" min="0" form="form-hopital"
+                               class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-purple-500">
+                    </div>
+                    <div class="flex gap-2 ml-auto">
+                        <button type="submit" class="px-5 py-2 bg-purple-600 text-white text-sm font-semibold rounded-lg hover:bg-purple-700 transition shadow-sm">
+                            <i class="fas fa-search mr-1"></i>Filtrer
+                        </button>
+                        <a href="{{ path('app_service_home', {filter: 'hopital'}) }}#section-hopitaux"
+                           class="px-5 py-2 bg-gray-100 text-gray-600 text-sm font-semibold rounded-lg hover:bg-gray-200 transition">
+                            <i class="fas fa-times mr-1"></i>Reset
+                        </a>
+                    </div>
+                </div>
+                {{ form_end(form_hopital) }}
+            </div>
+
+            {# Grille hôpitaux #}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {% for hopital in pagination_hopitaux %}
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 p-5">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="w-14 h-14 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                {% if hopital.imageName %}
+                                    <img src="{{ vich_uploader_asset(hopital, 'imageFile') }}" alt="{{ hopital.nom }}" class="w-14 h-14 object-cover rounded-lg">
+                                {% else %}
+                                    <i class="fas fa-hospital text-purple-600 text-xl"></i>
+                                {% endif %}
+                            </div>
+                            {% if hopital.serviceUrgenceDispo %}
+                                <span class="px-2 py-1 bg-red-100 text-red-800 text-xs font-bold rounded-full">
+                                    <i class="fas fa-ambulance mr-1"></i>Urgences 24/7
+                                </span>
+                            {% endif %}
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">{{ hopital.nom }}</h3>
+                        <div class="space-y-1.5 text-sm text-gray-600 mb-3">
+                            <p class="flex items-center gap-2"><i class="fas fa-map-marker-alt text-gray-400 w-4"></i>{{ hopital.adresse }}</p>
+                            <p class="flex items-center gap-2"><i class="fas fa-phone text-gray-400 w-4"></i>{{ hopital.tel }}</p>
+                            <p class="flex items-center gap-2"><i class="fas fa-bed text-gray-400 w-4"></i>{{ hopital.capacite }} lits</p>
+                        </div>
+                        {% if hopital.specialitesArray|length > 0 %}
+                            <div class="flex flex-wrap gap-1 mb-3">
+                                {% for spec in hopital.specialitesArray|slice(0, 2) %}
+                                    <span class="px-2 py-0.5 bg-purple-50 text-purple-700 text-xs rounded">{{ spec }}</span>
+                                {% endfor %}
+                                {% if hopital.specialitesArray|length > 2 %}
+                                    <span class="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs rounded">+{{ hopital.specialitesArray|length - 2 }}</span>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        <div class="flex gap-2">
+                            <a href="{{ path('app_hopital_show', {id: hopital.id}) }}"
+                               class="flex-1 text-center px-3 py-2 bg-purple-600 text-white text-sm font-semibold rounded-lg hover:bg-purple-700 transition">
+                                <i class="fas fa-info-circle mr-1"></i>Détails
+                            </a>
+                            <a href="{{ path('app_rendez_vous_new') }}"
+                               class="flex-1 text-center px-3 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition">
+                                <i class="fas fa-calendar-plus mr-1"></i>RDV
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="col-span-3 text-center py-12">
+                        <i class="fas fa-hospital text-gray-300 text-5xl mb-3"></i>
+                        <p class="text-gray-500 text-lg">Aucun hôpital ne correspond aux critères</p>
+                        <a href="{{ path('app_service_home', {filter: 'hopital'}) }}#section-hopitaux"
+                           class="mt-3 inline-block text-sm text-purple-600 hover:underline">Réinitialiser les filtres</a>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {# Pagination hôpitaux #}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm px-5 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <p class="text-sm text-gray-600">
+                    Page <strong>{{ pagination_hopitaux.currentPageNumber }}</strong> / <strong>{{ pagination_hopitaux.pageCount }}</strong>
+                    — <strong>{{ total_hopitaux }}</strong> hôpital(x) au total
+                </p>
+                <div class="knp-pagination">{{ knp_pagination_render(pagination_hopitaux) }}</div>
+            </div>
+        </div>
+        {% endif %}
+
+        {# ============================================ #}
+        {# SECTION RENDEZ-VOUS #}
+        {# ============================================ #}
+        {% if filter in ['rdv', 'all'] and pagination_rdv %}
+        <div id="section-rdv" class="space-y-4 scroll-mt-20">
+
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-gray-900">
+                    <i class="fas fa-calendar-check text-green-600 mr-2"></i>Rendez-vous
+                </h2>
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-1 bg-green-50 text-green-600 text-xs font-bold rounded border border-green-200">SpiriitFormFilterBundle</span>
+                    <span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded border border-blue-200">KnpPaginatorBundle</span>
+                    <span class="px-4 py-2 bg-green-100 text-green-800 rounded-full font-semibold">{{ total_rdv }} résultat(s)</span>
+                    <a href="{{ path('app_rendez_vous_new') }}"
+                       class="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 transition shadow-sm">
+                        <i class="fas fa-plus"></i> Nouveau RDV
+                    </a>
+                </div>
+            </div>
+
+            {# Formulaire filtrage RDV #}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="px-4 py-3 border-b border-gray-100 bg-green-50">
+                    <span class="text-sm font-semibold text-green-700">
+                        <i class="fas fa-filter mr-1"></i>Filtres multicritères avancés
+                    </span>
+                </div>
+                {{ form_start(form_rdv, {'action': path('app_service_home', {filter: 'rdv'}) ~ '#section-rdv', 'attr': {'class': 'px-4 py-4', 'id': 'form-rdv'}}) }}
+                <div class="flex flex-wrap items-end gap-3">
+                    <div class="flex flex-col gap-1" style="width: 140px">
+                        <label class="text-xs font-medium text-gray-600"><i class="fas fa-info-circle mr-1"></i>Statut</label>
+                        {{ form_widget(form_rdv.statut, {'attr': {'class': 'w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-green-500'}}) }}
+                    </div>
+                    <div class="flex flex-col gap-1" style="width: 160px">
+                        <label class="text-xs font-medium text-gray-600"><i class="fas fa-video mr-1"></i>Type</label>
+                        {{ form_widget(form_rdv.typeConsultation, {'attr': {'class': 'w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-green-500'}}) }}
+                    </div>
+                    <div class="flex flex-col gap-1" style="width: 150px">
+                        <label class="text-xs font-medium text-gray-600"><i class="fas fa-user mr-1"></i>Patient</label>
+                        {{ form_widget(form_rdv.patient, {'attr': {'class': 'w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-green-500', 'placeholder': 'Nom...'}}) }}
+                    </div>
+                    <div class="flex flex-col gap-1" style="width: 150px">
+                        <label class="text-xs font-medium text-gray-600"><i class="fas fa-user-md mr-1"></i>Médecin</label>
+                        {{ form_widget(form_rdv.medecin, {'attr': {'class': 'w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-green-500', 'placeholder': 'Dr...'}}) }}
+                    </div>
+                    <div class="flex flex-col gap-1" style="width: 150px">
+                        <label class="text-xs font-medium text-gray-600"><i class="fas fa-hospital mr-1"></i>Hôpital</label>
+                        {{ form_widget(form_rdv.hopital, {'attr': {'class': 'w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-green-500', 'placeholder': 'CHU...'}}) }}
+                    </div>
+                    <div class="flex flex-col gap-1" style="width: 140px">
+                        <label class="text-xs font-medium text-gray-600"><i class="fas fa-calendar mr-1"></i>Date du</label>
+                        {{ form_widget(form_rdv.dateRendezVous.left_date, {'attr': {'class': 'w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-green-500'}}) }}
+                    </div>
+                    <div class="flex flex-col gap-1" style="width: 140px">
+                        <label class="text-xs font-medium text-gray-600">Date au</label>
+                        {{ form_widget(form_rdv.dateRendezVous.right_date, {'attr': {'class': 'w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-green-500'}}) }}
+                    </div>
+                    <div class="flex flex-col gap-1" style="width: 90px">
+                        <label class="text-xs font-medium text-gray-600"><i class="fas fa-brain mr-1"></i>Score min</label>
+                        <input type="number" name="scoreAI_min" value="{{ scoreAI_min }}" placeholder="0" min="0" max="100" form="form-rdv"
+                               class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-green-500">
+                    </div>
+                    <div class="flex flex-col gap-1" style="width: 90px">
+                        <label class="text-xs font-medium text-gray-600">Score max</label>
+                        <input type="number" name="scoreAI_max" value="{{ scoreAI_max }}" placeholder="100" min="0" max="100" form="form-rdv"
+                               class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-green-500">
+                    </div>
+                    <div class="flex gap-2 ml-auto">
+                        <button type="submit" class="px-5 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition shadow-sm">
+                            <i class="fas fa-search mr-1"></i>Filtrer
+                        </button>
+                        <a href="{{ path('app_service_home', {filter: 'rdv'}) }}#section-rdv"
+                           class="px-5 py-2 bg-gray-100 text-gray-600 text-sm font-semibold rounded-lg hover:bg-gray-200 transition">
+                            <i class="fas fa-times mr-1"></i>Reset
+                        </a>
+                    </div>
+                </div>
+                {{ form_end(form_rdv) }}
+            </div>
+
+            {# Tableau RDV #}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</th>
+                                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Médecin</th>
+                                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hôpital</th>
+                                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score IA</th>
+                                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for rdv in pagination_rdv %}
+                                <tr class="hover:bg-gray-50 transition">
+                                    <td class="px-5 py-3 whitespace-nowrap">
+                                        {% if rdv.patient %}
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                                    <i class="fas fa-user text-blue-600 text-xs"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-medium text-gray-900">{{ rdv.patient.nom }} {{ rdv.patient.prenom }}</p>
+                                                    <p class="text-xs text-gray-400">{{ rdv.patient.email }}</p>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <span class="text-sm text-gray-400">Non assigné</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-700">
+                                        {% if rdv.medecin %}
+                                            Dr. {{ rdv.medecin.nom }}
+                                            {% if rdv.medecin.specialite is defined and rdv.medecin.specialite %}
+                                                <p class="text-xs text-gray-400">{{ rdv.medecin.specialite }}</p>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-gray-400">—</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-700">
+                                        {% if rdv.hopital %}{{ rdv.hopital.nom }}{% else %}<span class="text-gray-400">—</span>{% endif %}
+                                    </td>
+                                    <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-700">
+                                        {{ rdv.dateRendezVous|date('d/m/Y') }}
+                                        <p class="text-xs text-gray-400">{{ rdv.dateRendezVous|date('H:i') }}</p>
+                                    </td>
+                                    <td class="px-5 py-3 whitespace-nowrap">
+                                        {% if rdv.typeConsultation == 'Présentiel' %}
+                                            <span class="px-2 py-0.5 bg-green-100 text-green-800 text-xs font-semibold rounded-full"><i class="fas fa-hospital mr-1"></i>Présentiel</span>
+                                        {% elseif rdv.typeConsultation == 'Téléconsultation' %}
+                                            <span class="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full"><i class="fas fa-video mr-1"></i>Téléconsultation</span>
+                                        {% elseif rdv.typeConsultation == 'Urgence' %}
+                                            <span class="px-2 py-0.5 bg-red-100 text-red-800 text-xs font-semibold rounded-full"><i class="fas fa-ambulance mr-1"></i>Urgence</span>
+                                        {% else %}
+                                            <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full">{{ rdv.typeConsultation }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-5 py-3 whitespace-nowrap">
+                                        {% if rdv.statut == 'Confirmé' %}
+                                            <span class="px-2 py-0.5 bg-green-100 text-green-800 text-xs font-semibold rounded-full"><i class="fas fa-check mr-1"></i>Confirmé</span>
+                                        {% elseif rdv.statut == 'En attente' %}
+                                            <span class="px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full"><i class="fas fa-clock mr-1"></i>En attente</span>
+                                        {% elseif rdv.statut == 'Annulé' %}
+                                            <span class="px-2 py-0.5 bg-red-100 text-red-800 text-xs font-semibold rounded-full"><i class="fas fa-times mr-1"></i>Annulé</span>
+                                        {% elseif rdv.statut == 'Terminé' %}
+                                            <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full"><i class="fas fa-check-double mr-1"></i>Terminé</span>
+                                        {% else %}
+                                            <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full">{{ rdv.statut }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-700">
+                                        {% if rdv.scoreAI %}
+                                            <div class="flex items-center gap-2">
+                                                <span class="font-semibold">{{ rdv.scoreAI }}</span>
+                                                <div class="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                                    <div class="h-full {{ rdv.scoreAI >= 70 ? 'bg-green-500' : (rdv.scoreAI >= 40 ? 'bg-yellow-500' : 'bg-red-500') }}"
+                                                         style="width: {{ rdv.scoreAI }}%"></div>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <span class="text-gray-400">—</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-5 py-3 whitespace-nowrap">
+                                        <div class="flex items-center gap-3">
+                                            <a href="{{ path('app_rendez_vous_show', {id: rdv.id}) }}" class="text-blue-600 hover:text-blue-900 transition" title="Voir détails + QR Code">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ path('app_rendez_vous_edit', {id: rdv.id}) }}" class="text-green-600 hover:text-green-900 transition" title="Modifier">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="8" class="px-6 py-12 text-center">
+                                        <i class="fas fa-calendar-times text-gray-300 text-5xl mb-3 block"></i>
+                                        <p class="text-gray-500 text-lg">Aucun rendez-vous ne correspond aux critères</p>
+                                        <a href="{{ path('app_service_home', {filter: 'rdv'}) }}#section-rdv"
+                                           class="mt-3 inline-block text-sm text-green-600 hover:underline">Réinitialiser les filtres</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {# Pagination RDV #}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm px-5 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <p class="text-sm text-gray-600">
+                    Page <strong>{{ pagination_rdv.currentPageNumber }}</strong> / <strong>{{ pagination_rdv.pageCount }}</strong>
+                    — <strong>{{ total_rdv }}</strong> rendez-vous au total
+                </p>
+                <div class="knp-pagination">{{ knp_pagination_render(pagination_rdv) }}</div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</main>
+
+<style>
+html { scroll-behavior: smooth; }
+.scroll-mt-20 { scroll-margin-top: 5rem; }
+.knp-pagination ul { display:flex; gap:4px; list-style:none; padding:0; margin:0; align-items:center; flex-wrap:wrap; }
+.knp-pagination ul li a,
+.knp-pagination ul li span { display:inline-flex; align-items:center; justify-content:center; min-width:36px; height:36px; padding:6px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; font-weight:500; color:#374151; background:white; text-decoration:none; transition:all 0.2s ease; }
+.knp-pagination ul li a:hover { background:#f3e8ff; border-color:#9333ea; color:#9333ea; transform:translateY(-1px); box-shadow:0 2px 4px rgba(147,51,234,0.1); }
+.knp-pagination ul li.active span { background:linear-gradient(135deg, #9333ea 0%, #7c3aed 100%); border-color:#9333ea; color:white; font-weight:bold; box-shadow:0 2px 8px rgba(147,51,234,0.3); }
+.knp-pagination ul li.disabled span { color:#d1d5db; cursor:not-allowed; background:#f9fafb; border-color:#f3f4f6; }
+</style>
+
+{% endblock %}

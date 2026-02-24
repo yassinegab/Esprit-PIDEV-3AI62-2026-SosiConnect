@@ -1,0 +1,126 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Stress Statistics{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .stats-container {
+            max-width: 900px;
+            margin: 2rem auto;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-50 flex flex-col" x-data="{ sidebarOpen: false }">
+    
+    {# Top Navigation #}
+    {% include 'components/top-nav.html.twig' %}
+    
+    <main class="flex-1 w-full p-6">
+            <div class="stats-container animate-fadeIn">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Stress Analysis</h1>
+                        <p class="text-gray-500 mt-1">Detailed view of your well-being trends.</p>
+                    </div>
+                    <a href="{{ path('user_wellbeing_index') }}" class="group flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-indigo-600 transition-colors">
+                        <i class="fas fa-arrow-left transition-transform group-hover:-translate-x-1"></i>
+                        Back to Dashboard
+                    </a>
+                </div>
+
+                {% if predictions|length > 0 %}
+                    {% set latest = predictions|last %}
+                    {% set color = latest.predictedStressType == 'Low' ? 'bg-emerald-500' 
+                                : latest.predictedStressType == 'Moderate' ? 'bg-amber-500' 
+                                : 'bg-rose-500' %}
+                    
+                    <div class="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 mb-8 animate-fadeIn">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-gray-700">Latest Assessment</h3>
+                            <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider {{ latest.predictedStressType == 'Low' ? 'bg-emerald-100 text-emerald-700' : latest.predictedStressType == 'Moderate' ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700' }}">
+                                {{ latest.predictedStressType }} Stress
+                            </span>
+                        </div>
+                        <div class="w-full h-4 bg-gray-100 rounded-full overflow-hidden">
+                            <div class="{{ color }} h-full rounded-full transition-all duration-1000" style="width: {{ latest.confidenceScore }}%"></div>
+                        </div>
+                        <div class="flex justify-between mt-2 text-xs font-bold text-gray-400">
+                            <span>RELAXED</span>
+                            <span>{{ latest.confidenceScore|number_format(1) }}% STRESS SCORE</span>
+                            <span>CRITICAL</span>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Main Chart Card -->
+                <div class="bg-white rounded-3xl shadow-xl shadow-indigo-100/50 border border-indigo-50 p-8 mb-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                            <i class="fas fa-chart-line text-indigo-500"></i>
+                            Stress Score Trend
+                        </h2>
+                        <div class="flex gap-4">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                                <span class="text-xs font-medium text-gray-500">Low</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                                <span class="text-xs font-medium text-gray-500">Moderate</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                                <span class="text-xs font-medium text-gray-500">High</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="h-[400px]">
+                        {{ render_chart(stressChart) }}
+                    </div>
+                </div>
+
+                <!-- Detailed Charts Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+                    {# Mood Chart #}
+                    <div class="bg-white p-6 rounded-3xl shadow-lg border border-gray-100">
+                        <h3 class="text-lg font-bold mb-4 text-gray-700 flex items-center gap-2">
+                            <i class="fas fa-chart-line text-indigo-500"></i> Mood Trends
+                        </h3>
+                        <div class="h-64">
+                            {{ render_chart(moodChart) }}
+                        </div>
+                        <p class="mt-4 text-xs text-gray-500 italic">Tracking your anxiety and tension levels over the last 7 logs.</p>
+                    </div>
+
+                    {# Calories Chart #}
+                    <div class="bg-white p-6 rounded-3xl shadow-lg border border-gray-100">
+                        <h3 class="text-lg font-bold mb-4 text-gray-700 flex items-center gap-2">
+                            <i class="fas fa-fire text-emerald-500"></i> Calorie History
+                        </h3>
+                        <div class="h-64">
+                            {{ render_chart(calChart) }}
+                        </div>
+                        <p class="mt-4 text-xs text-gray-500 italic">Total daily calories tracked from your meal logs.</p>
+                    </div>
+
+                    {# Activity Chart #}
+                    <div class="bg-white p-6 rounded-3xl shadow-lg border border-gray-100">
+                        <h3 class="text-lg font-bold mb-4 text-gray-700 flex items-center gap-2">
+                            <i class="fas fa-calendar-check text-amber-500"></i> Log Frequency
+                        </h3>
+                        <div class="h-64">
+                            {{ render_chart(activityChart) }}
+                        </div>
+                        <p class="mt-4 text-xs text-gray-500 italic">Frequency of your wellness logs per day.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </main>
+</div>
+
+{% endblock %}

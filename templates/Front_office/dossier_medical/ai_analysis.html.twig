@@ -1,0 +1,578 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Analyse IA - Dossier Médical{% endblock %}
+
+{% block body %}
+<div class="flex min-h-screen bg-gray-50">
+
+
+    <div class="flex flex-1 flex-col lg:ml-72">
+        {% include 'components/top-nav.html.twig' %}
+
+        <main class="flex-1 overflow-auto pb-12">
+            <div class="mx-auto max-w-7xl space-y-8 p-4 lg:p-8">
+
+                {# Header #}
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                            <i class="fas fa-brain text-purple-600 mr-3"></i>
+                            Analyse IA du Dossier Médical
+                        </h1>
+                        <p class="text-gray-600 mt-1">
+                            Recommandations générées par intelligence artificielle avancée
+                        </p>
+                    </div>
+                    <a href="{{ path('dossier_medical_show', {'id': dossier_medical.id}) }}"
+                       class="inline-flex items-center px-5 py-2.5 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition">
+                        <i class="fas fa-arrow-left mr-2"></i> Retour
+                    </a>
+                </div>
+
+                {# Score de santé principal #}
+                <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg p-8 text-white">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-blue-100 mb-2">Score de Santé Général</p>
+                            <p class="text-7xl font-bold mb-2">{{ analysis.score_sante }}<span class="text-4xl">/100</span></p>
+                            {% if analysis.urgence %}
+                                <span class="inline-flex items-center px-4 py-2 bg-red-500 text-white rounded-full font-semibold">
+                                    <i class="fas fa-exclamation-circle mr-2"></i> Consultation urgente recommandée
+                                </span>
+                            {% endif %}
+                        </div>
+                        <div class="text-right">
+                            {% if analysis.gravite == 'faible' %}
+                                <span class="px-6 py-3 bg-green-500 text-white rounded-full font-semibold text-lg inline-flex items-center">
+                                    <i class="fas fa-check-circle mr-2"></i> Gravité Faible
+                                </span>
+                            {% elseif analysis.gravite == 'modere' %}
+                                <span class="px-6 py-3 bg-yellow-500 text-white rounded-full font-semibold text-lg inline-flex items-center">
+                                    <i class="fas fa-exclamation-triangle mr-2"></i> Gravité Modérée
+                                </span>
+                            {% else %}
+                                <span class="px-6 py-3 bg-red-500 text-white rounded-full font-semibold text-lg inline-flex items-center">
+                                    <i class="fas fa-exclamation-circle mr-2"></i> Gravité Élevée
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Graphiques #}
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {# Graphique en barres #}
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                        <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                            <i class="fas fa-chart-bar text-blue-600 mr-2"></i>
+                            Scores par Système Organique
+                        </h2>
+                        <div style="position: relative; height: 300px; width: 100%;">
+                            <canvas id="systemScoresChart"></canvas>
+                        </div>
+                    </div>
+
+                    {# Graphique radar #}
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                        <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                            <i class="fas fa-project-diagram text-purple-600 mr-2"></i>
+                            Vue d'Ensemble Santé
+                        </h2>
+                        <div style="position: relative; height: 300px; width: 100%;">
+                            <canvas id="radarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                {# Indicateurs de performance #}
+                {% if analysis.statistiques.indicateurs_performance is defined %}
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                        <i class="fas fa-tachometer-alt text-green-600 mr-2"></i>
+                        Indicateurs de Performance
+                    </h2>
+                    <div style="position: relative; height: 200px; width: 100%;">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+                {% endif %}
+
+                {# Résumé du cas #}
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-file-medical text-blue-600 mr-2"></i>
+                        Résumé Clinique Détaillé
+                    </h2>
+                    <p class="text-gray-700 leading-relaxed text-lg">{{ analysis.resume_cas }}</p>
+                </div>
+
+                {# Facteurs de risque et complications #}
+                {% if analysis.facteurs_risque is defined or analysis.complications_potentielles is defined %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {% if analysis.facteurs_risque is defined %}
+                    <div class="bg-white rounded-xl border border-red-200 shadow-sm p-6">
+                        <h2 class="text-xl font-bold text-red-900 mb-4 flex items-center">
+                            <i class="fas fa-exclamation-triangle text-red-600 mr-2"></i>
+                            Facteurs de Risque Identifiés
+                        </h2>
+                        <ul class="space-y-2">
+                            {% for risque in analysis.facteurs_risque %}
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-circle text-red-500 text-xs mt-1.5"></i>
+                                    <span class="text-gray-700">{{ risque }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    {% if analysis.complications_potentielles is defined %}
+                    <div class="bg-white rounded-xl border border-orange-200 shadow-sm p-6">
+                        <h2 class="text-xl font-bold text-orange-900 mb-4 flex items-center">
+                            <i class="fas fa-shield-virus text-orange-600 mr-2"></i>
+                            Complications Potentielles
+                        </h2>
+                        <ul class="space-y-2">
+                            {% for complication in analysis.complications_potentielles %}
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-circle text-orange-500 text-xs mt-1.5"></i>
+                                    <span class="text-gray-700">{{ complication }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                {# Plan de suivi #}
+                {% if analysis.plan_suivi is defined %}
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                        <i class="fas fa-calendar-alt text-indigo-600 mr-2"></i>
+                        Plan de Suivi Médical
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {% if analysis.plan_suivi.immediat is defined %}
+                        <div class="border-l-4 border-red-500 bg-red-50 p-4 rounded">
+                            <p class="text-sm font-semibold text-red-900 mb-2">Immédiat</p>
+                            <p class="text-sm text-red-700">{{ analysis.plan_suivi.immediat }}</p>
+                        </div>
+                        {% endif %}
+                        {% if analysis.plan_suivi.court_terme is defined %}
+                        <div class="border-l-4 border-orange-500 bg-orange-50 p-4 rounded">
+                            <p class="text-sm font-semibold text-orange-900 mb-2">Court terme</p>
+                            <p class="text-sm text-orange-700">{{ analysis.plan_suivi.court_terme }}</p>
+                        </div>
+                        {% endif %}
+                        {% if analysis.plan_suivi.moyen_terme is defined %}
+                        <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded">
+                            <p class="text-sm font-semibold text-blue-900 mb-2">Moyen terme</p>
+                            <p class="text-sm text-blue-700">{{ analysis.plan_suivi.moyen_terme }}</p>
+                        </div>
+                        {% endif %}
+                        {% if analysis.plan_suivi.long_terme is defined %}
+                        <div class="border-l-4 border-green-500 bg-green-50 p-4 rounded">
+                            <p class="text-sm font-semibold text-green-900 mb-2">Long terme</p>
+                            <p class="text-sm text-green-700">{{ analysis.plan_suivi.long_terme }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {# ✅ MÉDECINS LOCAUX #}
+                {% if analysis.medecins_locaux is defined and analysis.medecins_locaux|length > 0 %}
+                <div class="bg-white rounded-xl border border-green-200 shadow-sm p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-user-md text-green-600 mr-2"></i>
+                        Médecins Disponibles Localement
+                        <span class="ml-3 px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">{{ analysis.medecins_locaux|length }} trouvé(s)</span>
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {% for medecin in analysis.medecins_locaux %}
+                            <div class="border border-green-500 bg-green-50 ring-2 ring-green-400 rounded-lg p-4 hover:shadow-lg transition">
+                                <div class="mb-3">
+                                    <span class="px-3 py-1 bg-green-600 text-white text-xs rounded-full font-bold inline-flex items-center">
+                                        <i class="fas fa-star mr-1"></i> RECOMMANDÉ
+                                    </span>
+                                </div>
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-user-md text-white text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-900">Dr. {{ medecin.prenom }} {{ medecin.nom }}</p>
+                                        <p class="text-sm text-green-700 font-semibold">{{ medecin.specialite }}</p>
+                                    </div>
+                                </div>
+                                <div class="space-y-1 text-sm text-gray-700">
+                                    <p><i class="fas fa-envelope text-green-600 mr-2"></i>{{ medecin.email }}</p>
+                                    <p><i class="fas fa-phone text-green-600 mr-2"></i>{{ medecin.telephone }}</p>
+                                    <span class="inline-block mt-2 px-3 py-1 bg-green-600 text-white text-xs rounded-full">
+                                        <i class="fas fa-map-marker-alt mr-1"></i> Disponible localement
+                                    </span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {# MÉDECINS INTERNATIONAUX #}
+                {% if analysis.medecins_internationaux is defined and analysis.medecins_internationaux|length > 0 %}
+                <div class="bg-white rounded-xl border border-blue-200 shadow-sm p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-globe text-blue-600 mr-2"></i>
+                        Experts Internationaux Recommandés
+                        <span class="ml-3 px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">Top spécialistes mondiaux</span>
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {% for medecin in analysis.medecins_internationaux %}
+                            <div class="border border-blue-200 rounded-lg p-5 hover:shadow-lg transition bg-gradient-to-br from-blue-50 to-white">
+                                <div class="flex items-start gap-3 mb-3">
+                                    <div class="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-user-md text-white text-2xl"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-900 text-lg">{{ medecin.nom }}</p>
+                                        <p class="text-sm text-blue-700 font-semibold">{{ medecin.specialite }}</p>
+                                        <p class="text-xs text-gray-600 mt-1">
+                                            <i class="fas fa-hospital text-blue-500 mr-1"></i>{{ medecin.institution }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="space-y-2 text-sm">
+                                    <p class="text-gray-700 italic">"{{ medecin.expertise }}"</p>
+                                    <div class="flex items-center gap-2 text-xs flex-wrap">
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
+                                            <i class="fas fa-flag mr-1"></i>{{ medecin.pays }}
+                                        </span>
+                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">
+                                            <i class="fas fa-star mr-1"></i>{{ medecin.renommee }}
+                                        </span>
+                                    </div>
+                                    <div class="mt-3 pt-3 border-t border-blue-100 space-y-1 text-xs text-gray-600">
+                                        <p><i class="fas fa-envelope text-blue-600 mr-2"></i>{{ medecin.email }}</p>
+                                        <p><i class="fas fa-phone text-blue-600 mr-2"></i>{{ medecin.telephone }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {# ✅ HÔPITAUX LOCAUX #}
+                {% if analysis.hopitaux_locaux is defined and analysis.hopitaux_locaux|length > 0 %}
+                <div class="bg-white rounded-xl border border-purple-200 shadow-sm p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-hospital text-purple-600 mr-2"></i>
+                        Hôpitaux Locaux Disponibles
+                        <span class="ml-3 px-3 py-1 bg-purple-100 text-purple-800 text-sm rounded-full">{{ analysis.hopitaux_locaux|length }} établissement(s)</span>
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for hopital in analysis.hopitaux_locaux %}
+                            <div class="border border-purple-500 bg-purple-50 ring-2 ring-purple-400 rounded-lg p-4 hover:shadow-lg transition">
+                                <div class="mb-3">
+                                    <span class="px-3 py-1 bg-purple-600 text-white text-xs rounded-full font-bold inline-flex items-center">
+                                        <i class="fas fa-star mr-1"></i> RECOMMANDÉ
+                                    </span>
+                                </div>
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-hospital text-white text-xl"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-bold text-gray-900">{{ hopital.nom }}</p>
+                                        {% if hopital.urgences %}
+                                            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full font-semibold">
+                                                <i class="fas fa-ambulance"></i> Urgences 24/7
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% if hopital.specialites is defined and hopital.specialites|length > 0 %}
+                                    <div class="mb-3">
+                                        <p class="text-xs font-semibold text-gray-600 mb-2">Spécialités :</p>
+                                        <div class="flex flex-wrap gap-1">
+                                            {% for spec in hopital.specialites %}
+                                                <span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded">{{ spec }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <div class="space-y-1 text-sm text-gray-700">
+                                    <p><i class="fas fa-map-marker-alt text-purple-600 mr-2"></i>{{ hopital.adresse }}</p>
+                                    <p><i class="fas fa-phone text-purple-600 mr-2"></i>{{ hopital.telephone }}</p>
+                                    <p><i class="fas fa-bed text-purple-600 mr-2"></i>{{ hopital.capacite }} lits</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {# HÔPITAUX INTERNATIONAUX #}
+                {% if analysis.hopitaux_internationaux is defined and analysis.hopitaux_internationaux|length > 0 %}
+                <div class="bg-white rounded-xl border border-indigo-200 shadow-sm p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-hospital-alt text-indigo-600 mr-2"></i>
+                        Centres Hospitaliers d'Excellence Mondiale
+                        <span class="ml-3 px-3 py-1 bg-indigo-100 text-indigo-800 text-sm rounded-full">Top mondial</span>
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {% for hopital in analysis.hopitaux_internationaux %}
+                            <div class="border border-indigo-200 rounded-lg p-5 hover:shadow-lg transition bg-gradient-to-br from-indigo-50 to-white">
+                                <div class="flex items-start gap-3 mb-3">
+                                    <div class="w-14 h-14 bg-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-hospital-alt text-white text-2xl"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-900 text-lg">{{ hopital.nom }}</p>
+                                        <p class="text-sm text-indigo-700">{{ hopital.ville }}, {{ hopital.pays }}</p>
+                                    </div>
+                                </div>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex flex-wrap gap-1">
+                                        {% for spec in hopital.specialites %}
+                                            <span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded text-xs">{{ spec }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    <p class="text-xs text-gray-600 mt-2">
+                                        <i class="fas fa-award text-yellow-500 mr-1"></i>
+                                        <strong>{{ hopital.reputation }}</strong>
+                                    </p>
+                                    {% if hopital.urgences %}
+                                        <span class="inline-block px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                                            <i class="fas fa-ambulance mr-1"></i> Service d'urgence
+                                        </span>
+                                    {% endif %}
+                                    <div class="mt-3 pt-3 border-t border-indigo-100 space-y-1 text-xs text-gray-600">
+                                        <p><i class="fas fa-phone text-indigo-600 mr-2"></i>{{ hopital.telephone }}</p>
+                                        <p><i class="fas fa-globe text-indigo-600 mr-2"></i>{{ hopital.site_web }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {# Recommandations et Examens #}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                        <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-lightbulb text-yellow-600 mr-2"></i>
+                            Recommandations Médicales
+                        </h2>
+                        <ul class="space-y-3">
+                            {% for reco in analysis.recommandations %}
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-check-circle text-green-600 mt-1 flex-shrink-0"></i>
+                                    <span class="text-gray-700">{{ reco }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                        <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-vial text-purple-600 mr-2"></i>
+                            Examens Complémentaires
+                        </h2>
+                        <ul class="space-y-3">
+                            {% for examen in analysis.examens_suggeres %}
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-flask text-purple-600 mt-1 flex-shrink-0"></i>
+                                    <span class="text-gray-700">{{ examen }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                
+
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+
+{# ✅ Chargement de Chart.js depuis CDN #}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+{# ✅ Scripts Chart.js COMPLETS ET AMÉLIORÉS #}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const scoresSystemes = {{ analysis.statistiques.scores_systemes|default({})|json_encode|raw }};
+    const indicateursPerf = {{ analysis.statistiques.indicateurs_performance|default({})|json_encode|raw }};
+
+    console.log('Scores systèmes:', scoresSystemes);
+    console.log('Indicateurs performance:', indicateursPerf);
+
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: {
+            duration: 1200,
+            easing: 'easeInOutQuart'
+        },
+        plugins: {
+            legend: { display: false }
+        }
+    };
+
+    function getColorByScore(score, alpha = 0.8) {
+        if (score >= 80) return `rgba(34,197,94,${alpha})`;
+        else if (score >= 60) return `rgba(234,179,8,${alpha})`;
+        else if (score >= 40) return `rgba(249,115,22,${alpha})`;
+        else return `rgba(239,68,68,${alpha})`;
+    }
+
+    function getBorderColorByScore(score) {
+        if (score >= 80) return 'rgb(34,197,94)';
+        else if (score >= 60) return 'rgb(234,179,8)';
+        else if (score >= 40) return 'rgb(249,115,22)';
+        else return 'rgb(239,68,68)';
+    }
+
+    // Graphique 1 : Barres
+    const ctx1 = document.getElementById('systemScoresChart');
+    if (ctx1 && scoresSystemes && Object.keys(scoresSystemes).length > 0) {
+        const labels = Object.keys(scoresSystemes).map(k => k.charAt(0).toUpperCase() + k.slice(1).replace(/_/g, ' '));
+        const data = Object.values(scoresSystemes);
+
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Score (/100)',
+                    data: data,
+                    backgroundColor: data.map(v => getColorByScore(v, 0.85)),
+                    borderColor: data.map(v => getBorderColorByScore(v)),
+                    borderWidth: 2,
+                    borderRadius: 10,
+                    hoverBackgroundColor: data.map(v => getColorByScore(v, 1))
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: { 
+                            callback: value => value + '%',
+                            font: { size: 13, weight: 'bold' }
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 12 } }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        backgroundColor: 'rgba(0,0,0,0.9)',
+                        padding: 12,
+                        callbacks: {
+                            label: context => 'Score: ' + context.parsed.y + '/100'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Graphique 2 : Radar
+    const ctx2 = document.getElementById('radarChart');
+    if (ctx2 && scoresSystemes && Object.keys(scoresSystemes).length > 0) {
+        const labels = Object.keys(scoresSystemes).map(k => k.charAt(0).toUpperCase() + k.slice(1).replace(/_/g, ' '));
+        const data = Object.values(scoresSystemes);
+
+        new Chart(ctx2, {
+            type: 'radar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Scores Santé',
+                    data: data,
+                    backgroundColor: 'rgba(139,92,246,0.3)',
+                    borderColor: 'rgb(139,92,246)',
+                    borderWidth: 3,
+                    pointBackgroundColor: 'rgb(139,92,246)',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 3,
+                    pointRadius: 6
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: { stepSize: 20 }
+                    }
+                }
+            }
+        });
+    }
+
+    // Graphique 3 : Performance
+    const ctx3 = document.getElementById('performanceChart');
+    if (ctx3 && indicateursPerf && Object.keys(indicateursPerf).length > 0) {
+        const labels = Object.keys(indicateursPerf).map(k => k.charAt(0).toUpperCase() + k.slice(1).replace(/_/g, ' '));
+        const data = Object.values(indicateursPerf);
+
+        new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Performance (%)',
+                    data: data,
+                    backgroundColor: 'rgba(59,130,246,0.85)',
+                    borderColor: 'rgb(59,130,246)',
+                    borderWidth: 2,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                ...commonOptions,
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: { callback: value => value + '%' }
+                    }
+                }
+            }
+        });
+    }
+
+    console.log('✅ Graphiques initialisés');
+});
+</script>
+
+<style>
+canvas {
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.bg-white.rounded-xl {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.bg-white.rounded-xl:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}

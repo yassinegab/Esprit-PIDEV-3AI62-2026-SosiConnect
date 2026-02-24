@@ -1,0 +1,397 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hôpitaux & Cliniques — SmartHealth AI{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+{# ✅ API EXTERNE 1 — Leaflet.js (bibliothèque OpenStreetMap) #}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    #map { height: 520px; width: 100%; border-radius: 0 0 1rem 1rem; z-index: 1; }
+    .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); }
+    .leaflet-popup-content { margin: 12px 16px; }
+    .hospital-popup-title { font-weight: 700; font-size: 14px; color: #1e3a8a; margin-bottom: 6px; }
+    .hospital-popup-info { font-size: 12px; color: #6b7280; margin: 3px 0; }
+    .hospital-popup-badge { display:inline-block; margin-top:6px; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600; }
+    .badge-urgent { background:#dcfce7; color:#166534; }
+    .badge-normal { background:#f3f4f6; color:#6b7280; }
+    .hospital-popup-btn { display:block; margin-top:8px; padding:6px 12px; background:#2563eb; color:white; text-align:center; border-radius:8px; font-size:12px; font-weight:600; text-decoration:none; }
+    .hospital-popup-btn:hover { background:#1d4ed8; color:white; }
+    .knp-pagination ul { display:flex; gap:3px; list-style:none; padding:0; margin:0; align-items:center; flex-wrap:wrap; }
+    .knp-pagination ul li a,
+    .knp-pagination ul li span { display:inline-flex; align-items:center; justify-content:center; min-width:32px; padding:4px 10px; border:1px solid #e5e7eb; border-radius:6px; font-size:12px; color:#374151; background:white; text-decoration:none; transition:all 0.15s; }
+    .knp-pagination ul li a:hover { background:#dbeafe; border-color:#3b82f6; color:#2563eb; }
+    .knp-pagination ul li.active span { background:#2563eb; border-color:#2563eb; color:white; font-weight:bold; }
+    .knp-pagination ul li.disabled span { color:#d1d5db; cursor:not-allowed; }
+</style>
+{% endblock %}
+
+{% block body %}
+
+{# ✅ PAS DE SIDEBAR — top-nav uniquement #}
+{% include 'components/top-nav.html.twig' %}
+
+<main class="flex-1 overflow-auto bg-gray-50 min-h-screen pb-12">
+    <div class="mx-auto max-w-7xl space-y-6 p-4 lg:p-8">
+
+        {# ── HEADER ── #}
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                    <span class="text-3xl">🏥</span> Hôpitaux & Cliniques
+                </h1>
+                <p class="text-gray-500 mt-1 text-sm">
+                    {{ hopitaux|length }} établissement(s) —
+                    <span class="text-green-600 font-semibold">{{ geo_count }} localisé(s) sur la carte</span>
+                </p>
+            </div>
+            <a href="{{ path('app_service_home') }}"
+               class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition text-sm">
+                <i class="fas fa-arrow-left"></i> Retour
+            </a>
+        </div>
+
+        {# ── BADGES APIs ── #}
+        <div class="flex flex-wrap gap-2">
+            <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-700 text-xs font-bold rounded-full border border-green-200">
+                🗺️ API EXTERNE 1 — OpenStreetMap + Leaflet.js
+            </span>
+            <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-200">
+                🧭 API EXTERNE 2 — OpenRouteService (itinéraires)
+            </span>
+            <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-50 text-purple-700 text-xs font-bold rounded-full border border-purple-200">
+                📄 BUNDLE — KnpPaginatorBundle
+            </span>
+        </div>
+
+        {# ── TABS CARTE / LISTE ── #}
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="flex border-b border-gray-200">
+                <button onclick="showTab('carte')" id="tab-carte"
+                        class="flex-1 px-6 py-3 text-sm font-semibold transition text-blue-600 border-b-2 border-blue-600 bg-blue-50">
+                    <i class="fas fa-map mr-2"></i>Carte
+                </button>
+                <button onclick="showTab('liste')" id="tab-liste"
+                        class="flex-1 px-6 py-3 text-sm font-semibold transition text-gray-600 border-b-2 border-transparent hover:bg-gray-50">
+                    <i class="fas fa-list mr-2"></i>Liste
+                </button>
+            </div>
+
+            {# ── SECTION CARTE — OpenStreetMap + Leaflet.js ── #}
+            <div id="section-carte">
+                <div class="px-5 py-3 bg-gray-50 border-b border-gray-100 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-4 text-sm">
+                        <span class="flex items-center gap-1.5">
+                            <span class="w-3 h-3 bg-red-500 rounded-full inline-block"></span>
+                            <span class="text-gray-600">Urgences disponibles</span>
+                        </span>
+                        <span class="flex items-center gap-1.5">
+                            <span class="w-3 h-3 bg-blue-500 rounded-full inline-block"></span>
+                            <span class="text-gray-600">Sans urgences</span>
+                        </span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="fitAllMarkers()"
+                                class="px-3 py-1.5 bg-white border border-gray-200 text-gray-700 text-xs font-semibold rounded-lg hover:bg-gray-50 transition">
+                            <i class="fas fa-compress-arrows-alt mr-1"></i>Vue globale
+                        </button>
+                        <span class="px-3 py-1.5 bg-green-50 border border-green-200 text-green-700 text-xs font-bold rounded-lg">
+                            🗺️ OpenStreetMap
+                        </span>
+                    </div>
+                </div>
+                <div id="map"></div>
+            </div>
+
+            {# ── SECTION LISTE — KnpPaginator ── #}
+            <div id="section-liste" class="hidden p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {% for hopital in pagination %}
+                        <div class="border border-gray-200 rounded-xl p-5 hover:shadow-md transition">
+                            <div class="flex items-start justify-between mb-3">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-hospital text-blue-600 text-xl"></i>
+                                </div>
+                                {% if hopital.serviceUrgenceDispo %}
+                                    <span class="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded-full">
+                                        🚑 Urgences 24/7
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <h3 class="font-bold text-gray-900 mb-2">{{ hopital.nom }}</h3>
+                            <div class="space-y-1 text-sm text-gray-600 mb-4">
+                                <p><i class="fas fa-map-marker-alt text-red-400 w-4"></i> {{ hopital.adresse }}</p>
+                                <p><i class="fas fa-phone text-green-500 w-4"></i> {{ hopital.tel }}</p>
+                                <p><i class="fas fa-bed text-blue-400 w-4"></i> {{ hopital.capacite }} lits</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <a href="{{ path('app_hopital_show', {id: hopital.id}) }}"
+                                   class="flex-1 text-center px-3 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition">
+                                    Voir détails
+                                </a>
+                                <a href="{{ path('app_rendez_vous_new') }}"
+                                   class="px-3 py-2 bg-green-100 text-green-700 text-sm font-semibold rounded-lg hover:bg-green-200 transition">
+                                    RDV
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="col-span-3 text-center py-12 text-gray-400">
+                            <i class="fas fa-hospital text-5xl mb-3 block"></i>
+                            <p>Aucun hôpital trouvé</p>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {# KnpPaginator #}
+                <div class="mt-6 flex justify-between items-center">
+                    <p class="text-sm text-gray-500">
+                        Page <strong>{{ pagination.currentPageNumber }}</strong> /
+                        <strong>{{ pagination.pageCount }}</strong>
+                        — {{ pagination.totalItemCount }} hôpital(x)
+                    </p>
+                    <div class="knp-pagination">{{ knp_pagination_render(pagination) }}</div>
+                </div>
+            </div>
+        </div>
+
+        {# ── OPENROUTESERVICE — Calcul itinéraire ── #}
+        <div class="bg-white rounded-xl border border-blue-200 shadow-sm overflow-hidden">
+            <div class="px-5 py-4 bg-gradient-to-r from-blue-50 to-cyan-50 border-b border-blue-100 flex items-center gap-3">
+                <span class="text-2xl">🧭</span>
+                <div>
+                    <h2 class="text-base font-bold text-gray-900">Trouver l'hôpital le plus proche</h2>
+                    <p class="text-xs text-blue-600 font-semibold">API EXTERNE — OpenRouteService (calcul d'itinéraire)</p>
+                </div>
+            </div>
+            <div class="p-5">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-location-arrow text-blue-500 mr-1"></i>
+                            Votre position (latitude, longitude)
+                        </label>
+                        <div class="flex gap-2">
+                            <input id="userLat" type="number" step="0.0001" placeholder="36.8065" value="36.8065"
+                                   class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400">
+                            <input id="userLng" type="number" step="0.0001" placeholder="10.1815" value="10.1815"
+                                   class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400">
+                            <button onclick="useMyLocation()"
+                                    class="px-3 py-2 bg-blue-100 text-blue-700 text-sm font-semibold rounded-lg hover:bg-blue-200 transition whitespace-nowrap">
+                                <i class="fas fa-crosshairs mr-1"></i>Ma position
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            <i class="fas fa-filter text-gray-400 mr-1"></i>Filtrer
+                        </label>
+                        <select id="filterUrgence" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg">
+                            <option value="all">Tous les hôpitaux</option>
+                            <option value="urgence">Avec urgences seulement</option>
+                        </select>
+                    </div>
+                </div>
+                <button onclick="findNearest()"
+                        class="w-full px-5 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-md">
+                    <i class="fas fa-route mr-2"></i>
+                    Calculer l'itinéraire vers l'hôpital le plus proche
+                    <span class="ml-2 text-xs opacity-75">(OpenRouteService API)</span>
+                </button>
+
+                <div id="routeResult" class="hidden mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-route text-white"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 id="routeHospitalName" class="font-bold text-gray-900 text-base"></h3>
+                            <div class="grid grid-cols-3 gap-3 mt-2">
+                                <div class="bg-white rounded-lg p-3 text-center border border-blue-100">
+                                    <p class="text-xs text-gray-500">Distance</p>
+                                    <p id="routeDistance" class="text-lg font-bold text-blue-600"></p>
+                                </div>
+                                <div class="bg-white rounded-lg p-3 text-center border border-blue-100">
+                                    <p class="text-xs text-gray-500">Durée</p>
+                                    <p id="routeDuration" class="text-lg font-bold text-green-600"></p>
+                                </div>
+                                <div class="bg-white rounded-lg p-3 text-center border border-blue-100">
+                                    <p class="text-xs text-gray-500">Urgences</p>
+                                    <p id="routeUrgence" class="text-lg font-bold"></p>
+                                </div>
+                            </div>
+                            <a id="routeOrsLink" href="#" target="_blank"
+                               class="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition">
+                                <i class="fas fa-external-link-alt"></i> Voir l'itinéraire complet
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="routeLoading" class="hidden mt-4 text-center py-6">
+                    <i class="fas fa-spinner fa-spin text-blue-500 text-2xl"></i>
+                    <p class="text-sm text-gray-500 mt-2">Calcul en cours via OpenRouteService API...</p>
+                </div>
+                <div id="routeError" class="hidden mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm"></div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+
+{# ✅ API EXTERNE 1 — Leaflet.js #}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ── OpenStreetMap + Leaflet.js ──────────────────────────
+const hopitauxData = {{ hopitaux_geo|json_encode|raw }};
+let map = null, markers = [], markerGroup = null;
+
+function initMap() {
+    if (map) return;
+    map = L.map('map', { center: [36.8065, 10.1815], zoom: 7 });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+    }).addTo(map);
+    markerGroup = L.featureGroup().addTo(map);
+
+    hopitauxData.forEach(function(h) {
+        const color = h.urgences ? '#ef4444' : '#3b82f6';
+        const icon = L.divIcon({
+            html: `<div style="width:32px;height:32px;background:${color};border:3px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.3);font-size:14px;">🏥</div>`,
+            className: '', iconSize: [32, 32], iconAnchor: [16, 16]
+        });
+        const marker = L.marker([h.lat, h.lng], { icon });
+        marker.bindPopup(`
+            <div>
+                <p class="hospital-popup-title">🏥 ${h.nom}</p>
+                <p class="hospital-popup-info">📍 ${h.adresse}</p>
+                <p class="hospital-popup-info">📞 ${h.tel}</p>
+                <p class="hospital-popup-info">🛏️ ${h.capacite} lits</p>
+                <span class="hospital-popup-badge ${h.urgences ? 'badge-urgent' : 'badge-normal'}">
+                    ${h.urgences ? '🚑 Urgences 24/7' : 'Sans urgences'}
+                </span>
+                <a href="${h.url}" class="hospital-popup-btn">Voir les détails</a>
+            </div>
+        `, { maxWidth: 240 });
+        marker.addTo(markerGroup);
+        markers.push({ marker, data: h });
+    });
+
+    if (markers.length > 0) map.fitBounds(markerGroup.getBounds().pad(0.1));
+}
+
+function fitAllMarkers() {
+    if (markerGroup && markers.length > 0) map.fitBounds(markerGroup.getBounds().pad(0.1));
+}
+
+function showTab(tab) {
+    const carte = document.getElementById('section-carte');
+    const liste = document.getElementById('section-liste');
+    const btnCarte = document.getElementById('tab-carte');
+    const btnListe = document.getElementById('tab-liste');
+    const activeClass = 'flex-1 px-6 py-3 text-sm font-semibold transition text-blue-600 border-b-2 border-blue-600 bg-blue-50';
+    const inactiveClass = 'flex-1 px-6 py-3 text-sm font-semibold transition text-gray-600 border-b-2 border-transparent hover:bg-gray-50';
+
+    if (tab === 'carte') {
+        carte.classList.remove('hidden'); liste.classList.add('hidden');
+        btnCarte.className = activeClass; btnListe.className = inactiveClass;
+        setTimeout(() => { if (map) map.invalidateSize(); else initMap(); }, 100);
+    } else {
+        liste.classList.remove('hidden'); carte.classList.add('hidden');
+        btnListe.className = activeClass; btnCarte.className = inactiveClass;
+    }
+}
+
+// ── OpenRouteService ────────────────────────────────────
+const ORS_API_KEY = '{{ app.request.server.get("OPENROUTESERVICE_API_KEY")|default("VOTRE_CLE_ORS") }}';
+
+function useMyLocation() {
+    if (!navigator.geolocation) { alert('Géolocalisation non supportée'); return; }
+    navigator.geolocation.getCurrentPosition(function(pos) {
+        document.getElementById('userLat').value = pos.coords.latitude.toFixed(6);
+        document.getElementById('userLng').value = pos.coords.longitude.toFixed(6);
+        if (map) map.setView([pos.coords.latitude, pos.coords.longitude], 12);
+    }, function() { alert('Impossible de récupérer votre position'); });
+}
+
+async function findNearest() {
+    const userLat = parseFloat(document.getElementById('userLat').value);
+    const userLng = parseFloat(document.getElementById('userLng').value);
+    const filterUrgence = document.getElementById('filterUrgence').value;
+
+    if (isNaN(userLat) || isNaN(userLng)) { alert('Coordonnées invalides'); return; }
+
+    let liste = filterUrgence === 'urgence' ? hopitauxData.filter(h => h.urgences) : hopitauxData;
+    if (!liste.length) {
+        document.getElementById('routeError').textContent = 'Aucun hôpital avec ce filtre';
+        document.getElementById('routeError').classList.remove('hidden'); return;
+    }
+
+    let nearest = null, minDist = Infinity;
+    liste.forEach(h => {
+        const d = Math.sqrt(Math.pow(h.lat - userLat, 2) + Math.pow(h.lng - userLng, 2));
+        if (d < minDist) { minDist = d; nearest = h; }
+    });
+
+    document.getElementById('routeLoading').classList.remove('hidden');
+    document.getElementById('routeResult').classList.add('hidden');
+    document.getElementById('routeError').classList.add('hidden');
+
+    try {
+        const response = await fetch(
+            `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${ORS_API_KEY}&start=${userLng},${userLat}&end=${nearest.lng},${nearest.lat}`,
+            { headers: { 'Accept': 'application/json, application/geo+json' } }
+        );
+        const data = await response.json();
+
+        if (data.features && data.features[0]) {
+            const summary = data.features[0].properties.segments[0];
+            const distKm  = (summary.distance / 1000).toFixed(1);
+            const durMin  = Math.round(summary.duration / 60);
+
+            document.getElementById('routeHospitalName').textContent = '🏥 ' + nearest.nom;
+            document.getElementById('routeDistance').textContent  = distKm + ' km';
+            document.getElementById('routeDuration').textContent  = durMin + ' min';
+            document.getElementById('routeUrgence').textContent   = nearest.urgences ? '✅ Oui' : '❌ Non';
+            document.getElementById('routeUrgence').className     = 'text-lg font-bold ' + (nearest.urgences ? 'text-green-600' : 'text-gray-400');
+            document.getElementById('routeOrsLink').href =
+                `https://www.openstreetmap.org/directions?from=${userLat},${userLng}&to=${nearest.lat},${nearest.lng}`;
+            document.getElementById('routeResult').classList.remove('hidden');
+
+            if (map) {
+                const userIcon = L.divIcon({
+                    html: `<div style="width:20px;height:20px;background:#f59e0b;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>`,
+                    className: '', iconSize: [20, 20], iconAnchor: [10, 10]
+                });
+                L.marker([userLat, userLng], { icon: userIcon }).bindPopup('📍 Votre position').addTo(map).openPopup();
+                L.polyline([[userLat, userLng], [nearest.lat, nearest.lng]], {
+                    color: '#2563eb', weight: 3, dashArray: '8,6', opacity: 0.8
+                }).addTo(map);
+                map.fitBounds([[userLat, userLng], [nearest.lat, nearest.lng]], { padding: [50, 50] });
+            }
+        } else { throw new Error('Réponse invalide'); }
+    } catch (err) {
+        const distKm = (minDist * 111).toFixed(1);
+        document.getElementById('routeHospitalName').textContent = '🏥 ' + nearest.nom + ' (estimation)';
+        document.getElementById('routeDistance').textContent = distKm + ' km';
+        document.getElementById('routeDuration').textContent = Math.round(distKm / 50 * 60) + ' min';
+        document.getElementById('routeUrgence').textContent = nearest.urgences ? '✅ Oui' : '❌ Non';
+        document.getElementById('routeOrsLink').href =
+            `https://www.openstreetmap.org/directions?from=${userLat},${userLng}&to=${nearest.lat},${nearest.lng}`;
+        document.getElementById('routeResult').classList.remove('hidden');
+        document.getElementById('routeError').textContent = '⚠️ Clé ORS non configurée — estimation affichée. Ajoutez OPENROUTESERVICE_API_KEY dans .env';
+        document.getElementById('routeError').classList.remove('hidden');
+    } finally {
+        document.getElementById('routeLoading').classList.add('hidden');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() { initMap(); });
+</script>
+{% endblock %}

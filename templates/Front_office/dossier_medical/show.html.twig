@@ -1,0 +1,153 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dossier Médical #{{ dossier_medical.id }}{% endblock %}
+
+{% block body %}
+<div class="flex min-h-screen bg-gray-50">
+   
+
+    <div class="flex flex-1 flex-col lg:ml-72">
+        {% include 'components/top-nav.html.twig' %}
+
+        <main class="flex-1 overflow-auto pb-12">
+            <div class="mx-auto max-w-4xl space-y-8 p-4 lg:p-8">
+
+                {# Header avec boutons d'action #}
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">
+                            <i class="fas fa-file-medical text-green-600 mr-3"></i>
+                            Dossier Médical #{{ dossier_medical.id }}
+                        </h1>
+                        <p class="text-gray-600 mt-1">
+                            Créé le {{ dossier_medical.dateCreation|date('d/m/Y') }} 
+                            {% if dossier_medical.derniereMiseAJour %}
+                                • Dernière MAJ : {{ dossier_medical.derniereMiseAJour|date('d/m/Y H:i') }}
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="flex gap-3">
+                        {# ✅ CORRECTION : dossier_medical au lieu de dossierMedical #}
+                        <a href="{{ path('dossier_medical_ai_analysis', {'id': dossier_medical.id}) }}"
+                           class="inline-flex items-center px-5 py-2.5 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition shadow-md">
+                            <i class="fas fa-brain mr-2"></i> Analyser avec l'IA
+                        </a><a href="{{ path('dossier_medical_hf_analysis', {'id': dossier_medical.id}) }}"
+   class="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white text-sm font-semibold rounded-lg hover:bg-orange-700 transition">
+   🤗 Analyse Hugging Facee
+</a>
+
+                        <a href="{{ path('dossier_medical_edit', {'id': dossier_medical.id}) }}"
+                           class="inline-flex items-center px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition">
+                            <i class="fas fa-edit mr-2"></i> Modifier
+                        </a>
+                        <a href="{{ path('dossier_medical_index') }}"
+                           class="inline-flex items-center px-5 py-2.5 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition">
+                            <i class="fas fa-arrow-left mr-2"></i> Retour
+                        </a>
+                    </div>
+                </div>
+
+                {# Informations médicales #}
+                <div class="grid gap-6">
+                    
+                    {% if dossier_medical.antecedentsMedicaux %}
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-3">
+                            <i class="fas fa-history text-blue-600 mr-2"></i>
+                            Antécédents Médicaux
+                        </h3>
+                        <p class="text-gray-700 whitespace-pre-wrap">{{ dossier_medical.antecedentsMedicaux }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if dossier_medical.maladiesChroniques %}
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-3">
+                            <i class="fas fa-heartbeat text-red-600 mr-2"></i>
+                            Maladies Chroniques
+                        </h3>
+                        <p class="text-gray-700 whitespace-pre-wrap">{{ dossier_medical.maladiesChroniques }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if dossier_medical.allergies %}
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-3">
+                            <i class="fas fa-allergies text-orange-600 mr-2"></i>
+                            Allergies
+                        </h3>
+                        <p class="text-gray-700 whitespace-pre-wrap">{{ dossier_medical.allergies }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if dossier_medical.traitementsEnCours %}
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-3">
+                            <i class="fas fa-pills text-purple-600 mr-2"></i>
+                            Traitements en Cours
+                        </h3>
+                        <p class="text-gray-700 whitespace-pre-wrap">{{ dossier_medical.traitementsEnCours }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if dossier_medical.diagnostics %}
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-3">
+                            <i class="fas fa-stethoscope text-teal-600 mr-2"></i>
+                            Diagnostics
+                        </h3>
+                        <p class="text-gray-700 whitespace-pre-wrap">{{ dossier_medical.diagnostics }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if dossier_medical.notesMedecin %}
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-3">
+                            <i class="fas fa-notes-medical text-indigo-600 mr-2"></i>
+                            Notes du Médecin
+                        </h3>
+                        <p class="text-gray-700 whitespace-pre-wrap">{{ dossier_medical.notesMedecin }}</p>
+                    </div>
+                    {% endif %}
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        {% if dossier_medical.objectifSante %}
+                        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                            <h3 class="text-lg font-bold text-gray-900 mb-3">
+                                <i class="fas fa-bullseye text-green-600 mr-2"></i>
+                                Objectif Santé
+                            </h3>
+                            <p class="text-gray-700">{{ dossier_medical.objectifSante }}</p>
+                        </div>
+                        {% endif %}
+
+                        {% if dossier_medical.niveauActivite %}
+                        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                            <h3 class="text-lg font-bold text-gray-900 mb-3">
+                                <i class="fas fa-running text-blue-600 mr-2"></i>
+                                Niveau d'Activité
+                            </h3>
+                            <p class="text-gray-700">{{ dossier_medical.niveauActivite }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+                {# Bouton de suppression #}
+                <div class="border-t border-gray-200 pt-6">
+                    <form method="post" action="{{ path('dossier_medical_delete', {'id': dossier_medical.id}) }}" 
+                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce dossier médical ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ dossier_medical.id) }}">
+                        <button type="submit" 
+                                class="inline-flex items-center px-5 py-2.5 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition">
+                            <i class="fas fa-trash mr-2"></i> Supprimer ce dossier
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}

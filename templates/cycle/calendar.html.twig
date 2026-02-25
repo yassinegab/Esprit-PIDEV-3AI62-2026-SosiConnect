@@ -59,6 +59,10 @@
             <button id="btn-delete" class="btn btn-danger" disabled>Supprimer menstruation</button>
           </div>
         </div>
+     <a href="{{ path('export_cycle_pdf') }}" 
+   class="px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600">
+   Exporter en PDF
+</a>
         <div id="calendar-error" class="hidden rounded-md border border-pink-300 bg-pink-100 p-3 text-pink-800 mb-4"></div>
         <div id="calendar"></div>
       </div>

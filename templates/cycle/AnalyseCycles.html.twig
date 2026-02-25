@@ -1,0 +1,280 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="flex min-h-screen bg-gradient-to-br from-pink-50 to-rose-100">
+
+  {% include 'components/sidebar.html.twig' %}
+
+  <div class="flex flex-1 flex-col">
+    {% include 'components/top-nav.html.twig' %}
+
+    <main class="flex-1 overflow-auto">
+      <div class="mx-auto max-w-7xl space-y-8 p-6">
+
+        <!-- HEADER -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 class="text-3xl font-bold text-rose-600">
+              🌸 Tableau de bord
+            </h1>
+        
+          </div>
+
+          <div class="bg-white shadow-md rounded-xl px-4 py-2 text-gray-700">
+            📅 {{ "now"|date("l d F Y") }}
+          </div>
+        </div>
+
+        <!-- STAT CARDS -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          <!-- Moyenne animée -->
+          <div class="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition">
+            <h3 class="text-gray-500 text-sm uppercase">Durée moyenne</h3>
+            <p id="averageCounter" class="text-4xl font-bold text-rose-500 mt-2">
+              0 jours
+            </p>
+          </div>
+
+          <!-- Prediction -->
+          <div class="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition">
+            <h3 class="text-gray-500 text-sm uppercase">Prochain cycle estimé</h3>
+            {% if prediction %}
+              <p class="text-2xl font-semibold text-rose-600 mt-2">
+                {{ prediction|date('d M Y') }}
+              </p>
+            {% else %}
+              <p class="text-gray-400 mt-2">
+                Données insuffisantes
+              </p>
+            {% endif %}
+          </div>
+
+          <!-- Etat global (via IA) -->
+          <div class="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition">
+            <h3 class="text-gray-500 text-sm uppercase">État global</h3>
+            {% if aiAnalysis %}
+              {% if aiAnalysis.est_regulier is same as(true) or aiAnalysis.est_regulier == 'true' %}
+                <p class="text-xl font-semibold text-green-500 mt-2">
+                  ✔ Cycles réguliers
+                </p>
+              {% else %}
+                <p class="text-xl font-semibold text-red-500 mt-2">
+                  ⚠ Cycle irrégulier détecté
+                </p>
+              {% endif %}
+              {% if aiAnalysis.prediction_prochain %}
+                <p class="text-sm text-gray-500 mt-1">{{ aiAnalysis.prediction_prochain }}</p>
+              {% endif %}
+            {% else %}
+              <p class="text-gray-400 mt-2">
+                Analyse en attente de données
+              </p>
+            {% endif %}
+          </div>
+
+        </div>
+
+        
+
+        
+
+        <!-- Analyse IA complète -->
+        {% if aiAnalysis %}
+        <div class="bg-blue-50 p-6 rounded-2xl shadow-md border-l-4 border-blue-400">
+          <h2 class="text-xl font-bold text-blue-600 mb-2">
+            🧠 Analyse IA 
+          </h2>
+          {% if aiAnalysis.resume %}
+            <p class="text-gray-700 font-medium mb-2">{{ aiAnalysis.resume }}</p>
+          {% endif %}
+          {% if aiAnalysis.recommandations|length > 0 %}
+            <ul class="list-disc list-inside text-gray-700 space-y-1 mt-2">
+              {% for rec in aiAnalysis.recommandations %}
+                <li>{{ rec }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Cycles irréguliers (détectés par IA) -->
+        <div class="bg-white rounded-2xl shadow-md p-6">
+          <h2 class="text-xl font-bold text-rose-600 mb-4">
+            Analyse des cycles irréguliers
+          </h2>
+
+          {% if irregular|length > 0 %}
+            <div class="space-y-3">
+              {% for item in irregular %}
+                <div class="border-l-4 border-red-400 bg-red-50 p-4 rounded-lg">
+                  <p class="font-semibold text-red-600">
+                    ⚠ Cycle anormal ({{ item.length }} jours)
+                  </p>
+                  <p class="text-gray-600 text-sm mt-1">
+                    Du {{ item.cycle.dateDebutM|date('d M Y') }}
+                    au {{ item.cycleEnd|date('d M Y') }}
+                  </p>
+                  {% if item.raison %}
+                    <p class="text-gray-500 text-sm mt-1 italic">{{ item.raison }}</p>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
+              <p class="text-green-600 font-semibold">
+                {% if aiAnalysis %}🎉 Aucun cycle irrégulier détecté par l'IA.{% else %}En attente d'analyse IA.{% endif %}
+              </p>
+            </div>
+          {% endif %}
+
+        </div>
+       <!-- GRAPHIQUE CYCLES -->
+        <div class="bg-white rounded-2xl shadow-md p-6">
+          <h2 class="text-xl font-bold text-rose-600 mb-4">
+            📈 Évolution des cycles
+          </h2>
+          <canvas id="cycleChart"></canvas>
+        </div>
+
+      </div>
+      
+    </main>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// Statistique animée de la moyenne
+let target = {{ average }};
+let count = 0;
+let interval = setInterval(() => {
+    count++;
+    document.getElementById('averageCounter').innerText = count + " jours";
+    if(count >= target) clearInterval(interval);
+}, 30);
+
+// Graphique Chart.js
+const ctx = document.getElementById('cycleChart');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {{ labels|json_encode|raw }},
+        datasets: [{
+            label: 'Durée du cycle (jours)',
+            data: {{ lengths|json_encode|raw }},
+            borderColor: '#e11d48',
+            backgroundColor: 'rgba(225,29,72,0.1)',
+            tension: 0.4,
+            fill: true,
+            pointRadius: 5
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: true }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                suggestedMax: 40
+            }
+        }
+    }
+});
+</script>
+{% endblock %}
+{% block stylesheets %}
+<style>
+/* ---- Animations pour les cards ---- */
+@keyframes fadeInCard {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ---- Cartes Dashboard ---- */
+.grid > div {
+  background: #fff1f2; /* rose très clair */
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  opacity: 0;
+  transform: scale(0.95);
+  animation: fadeInCard 0.3s ease forwards;
+  transition: all 0.25s ease;
+  cursor: default;
+}
+
+.grid > div:hover {
+  background: #fce7f3; /* rose un peu plus saturé au hover */
+  transform: scale(1.02);
+  box-shadow: 0 10px 25px rgba(236, 72, 153, 0.25);
+}
+
+/* ---- Titres des cards ---- */
+.grid h3 {
+  color: #be185d;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ---- Texte des cards ---- */
+.grid p {
+  color: #9d174d;
+  font-weight: 500;
+}
+
+/* ---- Counters / nombres ---- */
+#averageCounter {
+  color: #ec4899;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+/* ---- Graphique Chart.js ---- */
+#cycleChart {
+  border-radius: 1.5rem;
+  background: #fff;
+  padding: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+/* ---- Analyse IA ---- */
+.bg-blue-50 {
+  border-left-width: 4px;
+  border-left-color: #3b82f6;
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.1);
+}
+
+/* ---- Cycles irréguliers ---- */
+.border-red-400 {
+  border-width: 4px;
+  border-radius: 1rem;
+  background: #F0FFF4;
+}
+.border-green-400 {
+  border-width: 4px;
+  border-radius: 1rem;
+  background: #d1fae5;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr !important;
+  }
+  #averageCounter {
+    font-size: 2rem;
+  }
+}
+</style>
+{% endblock %}

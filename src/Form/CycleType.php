@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Cycle;
+use App\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -21,6 +23,11 @@ class CycleType extends AbstractType
     ->add('dateFinM', DateType::class, [
         'widget' => 'single_text',
         'attr' => ['id' => 'cycle_end'] // <-- add this
+    ])
+    ->add('user', EntityType::class, [
+        'class' => User::class,
+        'choice_label' => 'nom',
+        'placeholder' => 'Sélectionner un utilisateur',
     ]);
     }
 

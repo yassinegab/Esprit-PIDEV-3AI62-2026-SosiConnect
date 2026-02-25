@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Event;
 use App\Form\EventType;
 use App\Repository\EventRepository;
+use App\Service\EventLoggerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +26,7 @@ class EventController extends AbstractController
 
  
     #[Route('/add', name: 'admin_events_new')]
-    public function new(Request $request, EntityManagerInterface $em): Response
+    public function new(Request $request, EntityManagerInterface $em, EventLoggerService $eventLogger): Response
     {
         $event = new Event();
         $form = $this->createForm(EventType::class, $event);
@@ -35,6 +36,9 @@ class EventController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($event);
             $em->flush();
+
+            // log creation
+            $eventLogger->logEvent('create', $event->getId(), 'Nouvel événement créé');
 
             $this->addFlash('success', 'Événement ajouté avec succès !');
 
@@ -48,7 +52,7 @@ class EventController extends AbstractController
 
 
     #[Route('/edit/{id}', name: 'admin_events_edit')]
-public function edit(Event $event, Request $request, EntityManagerInterface $em): Response
+public function edit(Event $event, Request $request, EntityManagerInterface $em, EventLoggerService $eventLogger): Response
 {
     // Création du formulaire avec l'entité existante
     $form = $this->createForm(EventType::class, $event);
@@ -58,9 +62,9 @@ public function edit(Event $event, Request $request, EntityManagerInterface $em)
     if ($form->isSubmitted() && $form->isValid()) {
         $em->flush(); // l'entité est déjà en base, pas besoin de persist()
 
-        $this->addFlash('success', 'Événement modifié avec succès !');
+        // log update
+        $eventLogger->logEvent('update', $event->getId(), 'modification');
 
-        return $this->redirectToRoute('admin_events_index');
     }
 
     return $this->render('admin/dashboard/edit.html.twig', [
@@ -70,10 +74,16 @@ public function edit(Event $event, Request $request, EntityManagerInterface $em)
 }
 
     #[Route('/delete/{id}', name: 'admin_events_delete')]
-    public function delete(Event $event, EntityManagerInterface $em): Response
+    public function delete(Event $event, EntityManagerInterface $em, EventLoggerService $eventLogger): Response
     {
+        // capture id before removal (Doctrine may clear it after flush)
+        $id = $event->getId();
+
         $em->remove($event);
         $em->flush();
+
+        // log deletion using captured id
+        $eventLogger->logEvent('delete', $id, 'suppression');
 
         $this->addFlash('success', 'Événement supprimé !');
         return $this->redirectToRoute('admin_events_index');

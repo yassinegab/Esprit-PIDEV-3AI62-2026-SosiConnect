@@ -2,6 +2,8 @@
 namespace App\Form;
 
 use App\Entity\Symptome;
+use App\Entity\Cycle;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -35,6 +37,13 @@ class SymptomeType extends AbstractType
             ->add('dateObservation', DateType::class, [
                 'widget' => 'single_text',
                 'label' => 'Date d\'observation',
+            ])
+            ->add('cycle', EntityType::class, [
+                'class' => Cycle::class,
+                'choice_label' => function (Cycle $cycle) {
+                    return $cycle->getDateDebutM() ? $cycle->getDateDebutM()->format('Y-m-d') : '';
+                },
+                'placeholder' => 'Sélectionner un cycle',
             ]);
     }
 

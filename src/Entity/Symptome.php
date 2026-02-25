@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\SymptomeRepository;
+use App\Entity\Cycle;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -13,6 +14,10 @@ class Symptome
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $IdSymptome = null;
+
+    #[ORM\ManyToOne(targetEntity: Cycle::class, inversedBy: 'symptomes')]
+    #[ORM\JoinColumn(nullable: false, referencedColumnName: 'id_cycle')]
+    private ?Cycle $cycle = null;
 
    
 
@@ -64,6 +69,18 @@ class Symptome
     public function setDateObservation(?\DateTime $DateObservation): static
     {
         $this->DateObservation = $DateObservation;
+
+        return $this;
+    }
+
+    public function getCycle(): ?Cycle
+    {
+        return $this->cycle;
+    }
+
+    public function setCycle(?Cycle $cycle): static
+    {
+        $this->cycle = $cycle;
 
         return $this;
     }

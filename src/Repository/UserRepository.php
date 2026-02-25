@@ -15,6 +15,7 @@ class UserRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, User::class);
     }
+
 // UserRepository.php
 public function findFemmes(): array
 {

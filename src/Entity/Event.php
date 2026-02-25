@@ -5,6 +5,9 @@ namespace App\Entity;
 use App\Repository\EventRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use App\Entity\User;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 class Event
@@ -36,6 +39,18 @@ class Event
     #[Assert\Choice(choices: ['Campagne', 'Recommandation', 'Autre'], message: "Choisissez un type valide.")]
     private ?string $type = null;
 
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'events')]
+    #[ORM\JoinTable(name: 'event_user')]
+    private Collection $attendees;
+
+    public function __construct()
+    {
+        $this->attendees = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -51,4 +66,28 @@ class Event
 
     public function getType(): ?string { return $this->type; }
     public function setType(string $type): self { $this->type = $type; return $this; }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getAttendees(): Collection
+    {
+        return $this->attendees;
+    }
+
+    public function addAttendee(User $user): self
+    {
+        if (!$this->attendees->contains($user)) {
+            $this->attendees->add($user);
+        }
+
+        return $this;
+    }
+
+    public function removeAttendee(User $user): self
+    {
+        $this->attendees->removeElement($user);
+
+        return $this;
+    }
 }

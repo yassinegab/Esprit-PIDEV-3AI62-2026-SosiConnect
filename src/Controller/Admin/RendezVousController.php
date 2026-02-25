@@ -2,7 +2,7 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\RendezVous;
+use App\Entity\Front_office\RendezVous;
 use App\Form\RendezVousType;
 use App\Repository\RendezVousRepository;        // ✅ CORRECTION ICI
 use App\Repository\HopitalRepository;           // ✅ CORRECTION ICI

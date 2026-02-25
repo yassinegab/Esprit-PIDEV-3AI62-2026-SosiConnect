@@ -9,19 +9,24 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 use App\Entity\DossierMedical;
+use App\Entity\UserWellBeingData;
+use App\Entity\ChatbotMessage;
+use App\Entity\Journal;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    // ================= IDENTITÉ =================
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank(message: "L'email est obligatoire")]
+    #[Assert\Email(message: "L'email '{{ value }}' n'est pas valide")]
     private ?string $email = null;
 
     #[ORM\Column(type: 'json')]
@@ -34,12 +39,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: "Le nom est obligatoire")]
+    #[Assert\Length(
+        min: 2,
+        max: 50,
+        minMessage: "Le nom doit contenir au moins {{ limit }} caractères",
+        maxMessage: "Le nom ne peut pas dépasser {{ limit }} caractères"
+    )]
     private ?string $nom = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: "Le prénom est obligatoire")]
+    #[Assert\Length(
+        min: 2,
+        max: 50,
+        minMessage: "Le prénom doit contenir au moins {{ limit }} caractères",
+        maxMessage: "Le prénom ne peut pas dépasser {{ limit }} caractères"
+    )]
     private ?string $prenom = null;
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(length: 20, nullable: true)]
+    #[Assert\Regex(
+        pattern: "/^[0-9+\s-]*$/",
+        message: "Le numéro de téléphone n'est pas valide"
+    )]
     private ?string $telephone = null;
 
     #[ORM\Column(type: "datetime", nullable: true)]
@@ -73,16 +96,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: DossierMedical::class, orphanRemoval: true)]
     private Collection $dossiersMedicaux;
 
+    // ================= WELLBEING RELATIONS =================
+    /**
+     * @var Collection<int, UserWellBeingData>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserWellBeingData::class)]
+    private Collection $userWellBeingData;
+
+    /**
+     * @var Collection<int, ChatbotMessage>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ChatbotMessage::class, cascade: ['persist', 'remove'])]
+    private Collection $chatbotMessages;
+
+    /**
+     * @var Collection<int, Journal>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Journal::class, cascade: ['persist', 'remove'])]
+    private Collection $journals;
+
     // ================= CONSTRUCTEUR =================
     public function __construct()
     {
         $this->created_at = new \DateTime();
         $this->roles = [];
         $this->dossiersMedicaux = new ArrayCollection();
+        $this->userWellBeingData = new ArrayCollection();
+        $this->chatbotMessages = new ArrayCollection();
+        $this->journals = new ArrayCollection();
         $this->setUserRole(UserRole::PATIENT);
     }
 
-    // ================= GETTERS / SETTERS =================
     public function getId(): ?int
     {
         return $this->id;
@@ -176,10 +220,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    // ================= CREATED_AT =================
     public function getCreatedAt(): \DateTimeInterface
     {
         return $this->created_at;
+    }
+
+    public function getFullName(): string
+    {
+        return $this->prenom . ' ' . $this->nom;
+    }
+
+    public function isPacient(): bool
+    {
+        return in_array('ROLE_PATIENT', $this->roles);
+    }
+
+    public function isMedecin(): bool
+    {
+        return in_array('ROLE_MEDECIN', $this->roles);
+    }
+
+    public function getRoleLabel(): string
+    {
+        if ($this->isMedecin()) {
+            return 'Médecin';
+        }
+        if ($this->isPacient()) {
+            return 'Patient';
+        }
+        return 'Utilisateur';
     }
 
     // ================= INFOS PHYSIQUES =================
@@ -279,6 +348,97 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $dossier->setUser(null);
             }
         }
+        return $this;
+    }
+
+    // ================= WELLBEING DATA =================
+    /**
+     * @return Collection<int, UserWellBeingData>
+     */
+    public function getUserWellBeingData(): Collection
+    {
+        return $this->userWellBeingData;
+    }
+
+    public function addUserWellBeingData(UserWellBeingData $data): self
+    {
+        if (!$this->userWellBeingData->contains($data)) {
+            $this->userWellBeingData->add($data);
+            $data->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserWellBeingData(UserWellBeingData $data): self
+    {
+        if ($this->userWellBeingData->removeElement($data)) {
+            // set the owning side to null (unless already changed)
+            if ($data->getUser() === $this) {
+                $data->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ChatbotMessage>
+     */
+    public function getChatbotMessages(): Collection
+    {
+        return $this->chatbotMessages;
+    }
+
+    public function addChatbotMessage(ChatbotMessage $chatbotMessage): self
+    {
+        if (!$this->chatbotMessages->contains($chatbotMessage)) {
+            $this->chatbotMessages->add($chatbotMessage);
+            $chatbotMessage->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChatbotMessage(ChatbotMessage $chatbotMessage): self
+    {
+        if ($this->chatbotMessages->removeElement($chatbotMessage)) {
+            // set the owning side to null (unless already changed)
+            if ($chatbotMessage->getUser() === $this) {
+                $chatbotMessage->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Journal>
+     */
+    public function getJournals(): Collection
+    {
+        return $this->journals;
+    }
+
+    public function addJournal(Journal $journal): self
+    {
+        if (!$this->journals->contains($journal)) {
+            $this->journals->add($journal);
+            $journal->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJournal(Journal $journal): self
+    {
+        if ($this->journals->removeElement($journal)) {
+            // set the owning side to null (unless already changed)
+            if ($journal->getUser() === $this) {
+                $journal->setUser(null);
+            }
+        }
+
         return $this;
     }
 }

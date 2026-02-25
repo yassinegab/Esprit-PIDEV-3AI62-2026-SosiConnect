@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}SmartHealth AI{% endblock %}</title>
+    <title>{% block title %}Sosi{% endblock %}</title>
     
     <!-- Tailwind CSS -->
     {% if app.environment == 'prod' %}
@@ -35,6 +35,8 @@
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    {{ importmap('app') }}
     
     {% block stylesheets %}
     <style>
@@ -92,6 +94,7 @@
     
     <!-- Alpine.js for interactivity -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<<<<<<< HEAD
      {# Font Awesome #}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -103,3 +106,9 @@
     {% block javascripts %}{% endblock %}
 </body>
 </html>
+=======
+    
+    {% block javascripts %}{% endblock %}
+</body>
+</html>
+>>>>>>> admin-userwellbeing-crud

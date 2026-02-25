@@ -9,7 +9,7 @@
                 <i class="fas fa-heartbeat text-white"></i>
             </div>
             <div>
-                <span class="text-lg font-bold text-gray-900">SmartHealth</span>
+                <span class="text-lg font-bold text-gray-900">Sosi</span>
                 <span class="block text-xs text-gray-500">Admin Panel</span>
             </div>
         </div>
@@ -24,9 +24,9 @@
             {'id': 'dashboard', 'label': 'Dashboard', 'icon': 'fa-chart-line', 'route': 'admin_dashboard'},
             {'separator': true},
             {'id': 'users', 'label': 'Gestion Utilisateurs', 'icon': 'fa-users', 'route': '#', 'description': 'Comptes et profils'},
-            {'id': 'services', 'label': 'Gestion Services Médicaux', 'icon': 'fa-hospital', 'route': '/admin/rendez-vous', 'description': 'RDV et consultations'},
+            {'id': 'services', 'label': 'Gestion Services Médicaux', 'icon': 'fa-hospital', 'route': 'admin_rendez_vous_index', 'description': 'RDV et consultations'},
             {'id': 'cycle', 'label': 'Gestion Cycle Menstruel', 'icon': 'fa-venus', 'route': '#', 'description': 'Suivi féminin'},
-            {'id': 'wellbeing', 'label': 'Gestion Bien-être', 'icon': 'fa-spa', 'route': '#', 'description': 'Santé mentale et habitudes'},
+            {'id': 'wellbeing', 'label': 'Gestion Bien-être', 'icon': 'fa-spa', 'route': 'app_user_well_being_data_index', 'description': 'Santé mentale et habitudes'},
             {'id': 'assistance', 'label': 'Gestion Aide/Don', 'icon': 'fa-hand-holding-heart', 'route': '#', 'description': 'Handicap et dons'},
             {'separator': true},
             {'id': 'analytics', 'label': 'Analytiques', 'icon': 'fa-chart-pie', 'route': '#'},
@@ -38,8 +38,8 @@
                 <div class="my-2 border-t border-gray-200"></div>
             {% else %}
                 {% set isActive = (app.request.get('_route') == item.route) %}
-                <a href="{{ item.route }}"
-                    class="group flex w-full flex-col rounded-lg px-3 py-2.5 text-sm font-medium transition-all
+                <a href="{{ item.route != '#' ? path(item.route) : '#' }}" 
+                   class="group flex w-full flex-col rounded-lg px-3 py-2.5 text-sm font-medium transition-all
                    {{ isActive ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-100' }}">
                     <div class="flex items-center gap-3">
                         <i class="fas {{ item.icon }} {{ isActive ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-700' }}"></i>

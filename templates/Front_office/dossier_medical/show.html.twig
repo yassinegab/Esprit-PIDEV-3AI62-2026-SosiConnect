@@ -4,9 +4,7 @@
 
 {% block body %}
 <div class="flex min-h-screen bg-gray-50">
-   
-
-    <div class="flex flex-1 flex-col lg:ml-72">
+    <div class="flex flex-1 flex-col">
         {% include 'components/top-nav.html.twig' %}
 
         <main class="flex-1 overflow-auto pb-12">
@@ -27,13 +25,12 @@
                         </p>
                     </div>
                     <div class="flex gap-3">
-                        {# ✅ CORRECTION : dossier_medical au lieu de dossierMedical #}
                         <a href="{{ path('dossier_medical_ai_analysis', {'id': dossier_medical.id}) }}"
                            class="inline-flex items-center px-5 py-2.5 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition shadow-md">
                             <i class="fas fa-brain mr-2"></i> Analyser avec l'IA
                         </a><a href="{{ path('dossier_medical_hf_analysis', {'id': dossier_medical.id}) }}"
    class="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white text-sm font-semibold rounded-lg hover:bg-orange-700 transition">
-   🤗 Analyse Hugging Facee
+   🤗 Analyse Hugging Face
 </a>
 
                         <a href="{{ path('dossier_medical_edit', {'id': dossier_medical.id}) }}"

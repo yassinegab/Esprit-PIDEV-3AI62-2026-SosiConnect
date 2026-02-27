@@ -25,10 +25,7 @@ return [
     '@hotwired/turbo' => [
         'version' => '7.3.0',
     ],
-<<<<<<< HEAD
-=======
     'chart.js' => [
         'version' => '3.9.1',
     ],
->>>>>>> origin/admin-userwellbeing-crud
 ];

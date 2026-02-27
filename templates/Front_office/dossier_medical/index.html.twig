@@ -5,9 +5,7 @@
 {% block body %}
 
 <div class="flex min-h-screen bg-gray-50">
- 
-
-    <div class="flex flex-1 flex-col lg:ml-72">
+    <div class="flex flex-1 flex-col">
         {% include 'components/top-nav.html.twig' %}
 
         <main class="flex-1 overflow-auto pb-12">
@@ -95,7 +93,6 @@
                                                         class="text-red-600 hover:text-red-900">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
-
                                                 <form id="delete-form-{{ dossier.id }}"
                                                       method="post"
                                                       action="{{ path('dossier_medical_delete', {'id': dossier.id}) }}"
@@ -123,43 +120,4 @@ function confirmDelete(id) {
     }
 }
 </script>
-=======
-<h1>Mes Dossiers Médicaux</h1>
-
-{% if is_granted('ROLE_MEDECIN') or is_granted('ROLE_ADMIN') %}
-    <a href="{{ path('dossier_medical_new') }}" class="btn btn-primary">Créer un nouveau dossier</a>
-{% endif %}
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Patient</th>
-            <th>Date de création</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for dossier in dossiers %}
-        <tr>
-            <td>{{ dossier.id }}</td>
-            <td>{{ dossier.user.email }}</td>
-            <td>{{ dossier.dateCreation|date('d/m/Y H:i') }}</td>
-            <td>
-                <a href="{{ path('dossier_medical_show', {'id': dossier.id}) }}" class="btn btn-info btn-sm">Voir</a>
-                <a href="{{ path('dossier_medical_edit', {'id': dossier.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
-                <form method="post" action="{{ path('dossier_medical_delete', {'id': dossier.id}) }}" style="display:inline;" onsubmit="return confirm('Voulez-vous vraiment supprimer ce dossier ?');">
-                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ dossier.id) }}">
-                    <button class="btn btn-danger btn-sm">Supprimer</button>
-                </form>
-            </td>
-        </tr>
-    {% else %}
-        <tr>
-            <td colspan="4">Aucun dossier trouvé.</td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
->>>>>>> origin/admin-userwellbeing-crud
 {% endblock %}

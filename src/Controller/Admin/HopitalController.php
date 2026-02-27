@@ -2,7 +2,7 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Front_office\Hopital;
+use App\Entity\Hopital;
 use App\Form\HopitalType;
 use App\Repository\HopitalRepository;
 use Doctrine\ORM\EntityManagerInterface;

@@ -17,6 +17,7 @@ use App\Repository\JournalRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
 use Symfony\UX\Chartjs\Model\Chart;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/wellbeing', name: 'user_wellbeing_')]
 class UserWellBeingDataFrontController extends AbstractController
@@ -27,7 +28,9 @@ class UserWellBeingDataFrontController extends AbstractController
         MealRepository $mealRepo,
         JournalRepository $journalRepo,
         EntityManagerInterface $em,
-        \App\Service\StressPredictionService $predictionService
+        \App\Service\StressPredictionService $predictionService,
+        Request $request,
+        PaginatorInterface $paginator
     ): Response {
         // Get the logged-in user
         $user = $this->getUser();
@@ -36,10 +39,42 @@ class UserWellBeingDataFrontController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        // 1. Fetch Current User Data
-        $userData = $repo->findBy(['user' => $user], ['createdAt' => 'DESC']);
-        $userMeals = $mealRepo->findBy(['user' => $user], ['createAt' => 'DESC']);
-        $userJournals = $journalRepo->findBy(['user' => $user], ['createdAt' => 'DESC']);
+        // 1. Fetch Current User Data with pagination
+        $qbData = $repo->createQueryBuilder('u')
+            ->andWhere('u.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('u.createdAt', 'DESC');
+
+        $qbMeals = $mealRepo->createQueryBuilder('m')
+            ->andWhere('m.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('m.createAt', 'DESC');
+
+        $qbJournals = $journalRepo->createQueryBuilder('j')
+            ->andWhere('j.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('j.createdAt', 'DESC');
+
+        $userData = $paginator->paginate(
+            $qbData,
+            $request->query->getInt('page_wb', 1),
+            3,
+            ['pageParameterName' => 'page_wb']
+        );
+
+        $userMeals = $paginator->paginate(
+            $qbMeals,
+            $request->query->getInt('page_meal', 1),
+            3,
+            ['pageParameterName' => 'page_meal']
+        );
+
+        $userJournals = $paginator->paginate(
+            $qbJournals,
+            $request->query->getInt('page_journal', 1),
+            3,
+            ['pageParameterName' => 'page_journal']
+        );
 
         // 2. AI Trend Interpretation
         $aiTrends = $predictionService->interpretTrends($user);

@@ -7,3 +7,4 @@ controllers:
 app_dashboard:
     path: /
     controller: App\Controller\DashboardController::index
+    defaults: { _security: 'is_granted("ROLE_USER")' }

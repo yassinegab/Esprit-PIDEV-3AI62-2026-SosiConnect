@@ -143,7 +143,7 @@ public function analyzeWithHuggingFace(DossierMedical $dossierMedical): Response
     $hfResult = null;
     $hfError  = null;
     $httpCode = null;
-    $modelName = "typeform/distilbert-base-uncased-mnli";
+    $modelName = "distilbert-base-uncased";
 
 
     if (empty($hfApiKey)) {
@@ -152,7 +152,7 @@ public function analyzeWithHuggingFace(DossierMedical $dossierMedical): Response
         $hfError = '⚠️ Aucune donnée médicale disponible';
     } else {
 
-       $ch = curl_init('https://router.huggingface.co/hf-inference/models/typeform/distilbert-base-uncased-mnli');
+       $ch = curl_init('https://api-inference.huggingface.co/models/distilbert-base-uncased');
 
 
 
@@ -194,13 +194,10 @@ public function analyzeWithHuggingFace(DossierMedical $dossierMedical): Response
 
     if (is_array($data)) {
 
-        $hfResult = [];
-
-        foreach ($data as $item) {
-            if (isset($item['label']) && isset($item['score'])) {
-                $hfResult[$item['label']] = $item['score'];
-
-            }
+        if (isset($data['labels']) && isset($data['scores'])) {
+            $hfResult = array_combine($data['labels'], $data['scores']);
+        } else {
+            $hfError = '❌ Données labels/scores manquantes : ' . substr($response, 0, 300);
         }
 
         arsort($hfResult);

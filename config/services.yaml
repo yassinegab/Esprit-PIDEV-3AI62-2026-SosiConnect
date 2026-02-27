@@ -13,3 +13,26 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+
+    App\Service\CyclePredictionService:
+        arguments:
+            $groqApiKey: '%env(GROQ_API_KEY)%'
+
+    App\Service\SmsService:
+        arguments:
+            $sid: '%env(TWILIO_SID)%'
+            $token: '%env(TWILIO_TOKEN)%'
+            $from: '%env(TWILIO_FROM)%'
+
+    App\Service\EventMailerService:
+        arguments:
+            $fromAddress: '%env(MAILER_FROM)%'
+
+    App\Service\EventLoggerService:
+        arguments:
+            $sosiEventLogger: '@monolog.logger.sosi_event_log'
+
+    App\Command\AppSendEventReminderCommand:
+        arguments:
+            $smsService: '@App\Service\SmsService'
+            $verifiedNumber: '%env(TWILIO_VERIFIED_TO)%'

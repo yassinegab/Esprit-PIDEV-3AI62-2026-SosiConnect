@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h1 { color: #ff69b4; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Rapport des cycles de souha>
+    <p>Période analysée : {{ start_date }} - {{ end_date }}</p>
+
+    <table>
+        <tr>
+            <th>Date de début</th>
+            <th>Date de fin</th>
+            <th>Durée (jours)</th>
+          
+        </tr>
+        {% for cycle in cycles %}
+<tr>
+    <td>{{ cycle.getDateDebutM() ? cycle.getDateDebutM().format('d/m/Y') : '' }}</td>
+    <td>{{ cycle.getDateFinM() ? cycle.getDateFinM().format('d/m/Y') : '' }}</td>
+    <td>
+        {% if cycle.getDateDebutM() and cycle.getDateFinM() %}
+            {{ cycle.getDateFinM().diff(cycle.getDateDebutM()).days + 1 }}
+        {% else %}
+            -
+        {% endif %}
+    </td>
+    <td>-</td> {# tu peux ajouter les symptômes si tu les stockes dans l'entité Cycle #}
+</tr>
+{% endfor %}
+    </table>
+</body>
+</html>

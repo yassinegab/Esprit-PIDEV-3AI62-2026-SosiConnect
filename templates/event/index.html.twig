@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}Événements{% endblock %}
+
+{% block body %}
+<div class="flex min-h-screen bg-background">
+  {# Sidebar #}
+  {% include 'components/sidebar.html.twig' %}
+  <div class="flex flex-1 flex-col">
+    {# Top Navigation #}
+    {% include 'components/top-nav.html.twig' %}
+    <main class="flex-1 overflow-auto">
+      <div class="mx-auto max-w-7xl space-y-6 p-4 lg:p-6">
+
+        <!-- Header -->
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div class="flex items-center gap-2 rounded-md border px-3 py-2">📅 {{ "now"|date("l d F Y") }}</div>
+        </div>
+
+        <!-- Event list -->
+        <div class="max-w-5xl mx-auto p-6">
+            <h2 class="text-2xl font-bold text-green-600 mb-6">📅 Prochains événements</h2>
+
+            {% if events is not empty %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white">
+                        <thead>
+                            <tr>
+                                <th class="px-6 py-3 border-b-2 text-left">Titre</th>
+                                <th class="px-6 py-3 border-b-2 text-left">Date</th>
+                                <th class="px-6 py-3 border-b-2 text-left">Type</th>
+                                <th class="px-6 py-3 border-b-2 text-left">Description</th>
+                                <th class="px-6 py-3 border-b-2 text-left">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for event in events %}
+                            <tr class="hover:bg-gray-100">
+                                <td class="px-6 py-4">{{ event.title }}</td>
+                                <td class="px-6 py-4">{{ event.date|date('d/m/Y H:i') }}</td>
+                                <td class="px-6 py-4">{{ event.type }}</td>
+                                <td class="px-6 py-4">{{ event.description }}</td>
+                                <td class="px-6 py-4">
+                                    <form action="{{ path('event_attend', {id: event.id}) }}" method="post" style="display:inline">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('attend-event' ~ event.id) }}">
+                                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Assister</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-gray-500">Aucun événement à venir pour le moment.</p>
+            {% endif %}
+
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+{% endblock %}

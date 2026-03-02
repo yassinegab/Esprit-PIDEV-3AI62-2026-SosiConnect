@@ -1,0 +1,173 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Contacts d'urgence{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto">
+
+    <!-- HEADER -->
+    <div class="flex justify-between items-center mb-6">
+
+        <h1 class="text-2xl font-bold text-blue-700 flex items-center gap-2">
+            📞 Contacts d'urgence
+        </h1>
+
+        <div class="text-sm text-gray-500">
+            Total : {{ contacts|length }}
+        </div>
+
+    </div>
+
+    <!-- GRID CONTACTS -->
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    {% for contact in contacts %}
+
+        <div onclick="openModal({{ contact.id }})"
+             class="bg-white rounded-xl shadow hover:shadow-xl transition cursor-pointer p-6 hover:scale-105">
+
+            <!-- AVATAR -->
+            <div class="flex items-center gap-4">
+
+                <div class="w-12 h-12 bg-blue-100 text-blue-700 flex items-center justify-center rounded-full font-bold">
+                    {{ contact.nom|first }}
+                </div>
+
+                <div>
+
+                    <div class="font-semibold text-gray-800">
+                        {{ contact.nom }}
+                    </div>
+
+                    <div class="text-sm text-gray-500">
+                        {{ contact.telephone }}
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- RELATION BADGE -->
+
+            <div class="mt-4">
+
+                <span class="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full">
+                    {{ contact.relation }}
+                </span>
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+    </div>
+
+</div>
+
+
+<!-- MODAL -->
+
+<div id="contactModal"
+     class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+
+    <div class="bg-white rounded-xl p-6 w-96 shadow-xl animate-fadeIn">
+
+        <h2 class="text-xl font-bold mb-4">
+            Contact Info
+        </h2>
+
+        <div id="modalContent"></div>
+
+        <div class="mt-4 flex justify-between">
+
+            <button onclick="closeModal()"
+                    class="px-4 py-2 bg-gray-400 text-white rounded">
+                Fermer
+            </button>
+
+            <form id="deleteForm" method="post">
+
+                <button class="px-4 py-2 bg-red-600 text-white rounded">
+                    Supprimer
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- JS -->
+
+<script>
+
+const contacts = {
+
+{% for contact in contacts %}
+
+    {{ contact.id }}: {
+        nom: "{{ contact.nom }}",
+        telephone: "{{ contact.telephone }}",
+        relation: "{{ contact.relation }}"
+    },
+
+{% endfor %}
+
+};
+
+
+function openModal(id)
+{
+
+    const contact = contacts[id];
+
+    document.getElementById('modalContent').innerHTML = `
+        <p><strong>Nom:</strong> ${contact.nom}</p>
+        <p><strong>Téléphone:</strong> ${contact.telephone}</p>
+        <p><strong>Relation:</strong> ${contact.relation}</p>
+    `;
+
+    document.getElementById('deleteForm').action =
+        "/admin/aide/contacts/delete/" + id;
+
+    document.getElementById('contactModal').classList.remove('hidden');
+
+}
+
+
+function closeModal()
+{
+    document.getElementById('contactModal').classList.add('hidden');
+}
+
+</script>
+
+<style>
+
+.animate-fadeIn
+{
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn
+{
+    from {
+        opacity:0;
+        transform:scale(0.9);
+    }
+
+    to {
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+</style>
+
+{% endblock %}

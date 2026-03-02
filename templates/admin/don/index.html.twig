@@ -1,0 +1,274 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Module Don{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="/css/modern-styles.css">
+{% endblock %}
+
+{% block content %}
+<div class="space-y-8 animate-fadeIn">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="page-title flex items-center gap-3">
+                <span class="text-4xl">🩸</span> Module Don
+            </h1>
+            <p class="text-gray-500 mt-1">Gestion hospitalière des dons, donneurs et demandes</p>
+        </div>
+        <div class="flex gap-3">
+            <a href="{{ path('admin_matching') }}" class="btn btn-primary">
+                🔗 Matching
+            </a>
+            <a href="{{ path('admin_don_list') }}" class="btn btn-secondary">
+                📋 Voir les dons
+            </a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="stat-card primary hover-lift cursor-pointer" onclick="window.location='{{ path('admin_don_list') }}'">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="stat-label">Total dons</p>
+                    <p class="stat-value">{{ stats.total }}</p>
+                </div>
+                <div class="text-3xl">📊</div>
+            </div>
+            <div class="mt-3 text-xs text-gray-500">Cliquez pour voir →</div>
+        </div>
+
+        <div class="stat-card success hover-lift">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="stat-label">Validés</p>
+                    <p class="stat-value">{{ stats.valides }}</p>
+                </div>
+                <div class="text-3xl">✅</div>
+            </div>
+            <div class="mt-3 h-1 bg-green-200 rounded">
+                <div class="h-full bg-green-500 rounded" style="width: {{ stats.total > 0 ? (stats.valides / stats.total * 100)|round : 0 }}%"></div>
+            </div>
+        </div>
+
+        <div class="stat-card danger hover-lift">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="stat-label">Refusés</p>
+                    <p class="stat-value">{{ stats.refuses }}</p>
+                </div>
+                <div class="text-3xl">❌</div>
+            </div>
+            <div class="mt-3 h-1 bg-red-200 rounded">
+                <div class="h-full bg-red-500 rounded" style="width: {{ stats.total > 0 ? (stats.refuses / stats.total * 100)|round : 0 }}%"></div>
+            </div>
+        </div>
+
+        <div class="stat-card warning hover-lift">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="stat-label">En attente</p>
+                    <p class="stat-value text-yellow-600">{{ stats.attente }}</p>
+                </div>
+                <div class="text-3xl">⏳</div>
+            </div>
+            {% if stats.attente > 0 %}
+            <div class="mt-3 flex items-center gap-2">
+                <span class="pulse-dot bg-yellow-500"></span>
+                <span class="text-xs text-yellow-600 font-medium">Action requise</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="font-semibold flex items-center gap-2">
+                    <span>📈</span> Répartition par statut
+                </h2>
+            </div>
+            <div class="card-body">
+                <canvas id="statutChart" height="200"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="font-semibold flex items-center gap-2">
+                    <span>🩸</span> Types de dons
+                </h2>
+            </div>
+            <div class="card-body">
+                <canvas id="typeChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a href="{{ path('admin_donneurs') }}" class="card group hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="card-body">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center text-3xl group-hover:bg-purple-200 transition">
+                        👤
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-purple-600">Donneurs</h3>
+                        <p class="text-gray-500 text-sm">Gérer les donneurs et disponibilité</p>
+                    </div>
+                </div>
+                <div class="mt-4 text-purple-600 font-semibold text-sm group-hover:text-purple-700">
+                    Accéder →
+                </div>
+            </div>
+        </a>
+
+        <a href="{{ path('admin_don_list') }}" class="card group hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="card-body">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-red-100 rounded-xl flex items-center justify-center text-3xl group-hover:bg-red-200 transition">
+                        🧾
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-red-600">Dons déclarés</h3>
+                        <p class="text-gray-500 text-sm">Valider, refuser ou supprimer</p>
+                    </div>
+                </div>
+                <div class="mt-4 text-red-600 font-semibold text-sm group-hover:text-red-700">
+                    Accéder →
+                </div>
+            </div>
+        </a>
+
+        <a href="{{ path('admin_demandes') }}" class="card group hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="card-body">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center text-3xl group-hover:bg-blue-200 transition">
+                        📥
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-blue-600">Demandes</h3>
+                        <p class="text-gray-500 text-sm">Gérer les demandes de don</p>
+                    </div>
+                </div>
+                <div class="mt-4 text-blue-600 font-semibold text-sm group-hover:text-blue-700">
+                    Accéder →
+                </div>
+            </div>
+        </a>
+    </div>
+
+    {% if recentDons is defined and recentDons|length > 0 %}
+    <div class="card">
+        <div class="card-header flex justify-between items-center">
+            <h3 class="font-semibold flex items-center gap-2 text-gray-800">
+                <span>🕐</span> Dons récents
+            </h3>
+            <a href="{{ path('admin_don_list') }}" class="text-sm text-indigo-600 hover:text-indigo-700">
+                Voir tout →
+            </a>
+        </div>
+        <div class="divide-y">
+            {% for don in recentDons %}
+            <div class="p-4 hover:bg-gray-50 transition">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center text-2xl">
+                            {{ don.typeDon == 'sang' ? '🩸' : '🫀' }}
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-800">{{ don.typeDon|upper }}</div>
+                            <div class="text-sm text-gray-500">{{ don.region }}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        {% if don.urgence %}
+                        <span class="badge bg-orange-100 text-orange-700">URGENT</span>
+                        {% endif %}
+                        <span class="badge {{ don.statusBadgeClass }}">
+                            {{ don.statusIcon }} {{ don.statut }}
+                        </span>
+                        <span class="text-sm text-gray-400">{{ don.dateDon|date('d/m/Y H:i') }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="card bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-200">
+        <div class="card-body">
+            <div class="flex items-center gap-4">
+                <div class="text-4xl">🔗</div>
+                <div class="flex-1">
+                    <h3 class="font-semibold text-indigo-800">Matching Intelligent</h3>
+                    <p class="text-sm text-indigo-600">
+                        Trouvez automatiquement les meilleurs donneurs pour les demandes urgentes.
+                    </p>
+                </div>
+                <a href="{{ path('admin_matching') }}" class="btn btn-primary">
+                    Lancer le matching
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const statutCtx = document.getElementById('statutChart');
+if (statutCtx) {
+    new Chart(statutCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Validés', 'Refusés', 'En attente'],
+            datasets: [{
+                data: [{{ stats.valides }}, {{ stats.refuses }}, {{ stats.attente }}],
+                backgroundColor: ['#10b981', '#ef4444', '#f59e0b'],
+                borderWidth: 0,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            cutout: '65%',
+            plugins: {
+                legend: { 
+                    position: 'bottom',
+                    labels: { padding: 20, usePointStyle: true }
+                }
+            }
+        }
+    });
+}
+
+const typeCtx = document.getElementById('typeChart');
+if (typeCtx) {
+    new Chart(typeCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Sang', 'Organe'],
+            datasets: [{
+                label: 'Nombre de dons',
+                data: [{{ stats.sang }}, {{ stats.organe }}],
+                backgroundColor: ['#dc2626', '#8b5cf6'],
+                borderRadius: 8,
+                barThickness: 40
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, grid: { display: false } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

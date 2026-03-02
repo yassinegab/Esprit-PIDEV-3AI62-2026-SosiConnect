@@ -1,0 +1,204 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}{{ faq ? 'Modifier' : 'Nouvelle' }} FAQ{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+.form-section {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 1px solid #e5e7eb;
+}
+.category-option {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+.category-option:hover {
+    transform: scale(1.02);
+}
+.category-option.selected {
+    ring: 2px;
+    ring-color: #8b5cf6;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6 animate-fadeIn">
+    <div class="flex items-center gap-4">
+        <a href="{{ path('admin_faq') }}" 
+           class="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-xl flex items-center justify-center text-gray-600 transition">
+            ←
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center text-white">
+                    {{ faq ? '✏️' : '➕' }}
+                </div>
+                {{ faq ? 'Modifier la Question' : 'Nouvelle Question' }}
+            </h1>
+            <p class="text-gray-500 mt-1 ml-13">{{ faq ? 'Mettez à jour la question et sa réponse' : 'Ajoutez une nouvelle question fréquente' }}</p>
+        </div>
+    </div>
+
+    {% if faq %}
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-4 border border-blue-100">
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-6 text-sm">
+                <div class="flex items-center gap-2">
+                    <span class="text-blue-600">👁️</span>
+                    <span class="text-gray-600"><strong>{{ faq.viewCount }}</strong> vues</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-blue-600">👍</span>
+                    <span class="text-gray-600"><strong>{{ faq.helpfulCount }}</strong> utiles</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-blue-600">📅</span>
+                    <span class="text-gray-600">Créé le <strong>{{ faq.createdAt|date('d/m/Y') }}</strong></span>
+                </div>
+            </div>
+            <div class="ml-auto">
+                {% if faq.isPublished %}
+                <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold">✅ Publiée</span>
+                {% else %}
+                <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-semibold">📝 Brouillon</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="post" class="space-y-6">
+        <div class="form-section">
+            <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <span class="text-xl">❓</span> Question
+            </h3>
+            <input type="text" name="question" required
+                   value="{{ faq.question|default('') }}"
+                   class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent text-lg"
+                   placeholder="Ex: Comment puis-je faire un don de sang ?">
+            <p class="text-xs text-gray-400 mt-2">Formulez une question claire et facile à comprendre</p>
+        </div>
+
+        <div class="form-section">
+            <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <span class="text-xl">💬</span> Réponse
+            </h3>
+            <textarea name="answer" required rows="8"
+                      class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                      placeholder="Expliquez la réponse en détail...&#10;&#10;Vous pouvez utiliser plusieurs paragraphes pour une meilleure lisibilité.">{{ faq.answer|default('') }}</textarea>
+            <div class="flex items-center justify-between mt-2">
+                <p class="text-xs text-gray-400">Soyez précis et exhaustif</p>
+                <span class="text-xs text-gray-400" id="charCount">0 caractères</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="form-section">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="text-xl">📁</span> Catégorie
+                </h3>
+                <div class="grid grid-cols-2 gap-3">
+                    {% set categories = [
+                        {value: 'general', icon: '📋', label: 'Général'},
+                        {value: 'don', icon: '🩸', label: 'Don'},
+                        {value: 'aide', icon: '🆘', label: 'Aide'},
+                        {value: 'urgence', icon: '🚨', label: 'Urgence'},
+                        {value: 'compte', icon: '👤', label: 'Compte'},
+                        {value: 'technique', icon: '⚙️', label: 'Technique'}
+                    ] %}
+                    {% for cat in categories %}
+                    <label class="category-option flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer
+                                 {{ faq.category|default('general') == cat.value ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-gray-300' }}">
+                        <input type="radio" name="category" value="{{ cat.value }}" 
+                               {{ faq.category|default('general') == cat.value ? 'checked' }} class="hidden">
+                        <span class="text-2xl">{{ cat.icon }}</span>
+                        <span class="font-medium text-gray-700">{{ cat.label }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="text-xl">⚙️</span> Paramètres
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Ordre d'affichage</label>
+                        <input type="number" name="displayOrder"
+                               value="{{ faq.displayOrder|default(0) }}"
+                               class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500"
+                               min="0" placeholder="0">
+                        <p class="text-xs text-gray-400 mt-1">Les nombres plus petits apparaissent en premier</p>
+                    </div>
+
+                    <div class="p-4 bg-gradient-to-r {{ faq is null or faq.isPublished ? 'from-green-50 to-emerald-50 border-green-200' : 'from-gray-50 to-gray-100 border-gray-200' }} rounded-xl border">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" name="isPublished" value="1" id="isPublished"
+                                   {% if faq is null or faq.isPublished %}checked{% endif %}
+                                   class="w-5 h-5 text-purple-600 rounded focus:ring-purple-500">
+                            <div>
+                                <span class="font-medium text-gray-800">Publier immédiatement</span>
+                                <p class="text-xs text-gray-500">La FAQ sera visible par les utilisateurs</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+            <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <span class="text-xl">👁️</span> Aperçu
+            </h3>
+            <div class="bg-gray-50 rounded-xl p-4">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="text-purple-600">❓</span>
+                    <span class="font-medium text-gray-800" id="previewQuestion">{{ faq.question|default('Votre question apparaîtra ici...') }}</span>
+                </div>
+                <p class="text-gray-600 text-sm pl-6" id="previewAnswer">{{ faq.answer|default('Votre réponse apparaîtra ici...')|striptags|slice(0, 150) }}...</p>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center pt-4">
+            <a href="{{ path('admin_faq') }}" 
+               class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold transition flex items-center gap-2">
+                ← Annuler
+            </a>
+            <button type="submit" 
+                    class="px-8 py-3 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition flex items-center gap-2">
+                <span class="text-xl">{{ faq ? '✏️' : '➕' }}</span>
+                {{ faq ? 'Mettre à jour la FAQ' : 'Créer la FAQ' }}
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.querySelector('input[name="question"]').addEventListener('input', function(e) {
+    document.getElementById('previewQuestion').textContent = e.target.value || 'Votre question apparaîtra ici...';
+});
+
+document.querySelector('textarea[name="answer"]').addEventListener('input', function(e) {
+    const text = e.target.value.replace(/<[^>]*>/g, '');
+    document.getElementById('previewAnswer').textContent = (text.slice(0, 150) || 'Votre réponse apparaîtra ici...') + (text.length > 150 ? '...' : '');
+    document.getElementById('charCount').textContent = text.length + ' caractères';
+});
+
+document.querySelectorAll('.category-option').forEach(option => {
+    option.addEventListener('click', function() {
+        document.querySelectorAll('.category-option').forEach(o => {
+            o.classList.remove('border-purple-500', 'bg-purple-50');
+            o.classList.add('border-gray-200');
+        });
+        this.classList.remove('border-gray-200');
+        this.classList.add('border-purple-500', 'bg-purple-50');
+    });
+});
+</script>
+{% endblock %}

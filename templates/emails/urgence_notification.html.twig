@@ -1,0 +1,64 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block title %}🚨 Alerte Urgence{% endblock %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 30px;">
+    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 40px; animation: pulse 1s infinite;">
+        🚨
+    </div>
+    <h2 style="color: #dc2626; margin-bottom: 10px;">ALERTE URGENCE</h2>
+    <p style="color: #6b7280;">Bonjour {{ contactName }}, une urgence a été déclenchée !</p>
+</div>
+
+<div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+    <h3 style="color: #dc2626; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+        📍 Localisation
+    </h3>
+    <p style="margin-bottom: 16px; color: #374151;">
+        Une personne a besoin d'aide à cet emplacement :
+    </p>
+    <a href="https://maps.google.com/?q={{ urgence.latitude }},{{ urgence.longitude }}" 
+       style="display: block; background: #dc2626; color: white; padding: 16px; border-radius: 10px; text-align: center; text-decoration: none; font-weight: bold; font-size: 16px;">
+        🗺️ Voir sur Google Maps
+    </a>
+    <p style="margin-top: 12px; text-align: center; color: #6b7280; font-size: 14px;">
+        Coordonnées: {{ urgence.latitude|round(6) }}, {{ urgence.longitude|round(6) }}
+    </p>
+</div>
+
+<div style="background: #f8fafc; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+    <h3 style="color: #374151; margin-bottom: 16px;">📋 Détails</h3>
+    <p style="margin-bottom: 8px;"><strong>📅 Date:</strong> {{ urgence.dateUrgence|date('d/m/Y à H:i') }}</p>
+    <p style="margin-bottom: 8px;"><strong>📊 Statut:</strong> 
+        <span style="background: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 20px; font-size: 14px;">
+            {{ urgence.statut }}
+        </span>
+    </p>
+    {% if urgence.message %}
+    <p style="margin-top: 16px;"><strong>💬 Message:</strong> {{ urgence.message }}</p>
+    {% endif %}
+</div>
+
+<div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 12px; padding: 24px; margin-bottom: 24px; border-left: 4px solid #f59e0b;">
+    <h3 style="color: #92400e; margin-bottom: 12px;">⚠️ Instructions</h3>
+    <ul style="color: #78350f; margin: 0; padding-left: 20px;">
+        <li style="margin-bottom: 8px;">Réagissez rapidement si vous êtes à proximité</li>
+        <li style="margin-bottom: 8px;">Contactez les services d'urgence si nécessaire</li>
+        <li style="margin-bottom: 8px;">Partagez cette localisation avec d'autres personnes</li>
+    </ul>
+</div>
+
+<div style="text-align: center;">
+    <p style="color: #dc2626; font-weight: bold; font-size: 18px;">
+        🆘 Merci de réagir rapidement !
+    </p>
+</div>
+
+<style>
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+</style>
+{% endblock %}

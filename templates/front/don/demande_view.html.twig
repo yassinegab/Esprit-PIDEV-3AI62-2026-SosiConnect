@@ -1,0 +1,192 @@
+{% extends 'layout/front-layout.html.twig' %}
+
+{% block title %}Demande #{{ demande.id }} - Répondre{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="/css/modern-styles.css">
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6 animate-fadeIn">
+    <div class="flex items-center gap-4">
+        <a href="{{ path('demande_don') }}" class="text-gray-500 hover:text-gray-700 transition">
+            ← Retour aux demandes
+        </a>
+    </div>
+
+    {% for message in app.flashes('success') %}
+    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded-lg">
+        ✅ {{ message }}
+    </div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg">
+        ❌ {{ message }}
+    </div>
+    {% endfor %}
+
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+        <div class="bg-gradient-to-r {{ demande.typeDemande == 'sang' ? 'from-red-500 to-red-600' : 'from-purple-500 to-purple-600' }} text-white p-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-4xl">
+                        {{ demande.typeDemande == 'sang' ? '🩸' : '🫀' }}
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold">Demande de {{ demande.typeDemande }}</h1>
+                        <p class="text-white/80">Publiée le {{ demande.dateDemande|date('d/m/Y à H:i') }}</p>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    {% if demande.urgence %}
+                    <span class="bg-white/20 px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2">
+                        🚨 URGENT
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6 space-y-6">
+            <div class="grid grid-cols-2 gap-6">
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <p class="text-sm text-gray-500 mb-1">📍 Région</p>
+                    <p class="font-semibold text-gray-800">{{ demande.region }}</p>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <p class="text-sm text-gray-500 mb-1">📊 Rang d'attente</p>
+                    <p class="font-semibold text-gray-800">#{{ demande.rangAttente }}</p>
+                </div>
+                {% if demande.typeSanguin %}
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <p class="text-sm text-gray-500 mb-1">🩸 Groupe sanguin</p>
+                    <p class="font-semibold text-gray-800">{{ demande.typeSanguin }}</p>
+                </div>
+                {% endif %}
+                {% if demande.typeOrgane %}
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <p class="text-sm text-gray-500 mb-1">🫀 Organe</p>
+                    <p class="font-semibold text-gray-800">{{ demande.typeOrgane }}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if demande.description %}
+            <div class="bg-blue-50 rounded-xl p-4">
+                <p class="text-sm text-blue-600 mb-2">📝 Description</p>
+                <p class="text-gray-700">{{ demande.description }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center text-xl">
+                    🤝
+                </div>
+                <h2 class="text-xl font-bold text-gray-800">Proposer votre aide</h2>
+            </div>
+
+            <form method="post" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nom complet *</label>
+                        <input type="text" name="donneur_nom" required
+                               class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                               placeholder="Votre nom">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Téléphone *</label>
+                        <input type="tel" name="donneur_telephone" required
+                               class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                               placeholder="XX XXX XXX">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                    <input type="email" name="donneur_email" required
+                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                           placeholder="votre@email.com">
+                </div>
+
+                {% if demande.typeDemande == 'sang' %}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Votre groupe sanguin</label>
+                    <select name="donneur_groupe_sanguin"
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition">
+                        <option value="">Sélectionner (optionnel)</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+                {% endif %}
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                    <textarea name="message" rows="4"
+                              class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition resize-none"
+                              placeholder="Précisez votre disponibilité, votre expérience..."></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-4 rounded-xl font-semibold transition shadow-lg">
+                    🤝 Envoyer ma proposition
+                </button>
+            </form>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-xl">
+                    💬
+                </div>
+                <h2 class="text-xl font-bold text-gray-800">Réponses ({{ responses|length }})</h2>
+            </div>
+
+            {% if responses|length > 0 %}
+                <div class="space-y-4 max-h-96 overflow-y-auto">
+                    {% for reponse in responses %}
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                        <div class="flex items-start justify-between mb-2">
+                            <div>
+                                <p class="font-semibold text-gray-800">{{ reponse.donneurNom }}</p>
+                                <p class="text-xs text-gray-500">{{ reponse.donneurEmail }}</p>
+                            </div>
+                            <span class="px-2 py-1 rounded-full text-xs font-medium {{ reponse.statusBadgeClass }}">
+                                {{ reponse.statusLabel }}
+                            </span>
+                        </div>
+                        {% if reponse.donneurGroupeSanguin %}
+                        <p class="text-sm text-gray-600 mb-2">🩸 Groupe: {{ reponse.donneurGroupeSanguin }}</p>
+                        {% endif %}
+                        {% if reponse.message %}
+                        <p class="text-sm text-gray-700 bg-white rounded-lg p-3 mt-2">{{ reponse.message }}</p>
+                        {% endif %}
+                        <div class="flex items-center justify-between mt-3 text-xs text-gray-400">
+                            <span>📞 {{ reponse.donneurTelephone }}</span>
+                            <span>{{ reponse.createdAt|date('d/m/Y H:i') }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-8 text-gray-400">
+                    <div class="text-4xl mb-2">📭</div>
+                    <p>Aucune réponse pour le moment</p>
+                    <p class="text-sm">Soyez le premier à proposer votre aide !</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

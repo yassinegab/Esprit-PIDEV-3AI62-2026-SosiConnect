@@ -1,0 +1,670 @@
+{% extends 'layout/front-layout.html.twig' %}
+
+{% block title %}Carte Médicale{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="/css/modern-styles.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+#map {
+    height: calc(100vh - 200px);
+    min-height: 500px;
+    border-radius: 1rem;
+    z-index: 1;
+}
+.leaflet-popup-content-wrapper {
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+.leaflet-popup-content {
+    margin: 12px 16px;
+}
+.category-btn {
+    transition: all 0.2s ease;
+}
+.category-btn.active {
+    transform: scale(1.05);
+}
+.lieu-card {
+    transition: all 0.2s ease;
+}
+.lieu-card:hover {
+    background: #f8fafc;
+}
+.lieu-card.active {
+    background: #eff6ff;
+    border-left: 3px solid #3b82f6;
+}
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+}
+.star-rating input {
+    display: none;
+}
+.star-rating label {
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #d1d5db;
+    transition: color 0.2s;
+}
+.star-rating label:hover,
+.star-rating label:hover ~ label,
+.star-rating input:checked ~ label {
+    color: #fbbf24;
+}
+.review-modal {
+    backdrop-filter: blur(4px);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-6 animate-fadeIn" x-data="mapApp()">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800" style="font-family: 'Poppins', sans-serif;">
+                🗺️ Carte Médicale
+            </h1>
+            <p class="text-gray-500 mt-1">Trouvez les médecins, pharmacies et hôpitaux près de vous</p>
+        </div>
+        <div class="flex items-center gap-2 text-sm">
+            <span class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+            <span class="text-gray-600" x-text="userLocation ? 'Position détectée' : 'Tunis (défaut)'"></span>
+            <button @click="getUserLocation()" class="ml-2 text-blue-600 hover:text-blue-700 underline">
+                📍 Me localiser
+            </button>
+        </div>
+    </div>
+
+    <div class="flex gap-4">
+        <div class="w-80 flex-shrink-0 space-y-4">
+            <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-100">
+                <div class="relative">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+                    <input type="text" 
+                           x-model="searchQuery"
+                           @input="filterLieux()"
+                           placeholder="Rechercher..."
+                           class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-100">
+                <h3 class="font-semibold text-gray-800 mb-3">📁 Catégories</h3>
+                <div class="flex flex-wrap gap-2">
+                    <button @click="toggleCategory('')" 
+                            :class="activeCategory === '' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                            class="category-btn px-3 py-2 rounded-lg text-sm font-medium transition">
+                        Tous
+                    </button>
+                    <template x-for="cat in categories" :key="cat">
+                        <button @click="toggleCategory(cat)"
+                                :class="activeCategory === cat ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                                class="category-btn px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1">
+                            <span x-text="getCategoryIcon(cat)"></span>
+                            <span x-text="cat"></span>
+                        </button>
+                    </template>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                <div class="p-4 border-b border-gray-100 flex justify-between items-center">
+                    <h3 class="font-semibold text-gray-800">📍 Lieux trouvés</h3>
+                    <span class="text-sm text-gray-500" x-text="filteredLieux.length + ' résultat(s)'"></span>
+                </div>
+                <div class="max-h-96 overflow-y-auto">
+                    <template x-for="lieu in filteredLieux" :key="lieu.id">
+                        <div class="lieu-card p-4 border-b border-gray-100 cursor-pointer"
+                             :class="{'active': selectedLieu && selectedLieu.id === lieu.id}"
+                             @click="selectLieu(lieu)">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
+                                     :class="getCategoryBgClass(lieu.categorie)">
+                                    <span x-text="getCategoryIcon(lieu.categorie)"></span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-medium text-gray-800 truncate" x-text="lieu.nom"></h4>
+                                    <p class="text-xs text-gray-500 truncate" x-text="lieu.adresse"></p>
+                                    <div class="flex items-center gap-3 mt-1">
+                                        <span class="text-xs px-2 py-0.5 rounded-full"
+                                              :class="getCategoryBadgeClass(lieu.categorie)"
+                                              x-text="lieu.categorie"></span>
+                                        <span class="text-xs text-gray-400" x-show="lieu.distance" x-text="lieu.distance + ' km'"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <div x-show="filteredLieux.length === 0" class="p-8 text-center text-gray-400">
+                        <div class="text-3xl mb-2">🔍</div>
+                        <p>Aucun lieu trouvé</p>
+                    </div>
+                </div>
+            </div>
+
+            <a href="{{ path('aide') }}" class="block bg-white rounded-2xl p-4 shadow-lg border border-gray-100 hover:shadow-xl transition">
+                <div class="flex items-center gap-3 text-gray-600">
+                    <span>←</span>
+                    <span>Retour au centre d'aide</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="flex-1 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <div x-show="selectedLieu" 
+         x-transition
+         class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white rounded-2xl shadow-2xl border border-gray-200 p-4 w-full max-w-lg z-50">
+        <div class="flex items-center gap-4" x-show="selectedLieu">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
+                 :class="getCategoryBgClass(selectedLieu?.categorie)">
+                <span x-text="getCategoryIcon(selectedLieu?.categorie)"></span>
+            </div>
+            <div class="flex-1">
+                <h4 class="font-bold text-gray-800" x-text="selectedLieu?.nom"></h4>
+                <p class="text-sm text-gray-500" x-text="selectedLieu?.adresse"></p>
+            </div>
+            <div class="flex gap-2">
+                <button @click="showQrCode(selectedLieu)" 
+                        class="w-10 h-10 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center hover:bg-purple-200 transition"
+                        title="QR Code">
+                    📱
+                </button>
+                <a :href="'tel:' + selectedLieu?.telephone" 
+                   x-show="selectedLieu?.telephone"
+                   class="w-10 h-10 bg-green-100 text-green-600 rounded-xl flex items-center justify-center hover:bg-green-200 transition">
+                    📞
+                </a>
+                <a :href="'https://www.google.com/maps/dir/?api=1&destination=' + selectedLieu?.latitude + ',' + selectedLieu?.longitude"
+                   target="_blank"
+                   class="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition flex items-center gap-2">
+                    🧭 Itinéraire
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div x-show="showQrModal" 
+         x-transition
+         class="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4"
+         @click.self="showQrModal = false">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden text-center" @click.stop>
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-2" x-text="qrLieu?.nom"></h3>
+                <p class="text-sm text-gray-500 mb-6" x-text="qrLieu?.adresse"></p>
+                <div class="bg-white p-4 rounded-xl border border-gray-200 inline-block mb-4">
+                    <img :src="qrCodeImage" alt="QR Code" class="w-48 h-48 mx-auto">
+                </div>
+                <p class="text-sm text-gray-600 mb-4">Scannez ce QR code pour obtenir l'itinéraire vers ce lieu</p>
+                <a :href="qrGoogleMapsUrl" 
+                   target="_blank"
+                   class="inline-block px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition">
+                    Ouvrir dans Google Maps
+                </a>
+            </div>
+            <button @click="showQrModal = false" 
+                    class="w-full py-3 bg-gray-100 text-gray-600 font-medium hover:bg-gray-200 transition">
+                Fermer
+            </button>
+        </div>
+    </div>
+
+    <div x-show="showReviewModal" 
+         x-transition
+         class="review-modal fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4"
+         @click.self="showReviewModal = false">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden" @click.stop>
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800" x-text="selectedLieu?.nom"></h3>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="text-yellow-400" x-text="'★'.repeat(Math.round(selectedLieu?.avgRating || 0)) + '☆'.repeat(5 - Math.round(selectedLieu?.avgRating || 0))"></span>
+                        <span class="text-sm text-gray-500" x-text="(selectedLieu?.avgRating || 0).toFixed(1) + ' (' + (selectedLieu?.reviewCount || 0) + ' avis)'"></span>
+                    </div>
+                </div>
+                <button @click="showReviewModal = false" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto" style="max-height: calc(90vh - 200px);">
+                <div class="mb-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100">
+                    <h4 class="font-semibold text-green-800 mb-3">✍️ Laisser un avis</h4>
+                    <form @submit.prevent="submitReview()">
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <input type="text" x-model="reviewForm.author_name" required
+                                   placeholder="Votre nom"
+                                   class="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500">
+                            <input type="email" x-model="reviewForm.author_email" required
+                                   placeholder="Votre email"
+                                   class="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Note</label>
+                            <div class="star-rating">
+                                <input type="radio" id="star5" x-model="reviewForm.rating" value="5">
+                                <label for="star5">★</label>
+                                <input type="radio" id="star4" x-model="reviewForm.rating" value="4">
+                                <label for="star4">★</label>
+                                <input type="radio" id="star3" x-model="reviewForm.rating" value="3">
+                                <label for="star3">★</label>
+                                <input type="radio" id="star2" x-model="reviewForm.rating" value="2">
+                                <label for="star2">★</label>
+                                <input type="radio" id="star1" x-model="reviewForm.rating" value="1">
+                                <label for="star1">★</label>
+                            </div>
+                        </div>
+                        <textarea x-model="reviewForm.comment" required rows="3"
+                                  placeholder="Partagez votre expérience..."
+                                  class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 mb-4"></textarea>
+                        <button type="submit" 
+                                :disabled="reviewFormLoading"
+                                class="w-full py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition disabled:opacity-50">
+                            <span x-show="!reviewFormLoading">Envoyer mon avis</span>
+                            <span x-show="reviewFormLoading">Envoi en cours...</span>
+                        </button>
+                    </form>
+                </div>
+
+                <h4 class="font-semibold text-gray-800 mb-4">💬 Avis (<span x-text="selectedLieuReviews.length"></span>)</h4>
+                
+                <div class="space-y-4">
+                    <template x-for="review in selectedLieuReviews" :key="review.id">
+                        <div class="p-4 bg-gray-50 rounded-xl">
+                            <div class="flex items-start justify-between mb-2">
+                                <div>
+                                    <span class="font-medium text-gray-800" x-text="review.authorName"></span>
+                                    <span x-show="review.isVerified" class="ml-2 text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded-full">✓ Vérifié</span>
+                                </div>
+                                <span class="text-yellow-400" x-text="review.ratingStars"></span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-2" x-text="review.comment"></p>
+                            <div class="flex items-center justify-between text-xs text-gray-400">
+                                <span x-text="review.createdAt"></span>
+                                <button @click="markHelpful(review.id)" class="text-blue-600 hover:text-blue-700">
+                                    👍 Utile (<span x-text="review.helpfulCount"></span>)
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                    
+                    <div x-show="selectedLieuReviews.length === 0" class="text-center py-8 text-gray-400">
+                        <div class="text-4xl mb-2">📝</div>
+                        <p>Aucun avis pour le moment</p>
+                        <p class="text-sm">Soyez le premier à donner votre avis !</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// Global map app instance
+var mapAppData = null;
+
+function mapApp() {
+    return {
+        lieux: {{ lieux|json_encode|raw }},
+        categories: {{ categories|json_encode|raw }},
+        filteredLieux: [],
+        activeCategory: '',
+        searchQuery: '',
+        selectedLieu: null,
+        userLocation: { lat: 36.8065, lng: 10.1815 },
+        map: null,
+        markers: [],
+        userMarker: null,
+        showReviewModal: false,
+        selectedLieuReviews: [],
+        reviewForm: { author_name: '', author_email: '', rating: 5, comment: '' },
+        reviewFormLoading: false,
+        showQrModal: false,
+        qrLieu: null,
+        qrCodeImage: '',
+        qrGoogleMapsUrl: '',
+
+        init() {
+            console.log('Lieux loaded:', this.lieux);
+            mapAppData = this;
+            this.filteredLieux = [...this.lieux];
+            this.initMap();
+            this.addUserMarker();
+            this.addMarkers();
+            this.calculateDistances();
+        },
+
+        initMap() {
+            this.map = L.map('map').setView([36.8065, 10.1815], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(this.map);
+
+            this.addMarkers();
+        },
+
+        getUserLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        this.userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        this.map.setView([this.userLocation.lat, this.userLocation.lng], 15);
+                        this.addUserMarker();
+                        this.calculateDistances();
+                    },
+                    (error) => {
+                        console.log('Geolocation Error:', error.message);
+                        this.userLocation = {
+                            lat: 36.8065,
+                            lng: 10.1815
+                        };
+                        this.addUserMarker();
+                        this.calculateDistances();
+                    },
+                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                );
+            } else {
+                this.userLocation = {
+                    lat: 36.8065,
+                    lng: 10.1815
+                };
+                this.addUserMarker();
+                this.calculateDistances();
+            }
+        },
+
+        addUserMarker() {
+            if (this.userMarker) {
+                this.map.removeLayer(this.userMarker);
+            }
+
+            const userIcon = L.divIcon({
+                html: '<div style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5); border: 3px solid white;">📍</div>',
+                className: 'user-marker',
+                iconSize: [40, 40],
+                iconAnchor: [20, 20]
+            });
+
+            this.userMarker = L.marker([this.userLocation.lat, this.userLocation.lng], { icon: userIcon })
+                .addTo(this.map)
+                .bindPopup('<strong>📍 Votre position</strong><br><small>Cliquez sur les marqueurs pour voir les détails</small>');
+        },
+
+        addMarkers() {
+            this.markers.forEach(m => this.map.removeLayer(m));
+            this.markers = [];
+
+            if (!this.filteredLieux || this.filteredLieux.length === 0) {
+                console.log('No lieux to display');
+                return;
+            }
+
+            const self = this;
+            this.filteredLieux.forEach((lieu, index) => {
+                const lat = parseFloat(lieu.latitude);
+                const lng = parseFloat(lieu.longitude);
+                
+                if (isNaN(lat) || isNaN(lng)) {
+                    console.log('Invalid coordinates for:', lieu.nom);
+                    return;
+                }
+
+                const icon = L.divIcon({
+                    html: `<div style="background: ${this.getCategoryColor(lieu.categorie)}; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 3px 10px rgba(0,0,0,0.2); border: 2px solid white;">${this.getCategoryIcon(lieu.categorie)}</div>`,
+                    className: 'lieu-marker',
+                    iconSize: [36, 36],
+                    iconAnchor: [18, 18]
+                });
+
+                const ratingStars = lieu.avgRating ? '★'.repeat(Math.round(lieu.avgRating)) + '☆'.repeat(5 - Math.round(lieu.avgRating)) : '☆☆☆☆☆';
+                const ratingText = lieu.avgRating ? `${lieu.avgRating.toFixed(1)} (${lieu.reviewCount} avis)` : 'Pas encore d\'avis';
+
+                const marker = L.marker([lat, lng], { icon })
+                    .addTo(this.map)
+                    .bindPopup(`
+                        <div style="min-width: 250px;">
+                            <h3 style="font-weight: bold; margin-bottom: 5px;">${lieu.nom}</h3>
+                            <p style="color: #666; font-size: 12px; margin-bottom: 8px;">${lieu.adresse}</p>
+                            <p style="font-size: 12px; margin-bottom: 4px;">📞 ${lieu.telephone || 'Non renseigné'}</p>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                                <span style="color: #fbbf24;">${ratingStars}</span>
+                                <span style="font-size: 12px; color: #666;">${ratingText}</span>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" 
+                                   target="_blank"
+                                   style="flex: 1; display: inline-block; background: #3b82f6; color: white; padding: 8px 12px; border-radius: 8px; text-decoration: none; font-size: 12px; text-align: center;">
+                                    🧭 Itinéraire
+                                </a>
+                                <button onclick="openReviewsModal(${lieu.id})"
+                                        style="flex: 1; background: #10b981; color: white; padding: 8px 12px; border-radius: 8px; font-size: 12px; border: none; cursor: pointer;">
+                                    ⭐ Avis
+                                </button>
+                            </div>
+                        </div>
+                    `);
+
+                marker.on('click', () => {
+                    this.selectLieu(lieu);
+                });
+
+                this.markers.push(marker);
+            });
+
+            console.log('Added', this.markers.length, 'markers');
+        },
+
+        openReviews(lieuId) {
+            this.selectedLieu = this.lieux.find(l => l.id === lieuId);
+            if (!this.selectedLieu) return;
+
+            fetch(`/aide/map/lieu/${lieuId}/reviews`)
+                .then(response => response.json())
+                .then(data => {
+                    this.selectedLieuReviews = data.reviews;
+                    this.selectedLieu.avgRating = data.lieu.avgRating;
+                    this.selectedLieu.reviewCount = data.lieu.reviewCount;
+                    this.showReviewModal = true;
+                })
+                .catch(error => {
+                    console.error('Error loading reviews:', error);
+                    this.selectedLieuReviews = [];
+                    this.showReviewModal = true;
+                });
+        },
+
+        submitReview() {
+            if (!this.selectedLieu) return;
+            
+            this.reviewFormLoading = true;
+            const formData = new FormData();
+            formData.append('author_name', this.reviewForm.author_name);
+            formData.append('author_email', this.reviewForm.author_email);
+            formData.append('rating', this.reviewForm.rating);
+            formData.append('comment', this.reviewForm.comment);
+
+            fetch(`/aide/map/lieu/${this.selectedLieu.id}/review`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    this.selectedLieuReviews.unshift(data.review);
+                    this.selectedLieu.reviewCount++;
+                    this.reviewForm = { author_name: '', author_email: '', rating: 5, comment: '' };
+                    alert('✅ Merci pour votre avis !');
+                } else {
+                    alert('❌ Erreur: ' + data.errors.join(', '));
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting review:', error);
+                alert('❌ Erreur lors de l\'envoi de l\'avis');
+            })
+            .finally(() => {
+                this.reviewFormLoading = false;
+            });
+        },
+
+        markHelpful(reviewId) {
+            fetch(`/aide/map/review/${reviewId}/helpful`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const review = this.selectedLieuReviews.find(r => r.id === reviewId);
+                        if (review) review.helpfulCount = data.helpfulCount;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error marking helpful:', error);
+                });
+        },
+
+        calculateDistances() {
+            if (!this.userLocation) return;
+
+            this.lieux.forEach(lieu => {
+                const distance = this.getDistance(
+                    this.userLocation.lat, this.userLocation.lng,
+                    parseFloat(lieu.latitude), parseFloat(lieu.longitude)
+                );
+                lieu.distance = distance.toFixed(1);
+            });
+
+            this.lieux.sort((a, b) => parseFloat(a.distance || 999) - parseFloat(b.distance || 999));
+            this.filteredLieux = [...this.lieux];
+        },
+
+        getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        },
+
+        filterLieux() {
+            let filtered = this.lieux;
+
+            if (this.activeCategory) {
+                filtered = filtered.filter(l => l.categorie === this.activeCategory);
+            }
+
+            if (this.searchQuery) {
+                const query = this.searchQuery.toLowerCase();
+                filtered = filtered.filter(l => 
+                    l.nom.toLowerCase().includes(query) || 
+                    l.adresse.toLowerCase().includes(query)
+                );
+            }
+
+            this.filteredLieux = filtered;
+            this.addMarkers();
+        },
+
+        toggleCategory(category) {
+            this.activeCategory = category;
+            this.filterLieux();
+        },
+
+        selectLieu(lieu) {
+            this.selectedLieu = lieu;
+            this.map.setView([parseFloat(lieu.latitude), parseFloat(lieu.longitude)], 16);
+            
+            const marker = this.markers.find(m => {
+                const pos = m.getLatLng();
+                return Math.abs(pos.lat - parseFloat(lieu.latitude)) < 0.0001 && 
+                       Math.abs(pos.lng - parseFloat(lieu.longitude)) < 0.0001;
+            });
+            if (marker) marker.openPopup();
+        },
+
+        getCategoryIcon(category) {
+            const icons = {
+                'Médecin': '👨‍⚕️',
+                'Pharmacie': '💊',
+                'Hôpital': '🏥',
+                'Clinique': '🏨',
+                'Laboratoire': '🧪',
+                'Urgence': '🚨'
+            };
+            return icons[category] || '📍';
+        },
+
+        getCategoryColor(category) {
+            const colors = {
+                'Médecin': '#10b981',
+                'Pharmacie': '#8b5cf6',
+                'Hôpital': '#ef4444',
+                'Clinique': '#f59e0b',
+                'Laboratoire': '#06b6d4',
+                'Urgence': '#dc2626'
+            };
+            return colors[category] || '#6b7280';
+        },
+
+        getCategoryBgClass(category) {
+            const classes = {
+                'Médecin': 'bg-green-100',
+                'Pharmacie': 'bg-purple-100',
+                'Hôpital': 'bg-red-100',
+                'Clinique': 'bg-yellow-100',
+                'Laboratoire': 'bg-cyan-100',
+                'Urgence': 'bg-red-100'
+            };
+            return classes[category] || 'bg-gray-100';
+        },
+
+        getCategoryBadgeClass(category) {
+            const classes = {
+                'Médecin': 'bg-green-100 text-green-700',
+                'Pharmacie': 'bg-purple-100 text-purple-700',
+                'Hôpital': 'bg-red-100 text-red-700',
+                'Clinique': 'bg-yellow-100 text-yellow-700',
+                'Laboratoire': 'bg-cyan-100 text-cyan-700',
+                'Urgence': 'bg-red-100 text-red-700'
+            };
+            return classes[category] || 'bg-gray-100 text-gray-700';
+        },
+
+        showQrCode(lieu) {
+            this.qrLieu = lieu;
+            this.qrGoogleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lieu.latitude},${lieu.longitude}`;
+            
+            fetch(`/aide/map/lieu/${lieu.id}/qr`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.qrCodeImage = data.qrCode;
+                        this.showQrModal = true;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading QR code:', error);
+                });
+        }
+    };
+}
+
+// Global function to open reviews from popup
+function openReviewsModal(lieuId) {
+    if (mapAppData) {
+        mapAppData.openReviews(lieuId);
+    }
+}
+</script>
+{% endblock %}

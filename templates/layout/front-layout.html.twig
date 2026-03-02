@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-50">
+    {% include 'components/top-nav.html.twig' %}
+    
+    <main class="p-6 min-h-[calc(100vh-80px)]">
+        {% block content %}{% endblock %}
+    </main>
+</div>
+{% endblock %}

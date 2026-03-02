@@ -1,0 +1,399 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Carte Médicale – Administration{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+.lieu-card {
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+}
+.lieu-card:hover {
+    transform: translateX(4px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+.lieu-card.hopital { border-left-color: #ef4444; }
+.lieu-card.pharmacie { border-left-color: #8b5cf6; }
+.lieu-card.clinique { border-left-color: #f59e0b; }
+.lieu-card.cabinet { border-left-color: #10b981; }
+.lieu-card.urgence { border-left-color: #dc2626; }
+.lieu-card.centre_don { border-left-color: #ec4899; }
+
+.category-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+.stat-card-enhanced {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+.stat-card-enhanced:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+#map {
+    border-radius: 1rem;
+    z-index: 1;
+}
+.form-section {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 1px solid #e5e7eb;
+}
+.category-option {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+.category-option:hover {
+    transform: scale(1.02);
+}
+.category-option.selected {
+    border-color: #10b981 !important;
+    background-color: #ecfdf5 !important;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-6 animate-fadeIn" x-data="{ showForm: false, selectedCategory: '' }">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
+                <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center text-white text-xl">
+                    🗺️
+                </div>
+                Carte Médicale
+            </h1>
+            <p class="text-gray-500 mt-1 ml-16">Gérez les établissements de santé sur la carte interactive</p>
+        </div>
+        <button @click="showForm = !showForm" 
+                class="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition flex items-center gap-2">
+            <span x-show="!showForm">➕</span>
+            <span x-show="showForm">✕</span>
+            <span x-text="showForm ? 'Fermer' : 'Ajouter un lieu'"></span>
+        </button>
+    </div>
+
+    {% for message in app.flashes('success') %}
+    <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 text-green-800 px-6 py-4 rounded-xl flex items-center gap-3 shadow-sm">
+        <span class="text-2xl">✅</span>
+        <span class="font-medium">{{ message }}</span>
+    </div>
+    {% endfor %}
+
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div class="stat-card-enhanced">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Total Lieux</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ lieux|length }}</p>
+                </div>
+                <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center text-2xl">
+                    📍
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card-enhanced">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Hôpitaux</p>
+                    <p class="text-3xl font-bold text-red-600 mt-1">{{ lieux|filter(l => l.categorie == 'hopital')|length }}</p>
+                </div>
+                <div class="w-14 h-14 bg-red-100 rounded-2xl flex items-center justify-center text-2xl">
+                    🏥
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card-enhanced">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Pharmacies</p>
+                    <p class="text-3xl font-bold text-purple-600 mt-1">{{ lieux|filter(l => l.categorie == 'pharmacie')|length }}</p>
+                </div>
+                <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center text-2xl">
+                    💊
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card-enhanced">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Cliniques</p>
+                    <p class="text-3xl font-bold text-yellow-600 mt-1">{{ lieux|filter(l => l.categorie == 'clinique')|length }}</p>
+                </div>
+                <div class="w-14 h-14 bg-yellow-100 rounded-2xl flex items-center justify-center text-2xl">
+                    🏨
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card-enhanced">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Urgences</p>
+                    <p class="text-3xl font-bold text-red-600 mt-1">{{ lieux|filter(l => l.categorie == 'urgence')|length }}</p>
+                </div>
+                <div class="w-14 h-14 bg-red-100 rounded-2xl flex items-center justify-center text-2xl">
+                    🚨
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div x-show="showForm" x-transition class="form-section">
+        <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <span class="text-xl">➕</span> Ajouter un nouveau lieu
+        </h3>
+        <p class="text-gray-500 text-sm mb-4">Cliquez sur la carte pour obtenir les coordonnées GPS automatiquement</p>
+        <form method="post" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nom de l'établissement *</label>
+                    <input type="text" name="nom" required
+                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                           placeholder="Ex: Hôpital Charles Nicolle">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Catégorie *</label>
+                    <select name="categorie" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500">
+                        <option value="">Sélectionner...</option>
+                        <option value="hopital">🏥 Hôpital</option>
+                        <option value="pharmacie">💊 Pharmacie</option>
+                        <option value="clinique">🏨 Clinique</option>
+                        <option value="cabinet">👨‍⚕️ Cabinet médical</option>
+                        <option value="urgence">🚨 Urgence</option>
+                        <option value="centre_don">🩸 Centre de don</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Téléphone</label>
+                    <input type="text" name="telephone"
+                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500"
+                           placeholder="Ex: +216 71 123 456">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Adresse *</label>
+                <input type="text" name="adresse" required
+                       class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500"
+                       placeholder="Ex: Boulevard du 9 Avril 1938, Tunis">
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Latitude *</label>
+                    <input type="text" id="lat" name="latitude" required step="any"
+                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 bg-gray-50"
+                           placeholder="Cliquez sur la carte" readonly>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Longitude *</label>
+                    <input type="text" id="lng" name="longitude" required step="any"
+                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 bg-gray-50"
+                           placeholder="Cliquez sur la carte" readonly>
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 pt-4">
+                <button type="button" @click="showForm = false" 
+                        class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold transition">
+                    Annuler
+                </button>
+                <button type="submit" 
+                        class="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-xl font-semibold shadow-lg transition flex items-center gap-2">
+                    <span>📍</span> Ajouter le lieu
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+            <div class="p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-b border-gray-100">
+                <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                    <span class="text-xl">🗺️</span> Carte Interactive
+                </h3>
+                <p class="text-gray-500 text-sm">Cliquez pour sélectionner une position</p>
+            </div>
+            <div id="map" style="height: 500px;"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+            <div class="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
+                <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                    <span class="text-xl">📋</span> Lieux Enregistrés
+                </h3>
+                <div class="flex gap-2 mt-2 flex-wrap">
+                    <button @click="selectedCategory = ''" 
+                            :class="selectedCategory === '' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700'"
+                            class="px-3 py-1 rounded-lg text-sm font-medium transition">
+                        Tous
+                    </button>
+                    <button @click="selectedCategory = 'hopital'" 
+                            :class="selectedCategory === 'hopital' ? 'bg-red-600 text-white' : 'bg-white text-gray-700'"
+                            class="px-3 py-1 rounded-lg text-sm font-medium transition">
+                        🏥 Hôpitaux
+                    </button>
+                    <button @click="selectedCategory = 'pharmacie'" 
+                            :class="selectedCategory === 'pharmacie' ? 'bg-purple-600 text-white' : 'bg-white text-gray-700'"
+                            class="px-3 py-1 rounded-lg text-sm font-medium transition">
+                        💊 Pharmacies
+                    </button>
+                    <button @click="selectedCategory = 'clinique'" 
+                            :class="selectedCategory === 'clinique' ? 'bg-yellow-600 text-white' : 'bg-white text-gray-700'"
+                            class="px-3 py-1 rounded-lg text-sm font-medium transition">
+                        🏨 Cliniques
+                    </button>
+                </div>
+            </div>
+            <div class="max-h-96 overflow-y-auto p-4 space-y-3">
+                {% for lieu in lieux %}
+                <div class="lieu-card {{ lieu.categorie }} bg-gray-50 rounded-xl p-4"
+                     x-show="selectedCategory === '' || selectedCategory === '{{ lieu.categorie }}'">
+                    <div class="flex items-start gap-4">
+                        <div class="category-icon 
+                            {% if lieu.categorie == 'hopital' %}bg-red-100
+                            {% elseif lieu.categorie == 'pharmacie' %}bg-purple-100
+                            {% elseif lieu.categorie == 'clinique' %}bg-yellow-100
+                            {% elseif lieu.categorie == 'cabinet' %}bg-green-100
+                            {% elseif lieu.categorie == 'urgence' %}bg-red-100
+                            {% elseif lieu.categorie == 'centre_don' %}bg-pink-100
+                            {% else %}bg-gray-100{% endif %}">
+                            {% if lieu.categorie == 'hopital' %}🏥
+                            {% elseif lieu.categorie == 'pharmacie' %}💊
+                            {% elseif lieu.categorie == 'clinique' %}🏨
+                            {% elseif lieu.categorie == 'cabinet' %}👨‍⚕️
+                            {% elseif lieu.categorie == 'urgence' %}🚨
+                            {% elseif lieu.categorie == 'centre_don' %}🩸
+                            {% else %}📍{% endif %}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-gray-800">{{ lieu.nom }}</h4>
+                            <p class="text-sm text-gray-500 truncate">{{ lieu.adresse }}</p>
+                            <div class="flex items-center gap-4 mt-2 text-xs text-gray-400">
+                                {% if lieu.telephone %}
+                                <span class="flex items-center gap-1">
+                                    <span>📞</span> {{ lieu.telephone }}
+                                </span>
+                                {% endif %}
+                                <span class="flex items-center gap-1">
+                                    <span>📅</span> {{ lieu.dateCreation|date('d/m/Y') }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="focusOnMap({{ lieu.latitude }}, {{ lieu.longitude }})"
+                                    class="p-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg transition" title="Voir sur la carte">
+                                📍
+                            </button>
+                            <form method="post" action="{{ path('admin_lieu_delete', {id: lieu.id}) }}"
+                                  onsubmit="return confirm('⚠️ Supprimer ce lieu ?');">
+                                <button type="submit" 
+                                        class="p-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition" title="Supprimer">
+                                    🗑️
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-12 text-gray-400">
+                    <div class="text-5xl mb-3">📍</div>
+                    <p class="font-medium">Aucun lieu enregistré</p>
+                    <p class="text-sm">Ajoutez votre premier établissement médical</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-6 text-white">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center text-3xl">
+                    💡
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg">Conseils d'utilisation</h3>
+                    <p class="text-green-100 text-sm">Cliquez sur la carte pour obtenir les coordonnées GPS. Utilisez les filtres pour trouver rapidement un type d'établissement.</p>
+                </div>
+            </div>
+            <a href="{{ path('aide_map') }}" target="_blank"
+               class="px-6 py-3 bg-white/20 hover:bg-white/30 rounded-xl font-semibold transition flex items-center gap-2">
+                👁️ Voir la carte publique
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+var map = L.map('map').setView([36.8065, 10.1815], 8);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+}).addTo(map);
+
+var markers = [];
+
+{% for lieu in lieux %}
+(function() {
+    var icon = L.divIcon({
+        html: `<div style="background: {% if lieu.categorie == 'hopital' %}#ef4444{% elseif lieu.categorie == 'pharmacie' %}#8b5cf6{% elseif lieu.categorie == 'clinique' %}#f59e0b{% elseif lieu.categorie == 'urgence' %}#dc2626{% elseif lieu.categorie == 'centre_don' %}#ec4899{% else %}#10b981{% endif %}; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); border: 2px solid white;">{% if lieu.categorie == 'hopital' %}🏥{% elseif lieu.categorie == 'pharmacie' %}💊{% elseif lieu.categorie == 'clinique' %}🏨{% elseif lieu.categorie == 'cabinet' %}👨‍⚕️{% elseif lieu.categorie == 'urgence' %}🚨{% elseif lieu.categorie == 'centre_don' %}🩸{% else %}📍{% endif %}</div>`,
+        className: 'custom-marker',
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
+    });
+    
+    var marker = L.marker([{{ lieu.latitude }}, {{ lieu.longitude }}], { icon: icon })
+        .addTo(map)
+        .bindPopup(`
+            <div style="min-width: 200px;">
+                <h3 style="font-weight: bold; font-size: 14px; margin-bottom: 5px;">{{ lieu.nom }}</h3>
+                <p style="color: #666; font-size: 12px; margin-bottom: 5px;">{{ lieu.adresse }}</p>
+                {% if lieu.telephone %}
+                <p style="font-size: 12px;">📞 {{ lieu.telephone }}</p>
+                {% endif %}
+                <div style="margin-top: 8px;">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination={{ lieu.latitude }},{{ lieu.longitude }}" 
+                       target="_blank"
+                       style="display: inline-block; background: #3b82f6; color: white; padding: 4px 10px; border-radius: 6px; text-decoration: none; font-size: 11px;">
+                        🧭 Itinéraire
+                    </a>
+                </div>
+            </div>
+        `);
+    markers.push(marker);
+})();
+{% endfor %}
+
+map.on('click', function(e) {
+    document.getElementById('lat').value = e.latlng.lat.toFixed(6);
+    document.getElementById('lng').value = e.latlng.lng.toFixed(6);
+});
+
+function focusOnMap(lat, lng) {
+    map.setView([lat, lng], 15);
+    markers.forEach(function(m) {
+        var pos = m.getLatLng();
+        if (Math.abs(pos.lat - lat) < 0.0001 && Math.abs(pos.lng - lng) < 0.0001) {
+            m.openPopup();
+        }
+    });
+}
+</script>
+{% endblock %}

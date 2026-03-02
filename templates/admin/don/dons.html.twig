@@ -1,0 +1,93 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Gestion des dons{% endblock %}
+
+{% block body %}
+
+<div class="flex min-h-screen bg-gray-50" x-data="{ sidebarOpen: true }">
+
+    <!-- SIDEBAR -->
+    <div class="w-64 fixed inset-y-0 left-0 z-50">
+        {% include 'admin/components/sidebar.html.twig' %}
+    </div>
+
+
+    <!-- MAIN -->
+    <div class="flex flex-col flex-1 ml-64">
+
+        <!-- TOP NAV -->
+        {% include 'admin/components/top-nav.html.twig' %}
+
+
+        <!-- CONTENT -->
+        <main class="p-6">
+
+            <h1 class="text-2xl font-bold text-red-700 mb-6">
+                🧾 Gestion des dons
+            </h1>
+
+
+            <div class="bg-white rounded-xl shadow overflow-hidden">
+
+                <table class="w-full">
+
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="p-3 text-left">Type</th>
+                            <th class="p-3 text-left">Région</th>
+                            <th class="p-3 text-left">Date</th>
+                            <th class="p-3 text-left">Statut</th>
+                            <th class="p-3 text-center">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for don in dons %}
+
+                        <tr class="border-t">
+
+                            <td class="p-3">{{ don.typeDon }}</td>
+
+                            <td>{{ don.region }}</td>
+
+                            <td>{{ don.dateDon|date('d/m/Y H:i') }}</td>
+
+                            <td>{{ don.statut }}</td>
+
+                            <td class="flex gap-2 p-3">
+
+                                <form method="post"
+                                      action="{{ path('admin_don_validate',{id:don.id}) }}">
+                                    <button class="bg-green-600 text-white px-3 py-1 rounded">
+                                        Valider
+                                    </button>
+                                </form>
+
+
+                                <form method="post"
+                                      action="{{ path('admin_don_delete',{id:don.id}) }}">
+                                    <button class="bg-red-600 text-white px-3 py-1 rounded">
+                                        Supprimer
+                                    </button>
+                                </form>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+{% endblock %}

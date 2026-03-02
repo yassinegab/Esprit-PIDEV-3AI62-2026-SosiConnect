@@ -1,0 +1,160 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block content %}
+
+<h1 class="text-2xl font-bold text-red-600 mb-6">
+🚨 Gestion des urgences
+</h1>
+<div class="flex justify-between items-center mb-6">
+
+<h1 class="text-2xl font-bold text-red-600">
+🚨 Gestion des urgences
+</h1>
+
+<div class="flex gap-3">
+
+<a href="{{ path('admin_urgences', {sort:'date'}) }}"
+class="
+px-4 py-2 rounded-lg text-white
+{{ sort == 'date'
+? 'bg-blue-600'
+: 'bg-gray-500 hover:bg-gray-600' }}
+">
+📅 Trier par date
+</a>
+
+
+<a href="{{ path('admin_urgences', {sort:'statut'}) }}"
+class="
+px-4 py-2 rounded-lg text-white
+{{ sort == 'statut'
+? 'bg-green-600'
+: 'bg-gray-500 hover:bg-gray-600' }}
+">
+📊 Trier par statut
+</a>
+
+</div>
+
+</div>
+    
+
+<div class="space-y-4">
+
+{% for urgence in urgences %}
+
+<div class="bg-white p-5 rounded-xl shadow flex justify-between items-center">
+
+    <div>
+
+        <p class="font-semibold text-lg">
+            {{ urgence.message }}
+        </p>
+
+        <p class="text-sm text-gray-500">
+            {{ urgence.dateUrgence|date('d/m/Y H:i') }}
+        </p>
+
+        <span class="
+        px-2 py-1 rounded text-xs font-bold
+        {% if urgence.statut == 'EN_ATTENTE' %}
+        bg-yellow-100 text-yellow-700
+        {% else %}
+        bg-green-100 text-green-700
+        {% endif %}
+        ">
+        {{ urgence.statut }}
+        </span>
+
+    </div>
+
+    <div class="flex gap-2">
+
+        <!-- VOIR MAP -->
+        <button onclick="openMap({{ urgence.latitude }}, {{ urgence.longitude }})"
+        class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+        📍 Voir
+        </button>
+
+        <!-- TOGGLE -->
+        <a href="{{ path('admin_urgence_toggle', {id: urgence.id}) }}"
+        class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
+        🔄 Statut
+        </a>
+
+        <!-- DELETE -->
+        <a href="{{ path('admin_urgence_delete', {id: urgence.id}) }}"
+        onclick="return confirm('Supprimer cette urgence ?')"
+        class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
+        🗑 Supprimer
+        </a>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+
+<!-- MODAL -->
+<div id="mapModal"
+class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+
+    <div class="bg-white p-4 rounded-xl w-2/3">
+
+        <div class="flex justify-between mb-2">
+
+            <h2 class="font-bold">Localisation urgence</h2>
+
+            <button onclick="closeMap()">✖</button>
+
+        </div>
+
+        <div id="map" style="height:400px;"></div>
+
+    </div>
+
+</div>
+
+
+<!-- Leaflet -->
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+
+<script>
+
+let map;
+
+function openMap(lat, lng)
+{
+
+    document.getElementById('mapModal').style.display='flex';
+
+    setTimeout(()=>{
+
+        if(map) map.remove();
+
+        map = L.map('map').setView([lat, lng], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
+        .addTo(map);
+
+        L.marker([lat, lng]).addTo(map);
+
+    },100);
+
+}
+
+function closeMap()
+{
+    document.getElementById('mapModal').style.display='none';
+}
+
+</script>
+
+{% endblock %}

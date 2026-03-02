@@ -1,0 +1,351 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Matching - Demande #{{ demande.id }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+.match-score-ring {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    position: relative;
+}
+.match-score-ring::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: white;
+}
+.match-score-ring span {
+    position: relative;
+    z-index: 1;
+}
+.score-high { background: conic-gradient(#22c55e calc(var(--score) * 1%), #e5e7eb 0); color: #16a34a; }
+.score-medium { background: conic-gradient(#eab308 calc(var(--score) * 1%), #e5e7eb 0); color: #ca8a04; }
+.score-low { background: conic-gradient(#94a3b8 calc(var(--score) * 1%), #e5e7eb 0); color: #64748b; }
+
+.donor-card {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+.donor-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+.donor-card.high-match { border-color: #22c55e; background: linear-gradient(to bottom, #f0fdf4, white); }
+.donor-card.medium-match { border-color: #eab308; background: linear-gradient(to bottom, #fefce8, white); }
+.donor-card.low-match { border-color: #94a3b8; background: linear-gradient(to bottom, #f8fafc, white); }
+
+.blood-type-badge {
+    font-family: monospace;
+    font-weight: bold;
+    padding: 6px 14px;
+    border-radius: 10px;
+}
+
+.compatibility-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-6 animate-fadeIn">
+    <div class="flex items-center gap-4">
+        <a href="{{ path('admin_matching') }}" 
+           class="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-xl flex items-center justify-center text-gray-600 transition">
+            ←
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white">
+                    🔗
+                </div>
+                Matching Détaillé - Demande #{{ demande.id }}
+            </h1>
+            <p class="text-gray-500 mt-1 ml-13">Analyse complète des donneurs compatibles</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-6">
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                <div class="p-5 bg-gradient-to-r {% if demande.urgence %}from-red-500 to-orange-500{% else %}from-blue-500 to-indigo-500{% endif %} text-white">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center text-4xl">
+                                {% if demande.typeDemande == 'sang' %}🩸{% else %}🫀{% endif %}
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    {% if demande.urgence %}
+                                    <span class="px-3 py-1 bg-white/20 rounded-full text-sm font-bold animate-pulse">
+                                        🚨 URGENT
+                                    </span>
+                                    {% endif %}
+                                    <span class="text-xl font-bold">{{ demande.typeDemande|upper }}</span>
+                                </div>
+                                <div class="flex items-center gap-4 text-white/80 text-sm">
+                                    <span class="flex items-center gap-1">
+                                        <span>📍</span> {{ demande.region }}
+                                    </span>
+                                    <span class="flex items-center gap-1">
+                                        <span>📅</span> {{ demande.dateDemande|date('d/m/Y à H:i') }}
+                                    </span>
+                                    <span class="flex items-center gap-1">
+                                        <span>Queue:</span> #{{ demande.rangAttente }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        {% if demande.typeSanguin %}
+                        <div class="blood-type-badge bg-white text-red-600 text-2xl">
+                            {{ demande.typeSanguin }}
+                        </div>
+                        {% elseif demande.typeOrgane %}
+                        <div class="blood-type-badge bg-white text-purple-600">
+                            {{ demande.typeOrgane }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="p-5">
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="text-center p-4 bg-gray-50 rounded-xl">
+                            <p class="text-3xl font-bold text-gray-800">{{ matches|length }}</p>
+                            <p class="text-sm text-gray-500">Donneurs compatibles</p>
+                        </div>
+                        <div class="text-center p-4 bg-green-50 rounded-xl">
+                            <p class="text-3xl font-bold text-green-600">{{ matches|filter(m => m.level == 'high')|length }}</p>
+                            <p class="text-sm text-gray-500">Score élevé (≥80%)</p>
+                        </div>
+                        <div class="text-center p-4 bg-yellow-50 rounded-xl">
+                            <p class="text-3xl font-bold text-yellow-600">{{ matches|filter(m => m.level == 'medium')|length }}</p>
+                            <p class="text-sm text-gray-500">Score moyen (50-79%)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                        <span class="text-xl">👥</span> Donneurs Compatibles
+                    </h3>
+                    <form method="post" action="{{ path('admin_matching_notify_all', {demandeId: demande.id}) }}">
+                        <button type="submit" 
+                                class="px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-xl font-medium transition flex items-center gap-2 shadow-lg">
+                            <span>📧</span> Notifier tous les donneurs
+                        </button>
+                    </form>
+                </div>
+
+                {% if matches|length > 0 %}
+                <div class="space-y-4">
+                    {% for match in matches %}
+                    <div class="donor-card {{ match.level }}-match rounded-xl p-5 relative overflow-hidden">
+                        {% if match.level == 'high' %}
+                        <div class="absolute top-0 right-0 bg-green-500 text-white text-xs px-3 py-1 rounded-bl-xl font-bold flex items-center gap-1">
+                            ⭐ MEILLEUR MATCH
+                        </div>
+                        {% endif %}
+
+                        <div class="flex items-start gap-5">
+                            <div class="match-score-ring score-{{ match.level }}" style="--score: {{ match.score }}">
+                                <span>{{ match.score }}%</span>
+                            </div>
+
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <h4 class="font-bold text-gray-800 text-lg">{{ match.donor.prenom }} {{ match.donor.nom }}</h4>
+                                    <span class="blood-type-badge bg-red-100 text-red-700">{{ match.donor.groupeSanguin }}</span>
+                                    {% if match.donor.isDisponible %}
+                                    <span class="compatibility-badge bg-green-100 text-green-700">
+                                        ✓ Disponible
+                                    </span>
+                                    {% else %}
+                                    <span class="compatibility-badge bg-gray-100 text-gray-600">
+                                        ✗ Indisponible
+                                    </span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="flex items-center gap-6 text-sm text-gray-500 mb-3">
+                                    <span class="flex items-center gap-1">
+                                        <span>🎂</span> {{ match.donor.age }} ans
+                                    </span>
+                                    <span class="flex items-center gap-1">
+                                        <span>📞</span> {{ match.donor.telephone }}
+                                    </span>
+                                    {% if match.donor.dateDernierDon %}
+                                    {% set daysSince = date().diff(match.donor.dateDernierDon).days %}
+                                    <span class="flex items-center gap-1 {% if daysSince >= 90 %}text-green-600{% else %}text-yellow-600{% endif %}">
+                                        <span>🩸</span> Dernier don: {{ daysSince }} jours
+                                    </span>
+                                    {% else %}
+                                    <span class="flex items-center gap-1 text-green-600">
+                                        <span>✨</span> Premier don
+                                    </span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    {% for reason in match.reasons %}
+                                    <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium flex items-center gap-1">
+                                        ✓ {{ reason }}
+                                    </span>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="flex items-center justify-between pt-3 border-t border-gray-200">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs text-gray-400">
+                                            Inscrit le {{ match.donor.createdAt|date('d/m/Y') }}
+                                        </span>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <a href="tel:{{ match.donor.telephone }}" 
+                                           class="px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-sm font-medium transition flex items-center gap-1">
+                                            📞 Appeler
+                                        </a>
+                                        <form method="post" action="{{ path('admin_matching_notify', {demandeId: demande.id, donorId: match.donor.id}) }}">
+                                            <button type="submit" 
+                                                    class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition flex items-center gap-1">
+                                                📧 Notifier
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-12 bg-gray-50 rounded-xl">
+                    <div class="text-6xl mb-4">🔍</div>
+                    <h4 class="font-bold text-gray-800 mb-2">Aucun donneur compatible trouvé</h4>
+                    <p class="text-gray-500 mb-4">Il n'y a pas de donneurs correspondant aux critères de cette demande</p>
+                    <div class="flex justify-center gap-4">
+                        <a href="{{ path('admin_donneurs') }}" 
+                           class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium">
+                            👥 Voir tous les donneurs
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-5">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="text-lg">📊</span> Statistiques
+                </h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
+                        <span class="text-gray-600">Score moyen</span>
+                        <span class="font-bold text-gray-800">
+                            {% if matches|length > 0 %}
+                            {{ (matches|reduce((carry, m) => carry + m.score, 0) / matches|length)|round }}%
+                            {% else %}N/A{% endif %}
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-green-50 rounded-xl">
+                        <span class="text-gray-600">Matches parfaits</span>
+                        <span class="font-bold text-green-600">{{ matches|filter(m => m.score >= 80)|length }}</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-yellow-50 rounded-xl">
+                        <span class="text-gray-600">Matches partiels</span>
+                        <span class="font-bold text-yellow-600">{{ matches|filter(m => m.score >= 50 and m.score < 80)|length }}</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
+                        <span class="text-gray-600">Faibles matches</span>
+                        <span class="font-bold text-gray-600">{{ matches|filter(m => m.score < 50)|length }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-5">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="text-lg">🩸</span> Compatibilité Requise
+                </h3>
+                {% if demande.typeSanguin %}
+                <div class="text-center p-4 bg-red-50 rounded-xl mb-4">
+                    <p class="text-sm text-gray-500 mb-1">Groupe sanguin recherché</p>
+                    <p class="text-3xl font-bold text-red-600">{{ demande.typeSanguin }}</p>
+                </div>
+                <div class="space-y-2 text-sm">
+                    <p class="font-medium text-gray-700">Donneurs compatibles:</p>
+                    <div class="flex flex-wrap gap-2">
+                        {% set compatible = {'O-': 'Tous', 'O+': 'O+, A+, B+, AB+', 'A-': 'A+, A-, AB+, AB-', 'A+': 'A+, AB+', 'B-': 'B+, B-, AB+, AB-', 'B+': 'B+, AB+', 'AB-': 'AB+, AB-', 'AB+': 'AB+'} %}
+                        {% for donor, recipients in compatible %}
+                            {% if demande.typeSanguin in recipients|split(', ') %}
+                            <span class="px-2 py-1 bg-green-100 text-green-700 rounded-lg font-mono text-xs">{{ donor }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-4 text-gray-500">
+                    <p>Information non spécifiée</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-5 border border-indigo-100">
+                <h3 class="font-bold text-indigo-800 mb-3 flex items-center gap-2">
+                    <span class="text-lg">💡</span> Recommandations
+                </h3>
+                <ul class="space-y-2 text-sm text-indigo-700">
+                    <li class="flex items-start gap-2">
+                        <span>•</span>
+                        <span>Priorisez les donneurs avec un score ≥ 80%</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span>•</span>
+                        <span>Contactez au moins 3 donneurs pour assurer un backup</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span>•</span>
+                        <span>Vérifiez la disponibilité par téléphone</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span>•</span>
+                        <span>Les donneurs O- sont universels pour les urgences</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-5">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="text-lg">⚡</span> Actions Rapides
+                </h3>
+                <div class="space-y-3">
+                    <a href="{{ path('admin_demandes') }}" 
+                       class="block w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-700 font-medium text-center transition">
+                        📋 Voir toutes les demandes
+                    </a>
+                    <a href="{{ path('admin_donneurs') }}" 
+                       class="block w-full px-4 py-3 bg-blue-100 hover:bg-blue-200 rounded-xl text-blue-700 font-medium text-center transition">
+                        👥 Gérer les donneurs
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,267 @@
+{% extends 'layout/front-layout.html.twig' %}
+
+{% block title %}Centre d'Aide{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="/css/modern-styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+.hero-gradient-aide {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 50%, #93c5fd 100%);
+}
+.card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-8 animate-fadeIn">
+    <div class="hero-gradient-aide rounded-2xl p-8 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-blue-300 rounded-full opacity-20 -translate-y-1/2 translate-x-1/2"></div>
+        <div class="absolute bottom-0 left-0 w-48 h-48 bg-blue-400 rounded-full opacity-20 translate-y-1/2 -translate-x-1/2"></div>
+        
+        <div class="relative z-10">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2" style="font-family: 'Poppins', sans-serif;">
+                🆘 Centre d'Aide & Assistance
+            </h1>
+            <p class="text-lg text-gray-600 max-w-2xl">
+                Besoin d'aide ? Gérez vos urgences, contacts et trouvez les réponses à vos questions.
+            </p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+        <a href="{{ path('urgence_index') }}" class="bg-white rounded-2xl p-6 shadow-lg card-hover border-2 border-red-200 group">
+            <div class="w-14 h-14 bg-red-100 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:bg-red-200 transition group-hover:scale-110">
+                🚨
+            </div>
+            <h3 class="font-bold text-gray-800 text-lg mb-1">Déclencher Urgence</h3>
+            <p class="text-gray-500 text-sm">Envoyer position aux contacts</p>
+        </a>
+
+        <a href="{{ path('contact_urgence_index') }}" class="bg-white rounded-2xl p-6 shadow-lg card-hover border border-gray-100 group">
+            <div class="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:bg-orange-200 transition group-hover:scale-110">
+                📱
+            </div>
+            <h3 class="font-bold text-gray-800 text-lg mb-1">Contacts d'Urgence</h3>
+            <p class="text-gray-500 text-sm">Gérer vos contacts</p>
+        </a>
+
+        <a href="{{ path('aide_faq') }}" class="bg-white rounded-2xl p-6 shadow-lg card-hover border border-gray-100 group">
+            <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:bg-purple-200 transition group-hover:scale-110">
+                ❓
+            </div>
+            <h3 class="font-bold text-gray-800 text-lg mb-1">FAQ</h3>
+            <p class="text-gray-500 text-sm">Questions fréquentes</p>
+        </a>
+
+        <a href="{{ path('aide_support_new') }}" class="bg-white rounded-2xl p-6 shadow-lg card-hover border border-gray-100 group">
+            <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:bg-blue-200 transition group-hover:scale-110">
+                🎫
+            </div>
+            <h3 class="font-bold text-gray-800 text-lg mb-1">Support</h3>
+            <p class="text-gray-500 text-sm">Créer un ticket</p>
+        </a>
+
+        <a href="{{ path('aide_tutorials') }}" class="bg-white rounded-2xl p-6 shadow-lg card-hover border border-gray-100 group">
+            <div class="w-14 h-14 bg-pink-100 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:bg-pink-200 transition group-hover:scale-110">
+                🎬
+            </div>
+            <h3 class="font-bold text-gray-800 text-lg mb-1">Tutoriels</h3>
+            <p class="text-gray-500 text-sm">Guides vidéo</p>
+        </a>
+    </div>
+
+    <a href="{{ path('aide_map') }}" class="block bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl p-6 text-white hover:shadow-xl transition">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center text-2xl">
+                    🗺️
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold">Carte Médicale</h3>
+                    <p class="text-green-100">Trouvez les médecins, pharmacies et hôpitaux près de vous</p>
+                </div>
+            </div>
+            <span class="text-3xl">→</span>
+        </div>
+    </a>
+
+    <div class="bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl p-8 text-white">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+            <div>
+                <h3 class="text-2xl font-bold mb-2">🚨 Urgence - Envoyer votre position</h3>
+                <p class="text-red-100">En cas d'urgence, envoyez votre localisation GPS à tous vos contacts d'urgence en un clic.</p>
+            </div>
+            <a href="{{ path('urgence_index') }}" class="bg-white text-red-600 px-8 py-4 rounded-xl font-bold hover:bg-red-50 transition shadow-lg flex items-center gap-2">
+                <span class="text-2xl">🆘</span> Déclencher Urgence
+            </a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-gray-800 text-lg">🔥 Questions Populaires</h3>
+                <a href="{{ path('aide_faq') }}" class="text-blue-600 text-sm font-medium hover:text-blue-700">
+                    Voir tout →
+                </a>
+            </div>
+            <div class="space-y-3">
+                {% for faq in popularFaqs %}
+                <a href="{{ path('aide_faq') }}" class="block p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
+                    <div class="flex items-start gap-3">
+                        <span class="text-blue-500 mt-1">❓</span>
+                        <div>
+                            <p class="font-medium text-gray-800">{{ faq.question }}</p>
+                            <p class="text-xs text-gray-500 mt-1">{{ faq.viewCount }} vues • {{ faq.helpfulCount }} utiles</p>
+                        </div>
+                    </div>
+                </a>
+                {% else %}
+                <div class="text-center py-8 text-gray-400">
+                    <p>Aucune FAQ disponible</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+            <h3 class="font-bold text-gray-800 text-lg mb-4">💬 Contactez-nous</h3>
+            <p class="text-gray-600 mb-6">
+                Vous ne trouvez pas la réponse à votre question ? Notre équipe est là pour vous aider.
+            </p>
+            
+            <div class="space-y-4">
+                <a href="{{ path('aide_support_new') }}" class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-xl">
+                        🎫
+                    </div>
+                    <div>
+                        <p class="font-medium text-gray-800">Créer un ticket</p>
+                        <p class="text-xs text-gray-500">Réponse sous 24h</p>
+                    </div>
+                </a>
+
+                <a href="mailto:support@wellnessconnect.com" class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-xl">
+                        📧
+                    </div>
+                    <div>
+                        <p class="font-medium text-gray-800">Email</p>
+                        <p class="text-xs text-gray-500">support@wellnessconnect.com</p>
+                    </div>
+                </a>
+
+                <a href="tel:+21612345678" class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-xl">
+                        📞
+                    </div>
+                    <div>
+                        <p class="font-medium text-gray-800">Téléphone</p>
+                        <p class="text-xs text-gray-500">+216 12 345 678</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-gray-800 text-lg">🎬 Tutoriels Vidéo</h3>
+            <a href="{{ path('aide_tutorials') }}" class="text-blue-600 text-sm font-medium hover:text-blue-700">
+                Voir tous →
+            </a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <a href="{{ path('aide_tutorials') }}" class="p-4 bg-gradient-to-br from-red-50 to-pink-50 rounded-xl hover:shadow-md transition group border border-red-100">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition">
+                        🩸
+                    </div>
+                    <div>
+                        <p class="font-medium text-gray-800">Don de Sang</p>
+                        <p class="text-xs text-gray-500">Guide pour donneurs</p>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600">Apprenez les étapes pour donner votre sang en toute sécurité.</p>
+            </a>
+            <a href="{{ path('aide_tutorials') }}" class="p-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl hover:shadow-md transition group border border-purple-100">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition">
+                        🫀
+                    </div>
+                    <div>
+                        <p class="font-medium text-gray-800">Don d'Organe</p>
+                        <p class="text-xs text-gray-500">Informations</p>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600">Tout savoir sur le don d'organes et son importance.</p>
+            </a>
+            <a href="{{ path('aide_tutorials') }}" class="p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl hover:shadow-md transition group border border-green-100">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition">
+                        🗺️
+                    </div>
+                    <div>
+                        <p class="font-medium text-gray-800">Carte Médicale</p>
+                        <p class="text-xs text-gray-500">Comment utiliser</p>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600">Trouvez facilement les établissements de santé proches.</p>
+            </a>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+        <h3 class="font-bold text-gray-800 text-lg mb-4">📁 Parcourir par Catégorie</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {% for category in categories %}
+            <a href="{{ path('aide_faq', {category: category}) }}" class="p-4 bg-gray-50 rounded-xl hover:bg-blue-50 hover:border-blue-200 border border-transparent transition text-center">
+                <div class="text-2xl mb-2">
+                    {% if category == 'don' %}🩸
+                    {% elseif category == 'aide' %}🆘
+                    {% elseif category == 'urgence' %}🚨
+                    {% elseif category == 'compte' %}👤
+                    {% else %}📋{% endif %}
+                </div>
+                <p class="font-medium text-gray-700">{{ category|title }}</p>
+            </a>
+            {% else %}
+            <div class="col-span-4 text-center py-4 text-gray-400">
+                Aucune catégorie disponible
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl p-8 text-white">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+            <div>
+                <h3 class="text-2xl font-bold mb-2">📤 Partagez Wellness Connect</h3>
+                <p class="text-blue-100">Aidez vos amis à découvrir nos services de santé</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ app.request.uri }}" target="_blank"
+                   class="w-12 h-12 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center text-xl transition">
+                    f
+                </a>
+                <a href="https://twitter.com/intent/tweet?text=Découvrez%20Wellness%20Connect&url={{ app.request.uri }}" target="_blank"
+                   class="w-12 h-12 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center text-xl transition">
+                    𝕏
+                </a>
+                <a href="https://wa.me/?text=Découvrez%20Wellness%20Connect%20{{ app.request.uri }}" target="_blank"
+                   class="w-12 h-12 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center text-xl transition">
+                    💬
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

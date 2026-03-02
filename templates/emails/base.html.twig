@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Wellness Connect{% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .email-header {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            padding: 30px;
+            text-align: center;
+        }
+        .email-header h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+        }
+        .email-header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            margin: 8px 0 0 0;
+        }
+        .email-body {
+            padding: 40px 30px;
+        }
+        .email-footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #eee;
+        }
+        .email-footer p {
+            color: #666;
+            font-size: 13px;
+            margin: 5px 0;
+        }
+        .email-footer a {
+            color: #dc2626;
+            text-decoration: none;
+        }
+        .social-links {
+            margin-top: 15px;
+        }
+        .social-links a {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            background: #eee;
+            border-radius: 50%;
+            margin: 0 5px;
+            text-decoration: none;
+            color: #666;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body style="background-color: #f5f5f5; padding: 20px;">
+    <div class="email-container">
+        <div class="email-header">
+            <h1>🩸 Wellness Connect</h1>
+            <p>Ensemble, sauvons des vies</p>
+        </div>
+        
+        <div class="email-body">
+            {% block content %}{% endblock %}
+        </div>
+        
+        <div class="email-footer">
+            <p>
+                <strong>Wellness Connect</strong><br>
+                Plateforme de don et de bien-être
+            </p>
+            <p style="margin-top: 15px;">
+                <a href="{{ url('don') }}">Visiter notre site</a> • 
+                <a href="#">Se désabonner</a>
+            </p>
+            <div class="social-links">
+                <a href="#">f</a>
+                <a href="#">𝕏</a>
+                <a href="#">in</a>
+            </div>
+            <p style="margin-top: 20px; font-size: 11px; color: #999;">
+                © {{ "now"|date("Y") }} Wellness Connect. Tous droits réservés.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

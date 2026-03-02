@@ -1,0 +1,31 @@
+{% extends 'layout/front-layout.html.twig' %}
+
+{% block title %}Aide{% endblock %}
+
+{% block content %}
+
+<div class="space-y-8">
+<h1 class="text-3xl font-bold mb-2">🆘 Aide</h1>
+    <p class="text-gray-600 text-lg mb-6 leading-relaxed max-w-3xl">
+        Cette section est dédiée à votre sécurité et à votre accompagnement au quotidien.
+        Elle vous permet de <strong>déclencher rapidement une urgence</strong>,
+        de <strong>gérer vos contacts d’urgence</strong> et de
+        <strong>localiser les services médicaux proches</strong>
+        tels que les médecins, pharmacies et hôpitaux.
+        <br><br>
+        En cas de situation critique, ces outils facilitent une
+        <strong>réaction rapide</strong>, une <strong>communication efficace</strong>
+        et un <strong>accès immédiat à l’aide nécessaire</strong>.
+    </p>
+
+<!-- FULL WIDTH MENU -->
+<div class="w-full">
+    {% include 'components/flowing_menu.html.twig' %}
+</div>
+
+<!-- OPTIONAL: Dome gallery below -->
+<div class="mt-16">
+    {% include 'components/dome_gallery.html.twig' %}
+</div>
+</div>
+{% endblock %}

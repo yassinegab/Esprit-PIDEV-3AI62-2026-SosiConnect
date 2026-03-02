@@ -1,0 +1,41 @@
+vich_uploader:
+    db_driver: orm
+
+    metadata:
+        type: attribute
+
+    mappings:
+        don_document:
+            uri_prefix: /uploads/dons
+            upload_destination: '%kernel.project_dir%/public/uploads/dons'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
+        donneur_image:
+            uri_prefix: /uploads/donneurs
+            upload_destination: '%kernel.project_dir%/public/uploads/donneurs'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
+        tutorial_thumbnail:
+            uri_prefix: /uploads/tutorials
+            upload_destination: '%kernel.project_dir%/public/uploads/tutorials'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
+        medical_document:
+            uri_prefix: /uploads/medical
+            upload_destination: '%kernel.project_dir%/public/uploads/medical'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true
+
+        support_attachment:
+            uri_prefix: /uploads/support
+            upload_destination: '%kernel.project_dir%/public/uploads/support'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            delete_on_update: true
+            delete_on_remove: true

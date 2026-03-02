@@ -1,0 +1,225 @@
+{% extends 'layout/front-layout.html.twig' %}
+
+{% block title %}Urgences{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="/css/modern-styles.css">
+<style>
+.urgence-btn {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);
+    animation: pulse-urgent 2s infinite;
+}
+.urgence-btn:hover {
+    animation: none;
+    transform: scale(1.02);
+}
+@keyframes pulse-urgent {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    50% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-8 animate-fadeIn" x-data="{ open: false, urgence: {} }">
+    
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800" style="font-family: 'Poppins', sans-serif;">
+                🚨 Gestion des Urgences
+            </h1>
+            <p class="text-gray-500 mt-1">Déclenchez une alerte et envoyez votre position à vos contacts</p>
+        </div>
+        <a href="{{ path('contact_urgence_index') }}" class="bg-white px-4 py-2 rounded-xl shadow hover:shadow-lg transition text-gray-700 flex items-center gap-2">
+            <span>📱</span> Gérer les contacts
+        </a>
+    </div>
+
+    {% for message in app.flashes('success') %}
+    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded-lg flex items-center gap-2">
+        <span>✅</span> {{ message }}
+    </div>
+    {% endfor %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2">
+            <div class="bg-gradient-to-br from-red-500 to-rose-600 rounded-2xl p-8 text-white shadow-xl">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-4xl">
+                        🆘
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold">Déclencher une Urgence</h2>
+                        <p class="text-red-100">Envoie votre position GPS à tous vos contacts</p>
+                    </div>
+                </div>
+
+                <form method="post" action="{{ path('urgence_send') }}" id="urgenceForm">
+                    <input type="hidden" name="latitude" id="latitude">
+                    <input type="hidden" name="longitude" id="longitude">
+
+                    <button type="submit" class="urgence-btn w-full py-6 rounded-2xl text-white text-xl font-bold shadow-2xl flex items-center justify-center gap-3 transition">
+                        <span class="text-3xl">🚨</span>
+                        DÉCLENCHER L'URGENCE
+                    </button>
+                </form>
+
+                <div id="geoStatus" class="mt-4 text-center text-red-100 text-sm"></div>
+
+                <div class="mt-6 p-4 bg-white/10 rounded-xl">
+                    <p class="text-sm text-red-100">
+                        <strong>💡 Comment ça fonctionne :</strong><br>
+                        1. Cliquez sur le bouton pour déclencher l'urgence<br>
+                        2. Votre position GPS est capturée automatiquement<br>
+                        3. Un SMS avec votre localisation est envoyé à tous vos contacts d'urgence
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span>📊</span> Statistiques
+                </h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                        <span class="text-gray-600">Total alertes</span>
+                        <span class="font-bold text-gray-800">{{ urgences|length }}</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-xl">
+                        <span class="text-gray-600">En attente</span>
+                        <span class="font-bold text-yellow-600">{{ urgences|filter(u => u.statut == 'EN_ATTENTE')|length }}</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-green-50 rounded-xl">
+                        <span class="text-gray-600">Traitées</span>
+                        <span class="font-bold text-green-600">{{ urgences|filter(u => u.statut != 'EN_ATTENTE')|length }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <a href="{{ path('contact_urgence_index') }}" 
+               class="block bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition group">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-2xl group-hover:bg-orange-200 transition">
+                        📱
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-800">Contacts d'urgence</h3>
+                        <p class="text-gray-500 text-sm">Gérer vos contacts</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+        <div class="p-6 border-b border-gray-100">
+            <h3 class="font-bold text-gray-800 text-lg flex items-center gap-2">
+                <span>📋</span> Historique des alertes
+            </h3>
+        </div>
+
+        {% if urgences|length > 0 %}
+        <div class="divide-y divide-gray-100">
+            {% for u in urgences %}
+            <div class="p-6 hover:bg-gray-50 transition flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 {{ u.statut == 'EN_ATTENTE' ? 'bg-yellow-100' : 'bg-green-100' }} rounded-xl flex items-center justify-center text-2xl">
+                        {{ u.statut == 'EN_ATTENTE' ? '⏳' : '✅' }}
+                    </div>
+                    <div>
+                        <p class="font-medium text-gray-800">{{ u.dateUrgence|date('d/m/Y à H:i') }}</p>
+                        <p class="text-sm text-gray-500">
+                            📍 {{ u.latitude|slice(0, 8) }}... , {{ u.longitude|slice(0, 8) }}...
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="px-3 py-1 {{ u.statut == 'EN_ATTENTE' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700' }} rounded-full text-xs font-semibold">
+                        {{ u.statut }}
+                    </span>
+                    <button class="text-blue-600 hover:text-blue-700 font-medium text-sm"
+                            @click="open = true; urgence = {
+                                id: {{ u.id }},
+                                date: '{{ u.dateUrgence|date('d/m/Y H:i') }}',
+                                message: '{{ u.message|e('js') }}',
+                                lat: '{{ u.latitude }}',
+                                lng: '{{ u.longitude }}',
+                                statut: '{{ u.statut }}'
+                            }">
+                        Voir détails
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="p-12 text-center">
+            <div class="text-4xl mb-4">📭</div>
+            <p class="text-gray-500">Aucune alerte enregistrée</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div x-show="open" x-cloak
+         class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+         @click.self="open = false">
+        <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-red-500 to-rose-500 p-6 text-white">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <span>🚨</span> Détails de l'urgence
+                </h2>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
+                    <span class="text-gray-500">Date</span>
+                    <span class="font-medium text-gray-800" x-text="urgence.date"></span>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
+                    <span class="text-gray-500">Message</span>
+                    <span class="font-medium text-gray-800" x-text="urgence.message"></span>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
+                    <span class="text-gray-500">Latitude</span>
+                    <span class="font-medium text-gray-800" x-text="urgence.lat"></span>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
+                    <span class="text-gray-500">Longitude</span>
+                    <span class="font-medium text-gray-800" x-text="urgence.lng"></span>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
+                    <span class="text-gray-500">Statut</span>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold"
+                          :class="urgence.statut === 'EN_ATTENTE' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'"
+                          x-text="urgence.statut"></span>
+                </div>
+
+                <a :href="`https://maps.google.com/?q=${urgence.lat},${urgence.lng}`" 
+                   target="_blank"
+                   class="block w-full py-3 bg-blue-600 hover:bg-blue-700 text-white text-center rounded-xl font-medium transition">
+                    🗺️ Voir sur Google Maps
+                </a>
+            </div>
+
+            <div class="p-6 pt-0 flex gap-3">
+                <form method="post" :action="`/aide/urgence/delete/${urgence.id}`" class="flex-1">
+                    <button type="submit" 
+                            onclick="return confirm('Supprimer cette alerte ?')"
+                            class="w-full py-3 bg-red-100 hover:bg-red-200 text-red-700 rounded-xl font-medium transition">
+                        🗑 Supprimer
+                    </button>
+                </form>
+                <button class="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition"
+                        @click="open = false">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/geolocation.js"></script>
+{% endblock %}

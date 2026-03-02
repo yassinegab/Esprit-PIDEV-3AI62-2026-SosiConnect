@@ -1,0 +1,57 @@
+<aside class="fixed left-0 top-0 h-screen w-72 bg-white border-r border-gray-200 flex flex-col shadow-sm z-40">
+  
+  <div class="flex h-16 items-center border-b border-gray-200 px-6">
+    <div class="flex items-center gap-3">
+      <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-pink-500 to-rose-500 text-white">
+        ❤️
+      </div>
+      <span class="text-lg font-semibold text-gray-800" style="font-family: 'Poppins', sans-serif;">
+        Santé & Bien-être
+      </span>
+    </div>
+  </div>
+
+  <nav class="flex-1 space-y-1 p-4 overflow-y-auto">
+    {% set menuItems = [
+      {'route': 'frontoffice_dashboard', 'key': 'dashboard', 'label': 'Tableau de bord', 'icon': '🏠'},
+      {'route': 'app_analyse_a_i_index', 'key': 'mental', 'label': 'Suivi du bien-être mental', 'icon': '🧠'},
+      {'route': 'frontoffice_hopitaux', 'key': 'hopitaux', 'label': 'Services sociaux et hôpitaux', 'icon': '🏥'},
+      {'route': 'app_rendez_vous', 'key': 'rendezvous', 'label': 'Rendez-vous', 'icon': '📅'},
+      {'route': 'don', 'key': 'don', 'label': 'Don', 'icon': '💖'},
+      {'route': 'aide', 'key': 'aide', 'label': 'Aide', 'icon': '🆘'}
+    ] %}
+
+    {% for item in menuItems %}
+      {% set isActive = (activeModule is defined and activeModule == item.key) %}
+
+      <a href="{{ path(item.route) }}"
+         class="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200
+         {% if item.key == 'don' and isActive %}
+            bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md
+         {% elseif item.key == 'don' %}
+            text-pink-600 hover:bg-pink-50
+         {% elseif item.key == 'aide' and isActive %}
+            bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md
+         {% elseif item.key == 'aide' %}
+            text-blue-600 hover:bg-blue-50
+         {% elseif isActive %}
+            bg-gray-100 text-gray-800
+         {% else %}
+            text-gray-600 hover:bg-gray-50 hover:text-gray-800
+         {% endif %}
+         ">
+        <span class="text-xl">{{ item.icon }}</span>
+        <span>{{ item.label }}</span>
+      </a>
+    {% endfor %}
+  </nav>
+
+  <div class="border-t border-gray-200 p-4">
+    <div class="rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+      <p class="text-xs text-gray-500">Dernière synchronisation</p>
+      <p class="mt-1 text-sm font-medium text-gray-700">
+        Aujourd'hui, {{ "now"|date("H:i") }}
+      </p>
+    </div>
+  </div>
+</aside>

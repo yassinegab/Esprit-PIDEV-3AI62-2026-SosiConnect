@@ -1,0 +1,49 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block title %}Nouvelle réponse à votre demande{% endblock %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 30px;">
+    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 40px;">
+        🤝
+    </div>
+    <h2 style="color: #1f2937; margin-bottom: 10px;">Quelqu'un veut vous aider !</h2>
+    <p style="color: #6b7280;">Une personne a répondu à votre demande de don</p>
+</div>
+
+<div style="background: #f8fafc; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+    <h3 style="color: #374151; margin-bottom: 16px;">📋 Détails de votre demande</h3>
+    <p style="margin-bottom: 8px;"><strong>Type:</strong> {{ demande.typeDemande == 'sang' ? '🩸 Don de sang' : '🫀 Don d\'organe' }}</p>
+    {% if demande.typeSanguin %}
+        <p style="margin-bottom: 8px;"><strong>Groupe sanguin:</strong> {{ demande.typeSanguin }}</p>
+    {% endif %}
+    {% if demande.typeOrgane %}
+        <p style="margin-bottom: 8px;"><strong>Organe:</strong> {{ demande.typeOrgane }}</p>
+    {% endif %}
+    <p style="margin-bottom: 8px;"><strong>Région:</strong> {{ demande.region }}</p>
+</div>
+
+<div style="background: linear-gradient(135deg, #ecfdf5, #d1fae5); border-radius: 12px; padding: 24px; margin-bottom: 24px; border-left: 4px solid #10b981;">
+    <h3 style="color: #065f46; margin-bottom: 16px;">👤 Informations du donneur</h3>
+    <p style="margin-bottom: 8px;"><strong>Nom:</strong> {{ reponse.donneurNom }}</p>
+    <p style="margin-bottom: 8px;"><strong>Email:</strong> {{ reponse.donneurEmail }}</p>
+    <p style="margin-bottom: 8px;"><strong>Téléphone:</strong> {{ reponse.donneurTelephone }}</p>
+    {% if reponse.donneurGroupeSanguin %}
+        <p style="margin-bottom: 8px;"><strong>Groupe sanguin:</strong> {{ reponse.donneurGroupeSanguin }}</p>
+    {% endif %}
+    {% if reponse.message %}
+        <p style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #a7f3d0;"><strong>Message:</strong><br><em>"{{ reponse.message }}"</em></p>
+    {% endif %}
+</div>
+
+<div style="text-align: center;">
+    <a href="{{ url('demande_don_view', {id: demande.id}) }}" 
+       style="display: inline-block; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 600;">
+        Voir les détails →
+    </a>
+</div>
+
+<p style="text-align: center; color: #9ca3af; font-size: 14px; margin-top: 24px;">
+    💡 Conseil : Contactez rapidement le donneur pour confirmer les détails.
+</p>
+{% endblock %}

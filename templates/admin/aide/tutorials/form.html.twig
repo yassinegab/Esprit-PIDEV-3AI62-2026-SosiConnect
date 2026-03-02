@@ -1,0 +1,114 @@
+{% extends 'layout/dashboard.html.twig' %}
+
+{% block title %}{{ tutorial ? 'Modifier' : 'Nouveau' }} Tutoriel{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="/css/modern-styles.css">
+{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto space-y-6 animate-fadeIn">
+    <div class="flex items-center gap-4">
+        <a href="{{ path('admin_tutorials') }}" class="text-gray-500 hover:text-gray-700 transition">
+            ← Retour
+        </a>
+        <h1 class="text-2xl font-bold text-gray-800">{{ tutorial ? 'Modifier le tutoriel' : 'Nouveau tutoriel' }}</h1>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+        <form method="post" class="space-y-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Titre *</label>
+                <input type="text" name="title" value="{{ tutorial ? tutorial.title : '' }}" required
+                       class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                       placeholder="Ex: Comment donner son sang">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                <textarea name="description" rows="4" required
+                          class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="Description du tutoriel...">{{ tutorial ? tutorial.description : '' }}</textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">URL de la vidéo *</label>
+                <input type="url" name="video_url" value="{{ tutorial ? tutorial.videoUrl : '' }}" required
+                       class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                       placeholder="https://www.youtube.com/watch?v=...">
+                <p class="text-xs text-gray-500 mt-1">YouTube, Vimeo ou autre plateforme vidéo</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Catégorie</label>
+                    <select name="category" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500">
+                        <option value="general" {{ tutorial and tutorial.category == 'general' ? 'selected' }}>Général</option>
+                        <option value="don-sang" {{ tutorial and tutorial.category == 'don-sang' ? 'selected' }}>Don de sang</option>
+                        <option value="don-organe" {{ tutorial and tutorial.category == 'don-organe' ? 'selected' }}>Don d'organe</option>
+                        <option value="carte" {{ tutorial and tutorial.category == 'carte' ? 'selected' }}>Carte médicale</option>
+                        <option value="urgence" {{ tutorial and tutorial.category == 'urgence' ? 'selected' }}>Urgence</option>
+                        <option value="support" {{ tutorial and tutorial.category == 'support' ? 'selected' }}>Support</option>
+                        <option value="compte" {{ tutorial and tutorial.category == 'compte' ? 'selected' }}>Compte</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Durée (secondes)</label>
+                    <input type="number" name="duration" value="{{ tutorial ? tutorial.duration : 0 }}" min="0"
+                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
+                           placeholder="300 pour 5 minutes">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Ordre d'affichage</label>
+                    <input type="number" name="display_order" value="{{ tutorial ? tutorial.displayOrder : 0 }}" min="0"
+                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
+                           placeholder="0 = premier">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Statut</label>
+                    <label class="flex items-center gap-3 mt-3 cursor-pointer">
+                        <input type="checkbox" name="is_published" value="1" {{ not tutorial or tutorial.isPublished ? 'checked' }}
+                               class="w-5 h-5 text-blue-600 rounded">
+                        <span class="text-gray-700">Publier immédiatement</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-4 pt-4 border-t border-gray-100">
+                <a href="{{ path('admin_tutorials') }}" class="px-6 py-3 border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition">
+                    Annuler
+                </a>
+                <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition">
+                    {{ tutorial ? 'Mettre à jour' : 'Créer le tutoriel' }}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if tutorial %}
+    <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+        <h3 class="font-semibold text-gray-800 mb-3">📊 Statistiques</h3>
+        <div class="grid grid-cols-3 gap-4">
+            <div class="text-center">
+                <div class="text-2xl font-bold text-gray-800">{{ tutorial.viewCount }}</div>
+                <div class="text-sm text-gray-500">Vues</div>
+            </div>
+            <div class="text-center">
+                <div class="text-2xl font-bold text-gray-800">{{ tutorial.likeCount }}</div>
+                <div class="text-sm text-gray-500">Likes</div>
+            </div>
+            <div class="text-center">
+                <div class="text-2xl font-bold text-gray-800">{{ tutorial.createdAt|date('d/m/Y') }}</div>
+                <div class="text-sm text-gray-500">Créé le</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

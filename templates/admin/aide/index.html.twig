@@ -1,0 +1,198 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Admin – Centre d'Aide{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="/css/modern-styles.css">
+{% endblock %}
+
+{% block content %}
+<div class="space-y-8 animate-fadeIn">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="page-title flex items-center gap-3">
+                <span class="text-4xl">🆘</span> Centre d'Aide & Assistance
+            </h1>
+            <p class="text-gray-500 mt-1">Gestion des urgences, contacts, FAQ et support</p>
+        </div>
+        <div class="text-sm text-gray-500 bg-white px-4 py-2 rounded-lg shadow">
+            {{ "now"|date("d/m/Y H:i") }}
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="stat-card primary hover-lift">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="stat-label">Urgences actives</p>
+                    <p class="stat-value text-red-600">{{ totalUrgences }}</p>
+                </div>
+                <div class="text-3xl">🚨</div>
+            </div>
+        </div>
+
+        <div class="stat-card success hover-lift">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="stat-label">Contacts</p>
+                    <p class="stat-value text-blue-600">{{ totalContacts }}</p>
+                </div>
+                <div class="text-3xl">📞</div>
+            </div>
+        </div>
+
+        <div class="stat-card warning hover-lift">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="stat-label">Lieux médicaux</p>
+                    <p class="stat-value text-green-600">{{ totalLieux }}</p>
+                </div>
+                <div class="text-3xl">🏥</div>
+            </div>
+        </div>
+
+        <div class="stat-card hover-lift">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="stat-label">Système</p>
+                    <p class="stat-value text-lg text-green-600">Opérationnel</p>
+                </div>
+                <div class="text-3xl text-green-500 animate-pulse">●</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a href="{{ path('admin_urgences') }}" class="card group hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="card-body">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-red-100 rounded-xl flex items-center justify-center text-3xl group-hover:bg-red-200 transition">
+                        🚨
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-red-600">Urgences</h3>
+                        <p class="text-gray-500 text-sm">Gérer les urgences en temps réel</p>
+                    </div>
+                </div>
+                <div class="mt-4 text-red-600 font-semibold text-sm">
+                    Accéder →
+                </div>
+            </div>
+        </a>
+
+        <a href="{{ path('admin_contacts') }}" class="card group hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="card-body">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center text-3xl group-hover:bg-blue-200 transition">
+                        📞
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-blue-600">Contacts d'urgence</h3>
+                        <p class="text-gray-500 text-sm">Gérer les contacts</p>
+                    </div>
+                </div>
+                <div class="mt-4 text-blue-600 font-semibold text-sm">
+                    Accéder →
+                </div>
+            </div>
+        </a>
+
+        <a href="{{ path('admin_carte_medicale') }}" class="card group hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="card-body">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center text-3xl group-hover:bg-green-200 transition">
+                        🗺
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-green-600">Carte médicale</h3>
+                        <p class="text-gray-500 text-sm">Lieux médicaux et pharmacies</p>
+                    </div>
+                </div>
+                <div class="mt-4 text-green-600 font-semibold text-sm">
+                    Accéder →
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <a href="{{ path('admin_faq') }}" class="card group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-l-4 border-purple-500">
+            <div class="card-body">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center text-3xl group-hover:bg-purple-200 transition">
+                        ❓
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-purple-600">FAQ / Centre d'aide</h3>
+                        <p class="text-gray-500 text-sm">Gérer les questions fréquentes</p>
+                    </div>
+                </div>
+                <div class="mt-4 text-purple-600 font-semibold text-sm">
+                    Accéder →
+                </div>
+            </div>
+        </a>
+
+        <a href="{{ path('admin_support') }}" class="card group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-l-4 border-indigo-500">
+            <div class="card-body">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-indigo-100 rounded-xl flex items-center justify-center text-3xl group-hover:bg-indigo-200 transition">
+                        💬
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-indigo-600">Support Tickets</h3>
+                        <p class="text-gray-500 text-sm">Gérer les demandes de support</p>
+                    </div>
+                </div>
+                <div class="mt-4 text-indigo-600 font-semibold text-sm">
+                    Accéder →
+                </div>
+            </div>
+        </a>
+    </div>
+
+    {% if urgencesRecentes|length > 0 %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="font-semibold flex items-center gap-2 text-red-600">
+                <span>🚨</span> Dernières urgences
+            </h3>
+        </div>
+        <div class="divide-y">
+            {% for urgence in urgencesRecentes %}
+            <div class="p-4 hover:bg-gray-50 transition">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <div class="font-semibold">{{ urgence.type }}</div>
+                        <div class="text-sm text-gray-500">{{ urgence.localisation }}</div>
+                    </div>
+                    <div class="text-sm text-gray-400">
+                        {{ urgence.dateUrgence|date('H:i') }}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="p-4 text-gray-400 text-center">
+                Aucune urgence récente
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="card bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-200">
+        <div class="card-body">
+            <div class="flex items-center gap-4">
+                <div class="text-4xl">💡</div>
+                <div class="flex-1">
+                    <h3 class="font-semibold text-indigo-800">Conseil</h3>
+                    <p class="text-sm text-indigo-600">
+                        Assurez-vous que la FAQ est à jour pour réduire les demandes de support.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

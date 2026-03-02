@@ -1,0 +1,11 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block content %}
+<div style="text-align: center; padding: 40px;">
+    <h1 style="color: #10b981;">✅ Test Email Réussi !</h1>
+    <p>Si vous recevez cet email, votre configuration Mailtrap fonctionne correctement.</p>
+    <p style="color: #666; margin-top: 30px;">
+        Envoyé le {{ date|date('d/m/Y à H:i') }}
+    </p>
+</div>
+{% endblock %}

@@ -1,0 +1,228 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Gestion des dons{% endblock %}
+
+{% block content %}
+<div class="animate-fadeIn space-y-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <h1 class="text-2xl font-bold text-red-700 flex items-center gap-3">
+            <span class="text-3xl">🧾</span> Gestion des dons
+        </h1>
+        <div class="flex gap-2">
+            <span class="bg-gray-100 px-3 py-1 rounded-full text-sm text-gray-600">
+                {{ pagination.total }} don(s)
+            </span>
+        </div>
+    </div>
+
+    {% for message in app.flashes('success') %}
+    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded-lg shadow flex items-center gap-2">
+        <span>✅</span> {{ message }}
+    </div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg shadow flex items-center gap-2">
+        <span>❌</span> {{ message }}
+    </div>
+    {% endfor %}
+
+    <form method="get" class="bg-white p-4 rounded-xl shadow space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Recherche</label>
+                <input type="text" name="search" value="{{ filters.search|default('') }}" 
+                       placeholder="Région, type..."
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500 focus:border-transparent">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Statut</label>
+                <select name="statut" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500">
+                    <option value="">Tous</option>
+                    <option value="EN_ATTENTE" {{ filters.statut == 'EN_ATTENTE' ? 'selected' }}>En attente</option>
+                    <option value="VALIDÉ" {{ filters.statut == 'VALIDÉ' ? 'selected' }}>Validés</option>
+                    <option value="REFUSÉ" {{ filters.statut == 'REFUSÉ' ? 'selected' }}>Refusés</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                <select name="typeDon" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500">
+                    <option value="">Tous</option>
+                    <option value="sang" {{ filters.typeDon == 'sang' ? 'selected' }}>Sang</option>
+                    <option value="organe" {{ filters.typeDon == 'organe' ? 'selected' }}>Organe</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Date début</label>
+                <input type="date" name="dateFrom" value="{{ filters.dateFrom|default('') }}"
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Date fin</label>
+                <input type="date" name="dateTo" value="{{ filters.dateTo|default('') }}"
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500">
+            </div>
+        </div>
+        
+        <div class="flex justify-between items-center">
+            <div class="flex gap-2">
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition">
+                    🔍 Rechercher
+                </button>
+                <a href="{{ path('admin_don_list') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition">
+                    Réinitialiser
+                </a>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <label class="text-sm text-gray-600">Trier:</label>
+                <select name="sortOrder" class="border border-gray-300 rounded-lg px-3 py-2">
+                    <option value="DESC" {{ filters.sortOrder == 'DESC' ? 'selected' }}>Plus récents</option>
+                    <option value="ASC" {{ filters.sortOrder == 'ASC' ? 'selected' }}>Plus anciens</option>
+                </select>
+            </div>
+        </div>
+    </form>
+
+    <form method="post" action="{{ path('admin_don_bulk') }}" id="bulkForm">
+        <input type="hidden" name="_token" value="{{ csrf_token('bulk_action') }}">
+        
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-100 text-gray-700">
+                        <tr>
+                            <th class="p-4 text-left w-10">
+                                <input type="checkbox" id="selectAll" class="w-4 h-4 rounded border-gray-300">
+                            </th>
+                            <th class="p-4 text-left">Type</th>
+                            <th class="p-4 text-left">Détails</th>
+                            <th class="p-4 text-left">Région</th>
+                            <th class="p-4 text-left">Date</th>
+                            <th class="p-4 text-left">Statut</th>
+                            <th class="p-4 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for don in dons %}
+                        <tr class="hover:bg-gray-50 transition duration-200">
+                            <td class="p-4">
+                                <input type="checkbox" name="ids[]" value="{{ don.id }}" class="don-checkbox w-4 h-4 rounded border-gray-300">
+                            </td>
+                            <td class="p-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-2xl">{{ don.typeDon == 'sang' ? '🩸' : '🫀' }}</span>
+                                    <span class="font-semibold text-red-600">{{ don.typeDon|upper }}</span>
+                                </div>
+                            </td>
+                            <td class="p-4 text-gray-600">
+                                {% if don.typeDon == 'sang' and don.typeSanguin %}
+                                    <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">{{ don.typeSanguin }}</span>
+                                {% elseif don.typeOrgane %}
+                                    <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">{{ don.typeOrgane }}</span>
+                                {% endif %}
+                                {% if don.urgence %}
+                                    <span class="ml-2 bg-orange-100 text-orange-700 px-2 py-1 rounded text-xs font-bold animate-pulse">URGENT</span>
+                                {% endif %}
+                            </td>
+                            <td class="p-4">{{ don.region }}</td>
+                            <td class="p-4 text-gray-600">{{ don.dateDon|date('d/m/Y H:i') }}</td>
+                            <td class="p-4">
+                                <span class="px-3 py-1 {{ don.statusBadgeClass }} rounded-full text-xs font-bold">
+                                    {{ don.statusIcon }} {{ don.statut }}
+                                </span>
+                            </td>
+                            <td class="p-4">
+                                <div class="flex justify-center gap-1 flex-wrap">
+                                    {% if don.statut != 'VALIDÉ' %}
+                                    <form method="post" action="{{ path('admin_don_validate', {id: don.id}) }}" class="inline">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('validate' ~ don.id) }}">
+                                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg text-xs transition hover:scale-105">
+                                            ✔ Valider
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                    
+                                    {% if don.statut != 'REFUSÉ' %}
+                                    <form method="post" action="{{ path('admin_don_reject', {id: don.id}) }}" class="inline">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('reject' ~ don.id) }}">
+                                        <button type="submit" class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded-lg text-xs transition hover:scale-105">
+                                            ✖ Refuser
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                    
+                                    <form method="post" action="{{ path('admin_don_delete', {id: don.id}) }}" class="inline" onsubmit="return confirm('Supprimer ce don ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ don.id) }}">
+                                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-xs transition hover:scale-105">
+                                            🗑
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-gray-500 py-12">
+                                <div class="flex flex-col items-center gap-2">
+                                    <span class="text-4xl">📭</span>
+                                    <p>Aucun don trouvé</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            {% if dons|length > 0 %}
+            <div class="bg-gray-50 px-4 py-3 border-t flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <select name="action" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        <option value="">Action groupée</option>
+                        <option value="validate">Valider sélection</option>
+                        <option value="reject">Refuser sélection</option>
+                        <option value="delete">Supprimer sélection</option>
+                    </select>
+                    <button type="submit" class="bg-gray-800 hover:bg-black text-white px-4 py-2 rounded-lg text-sm transition">
+                        Appliquer
+                    </button>
+                </div>
+                
+                {% if pagination.pages > 1 %}
+                <div class="flex items-center gap-2">
+                    {% if pagination.current > 1 %}
+                    <a href="{{ path('admin_don_list', app.request.query.all|merge({page: pagination.current - 1})) }}" 
+                       class="px-3 py-1 bg-white border rounded hover:bg-gray-100 transition">
+                        ← Précédent
+                    </a>
+                    {% endif %}
+                    
+                    <span class="text-sm text-gray-600">
+                        Page {{ pagination.current }} / {{ pagination.pages }}
+                    </span>
+                    
+                    {% if pagination.current < pagination.pages %}
+                    <a href="{{ path('admin_don_list', app.request.query.all|merge({page: pagination.current + 1})) }}" 
+                       class="px-3 py-1 bg-white border rounded hover:bg-gray-100 transition">
+                        Suivant →
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<script>
+document.getElementById('selectAll')?.addEventListener('change', function() {
+    document.querySelectorAll('.don-checkbox').forEach(cb => cb.checked = this.checked);
+});
+</script>
+{% endblock %}

@@ -1,0 +1,169 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Gestion des Donneurs{% endblock %}
+
+{% block content %}
+<div class="space-y-6 animate-fadeIn">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-purple-700 flex items-center gap-2">
+            <span class="text-3xl">👤</span> Gestion des Donneurs
+        </h1>
+        <span class="bg-gray-100 px-3 py-1 rounded-full text-sm text-gray-600">
+            {{ pagination.total }} donneur(s)
+        </span>
+    </div>
+
+    {% for message in app.flashes('success') %}
+    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded-lg shadow">
+        ✅ {{ message }}
+    </div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg shadow">
+        ❌ {{ message }}
+    </div>
+    {% endfor %}
+
+    <div class="bg-white p-4 rounded-xl shadow">
+        <form method="get" class="flex flex-wrap gap-3 items-end">
+            <div class="flex-1 min-w-[200px]">
+                <input type="text" name="search" value="{{ filters.search|default('') }}"
+                       placeholder="🔍 Nom, prénom..."
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500">
+            </div>
+            <div>
+                <select name="groupe" class="border border-gray-300 rounded-lg px-3 py-2">
+                    <option value="">Tous groupes</option>
+                    {% for g in groupes_sanguins %}
+                    <option value="{{ g }}" {{ filters.groupe == g ? 'selected' }}>{{ g }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <select name="disponible" class="border border-gray-300 rounded-lg px-3 py-2">
+                    <option value="">Tous</option>
+                    <option value="1" {{ filters.disponible == '1' ? 'selected' }}>Disponibles</option>
+                    <option value="0" {{ filters.disponible == '0' ? 'selected' }}>Indisponibles</option>
+                </select>
+            </div>
+            <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition">
+                Filtrer
+            </button>
+            <a href="{{ path('admin_donneurs') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition">
+                Reset
+            </a>
+        </form>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-100 text-gray-700">
+                    <tr>
+                        <th class="p-4 text-left">Nom</th>
+                        <th class="p-4 text-left">Âge</th>
+                        <th class="p-4 text-left">Groupe</th>
+                        <th class="p-4 text-left">Téléphone</th>
+                        <th class="p-4 text-left">Dernier don</th>
+                        <th class="p-4 text-left">Disponibilité</th>
+                        <th class="p-4 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for donneur in donneurs %}
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="p-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold">
+                                    {{ donneur.prenom|first }}{{ donneur.nom|first }}
+                                </div>
+                                <div>
+                                    <div class="font-medium">{{ donneur.prenom }} {{ donneur.nom }}</div>
+                                    <div class="text-xs text-gray-500">ID: {{ donneur.id }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="p-4 text-gray-600">{{ donneur.age }} ans</td>
+                        <td class="p-4">
+                            <span class="bg-red-100 text-red-700 px-2 py-1 rounded font-bold text-xs">
+                                {{ donneur.groupeSanguin }}
+                            </span>
+                        </td>
+                        <td class="p-4 text-gray-600">{{ donneur.telephone }}</td>
+                        <td class="p-4 text-gray-600">
+                            {% if donneur.dateDernierDon %}
+                                {{ donneur.dateDernierDon|date('d/m/Y') }}
+                            {% else %}
+                                <span class="text-gray-400">-</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-4">
+                            {% if donneur.disponible %}
+                                <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold flex items-center gap-1 w-fit">
+                                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                    Disponible
+                                </span>
+                            {% else %}
+                                <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold">
+                                    Indisponible
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="p-4">
+                            <div class="flex justify-center gap-2">
+                                <form method="post" action="{{ path('admin_donneur_toggle', {id: donneur.id}) }}" class="inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('toggle' ~ donneur.id) }}">
+                                    <button type="submit" 
+                                            class="px-3 py-1 {{ donneur.disponible ? 'bg-orange-100 text-orange-700 hover:bg-orange-200' : 'bg-green-100 text-green-700 hover:bg-green-200' }} rounded transition text-xs font-medium">
+                                        {{ donneur.disponible ? 'Rendre indisponible' : 'Rendre disponible' }}
+                                    </button>
+                                </form>
+                                
+                                <form method="post" action="{{ path('admin_donneur_delete', {id: donneur.id}) }}" 
+                                      class="inline" onsubmit="return confirm('Supprimer ce donneur ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ donneur.id) }}">
+                                    <button type="submit" 
+                                            class="px-3 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded transition text-xs font-medium">
+                                        🗑 Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="p-12 text-center text-gray-500">
+                            <div class="text-4xl mb-2">👤</div>
+                            <p>Aucun donneur enregistré</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if pagination.pages > 1 %}
+        <div class="p-4 bg-gray-50 border-t flex justify-center items-center gap-4">
+            {% if pagination.current > 1 %}
+            <a href="{{ path('admin_donneurs', app.request.query.all|merge({page: pagination.current - 1})) }}" 
+               class="px-4 py-2 bg-white border rounded-lg hover:bg-gray-100 transition">
+                ← Précédent
+            </a>
+            {% endif %}
+            
+            <span class="text-sm text-gray-600 px-3">
+                Page {{ pagination.current }} / {{ pagination.pages }}
+            </span>
+            
+            {% if pagination.current < pagination.pages %}
+            <a href="{{ path('admin_donneurs', app.request.query.all|merge({page: pagination.current + 1})) }}" 
+               class="px-4 py-2 bg-white border rounded-lg hover:bg-gray-100 transition">
+                Suivant →
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

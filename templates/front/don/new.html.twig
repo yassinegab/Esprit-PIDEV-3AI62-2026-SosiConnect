@@ -1,0 +1,216 @@
+{% extends 'layout/front-layout.html.twig' %}
+
+{% block title %}Déclarer un don{% endblock %}
+
+{% block content %}
+<div class="space-y-6 animate-fadeIn">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+            <span class="text-3xl">🩸</span> Déclarer un don
+        </h1>
+        <a href="{{ path('don_history') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition flex items-center gap-2">
+            <span>📋</span> Historique
+        </a>
+    </div>
+
+    {% for message in app.flashes('success') %}
+    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded-lg shadow flex items-center gap-2">
+        <span>✅</span> {{ message }}
+    </div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg shadow flex items-center gap-2">
+        <span>❌</span> {{ message }}
+    </div>
+    {% endfor %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-1">
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 sticky top-4">
+                <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span>➕</span> Nouveau don
+                </h2>
+                
+                <form method="post" enctype="multipart/form-data" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Type de don *</label>
+                        <select name="type_don" required 
+                                id="typeDonSelect"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+                            <option value="">Sélectionner...</option>
+                            <option value="sang">🩸 Sang</option>
+                            <option value="organe">🫀 Organe</option>
+                        </select>
+                    </div>
+
+                    <div id="sanguinField" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Groupe sanguin</label>
+                        <select name="type_sanguin" 
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500">
+                            <option value="">Sélectionner...</option>
+                            {% for type in types_sanguin %}
+                            <option value="{{ type }}">{{ type }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div id="organeField" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Type d'organe</label>
+                        <select name="type_organe"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500">
+                            <option value="">Sélectionner...</option>
+                            {% for type in types_organe %}
+                            <option value="{{ type }}">{{ type|title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Région *</label>
+                        <input type="text" name="region" required
+                               placeholder="Ex: Tunis, Sfax..."
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">📎 Document justificatif (optionnel)</label>
+                        <input type="file" name="document" accept=".pdf,image/jpeg,image/png" 
+                               class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
+                        <p class="text-xs text-gray-500 mt-1">PDF, JPG, PNG jusqu'à 10MB</p>
+                    </div>
+
+                    <div class="flex items-center gap-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
+                        <input type="checkbox" name="urgence" value="1" id="urgenceCheck"
+                               class="w-5 h-5 text-orange-600 rounded border-orange-300 focus:ring-orange-500">
+                        <label for="urgenceCheck" class="text-sm font-medium text-orange-800">
+                            🚨 Cas urgent
+                        </label>
+                    </div>
+
+                    <button type="submit" 
+                            class="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2">
+                        <span>🩸</span> Déclarer le don
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-4">
+            <div class="bg-white p-4 rounded-xl shadow">
+                <form method="get" class="flex flex-wrap gap-3 items-end">
+                    <div class="flex-1 min-w-[200px]">
+                        <input type="text" name="search" value="{{ filters.search|default('') }}"
+                               placeholder="🔍 Rechercher par région..."
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500">
+                    </div>
+                    <div>
+                        <select name="typeDon" class="border border-gray-300 rounded-lg px-3 py-2">
+                            <option value="">Tous types</option>
+                            <option value="sang" {{ filters.typeDon == 'sang' ? 'selected' }}>Sang</option>
+                            <option value="organe" {{ filters.typeDon == 'organe' ? 'selected' }}>Organe</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="bg-gray-800 hover:bg-black text-white px-4 py-2 rounded-lg transition">
+                        Filtrer
+                    </button>
+                    <a href="{{ path('don_new') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition">
+                        Reset
+                    </a>
+                </form>
+            </div>
+
+            <div class="bg-white rounded-xl shadow overflow-hidden">
+                <div class="p-4 bg-gray-50 border-b flex justify-between items-center">
+                    <h2 class="font-bold text-gray-800 flex items-center gap-2">
+                        <span>📋</span> Dons déclarés
+                    </h2>
+                    <span class="text-sm text-gray-500">{{ pagination.total }} résultat(s)</span>
+                </div>
+
+                <div class="divide-y divide-gray-100">
+                    {% for don in dons %}
+                    <div class="p-4 hover:bg-gray-50 transition">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-start gap-3">
+                                <div class="text-3xl">
+                                    {{ don.typeDon == 'sang' ? '🩸' : '🫀' }}
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-gray-800">{{ don.typeDon|upper }}</span>
+                                        {% if don.typeSanguin %}
+                                        <span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-xs font-bold">{{ don.typeSanguin }}</span>
+                                        {% elseif don.typeOrgane %}
+                                        <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-xs">{{ don.typeOrgane }}</span>
+                                        {% endif %}
+                                        {% if don.urgence %}
+                                        <span class="bg-orange-100 text-orange-700 px-2 py-0.5 rounded text-xs font-bold animate-pulse">URGENT</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="text-sm text-gray-500 mt-1">
+                                        📍 {{ don.region }} • 📅 {{ don.dateDon|date('d/m/Y H:i') }}
+                                        {% if don.documentName %}
+                                        <a href="{{ vich_uploader_asset(don, 'documentFile') }}" target="_blank" class="ml-2 text-blue-600 hover:text-blue-800">
+                                            <i class="fas fa-paperclip"></i> Document
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="mt-2">
+                                        <span class="px-2 py-1 {{ don.statusBadgeClass }} rounded-full text-xs font-semibold">
+                                            {{ don.statusIcon }} {{ don.statut }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <form method="post" action="{{ path('don_delete', {id: don.id}) }}"
+                                  onsubmit="return confirm('Supprimer ce don ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ don.id) }}">
+                                <button class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition">
+                                    🗑
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="p-12 text-center text-gray-500">
+                        <div class="text-4xl mb-2">📭</div>
+                        <p>Aucun don trouvé</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% if pagination.pages > 1 %}
+                <div class="p-4 bg-gray-50 border-t flex justify-center items-center gap-2">
+                    {% if pagination.current > 1 %}
+                    <a href="{{ path('don_new', app.request.query.all|merge({page: pagination.current - 1})) }}" 
+                       class="px-3 py-1 bg-white border rounded hover:bg-gray-100 transition">
+                        ←
+                    </a>
+                    {% endif %}
+                    
+                    <span class="text-sm text-gray-600 px-3">
+                        {{ pagination.current }} / {{ pagination.pages }}
+                    </span>
+                    
+                    {% if pagination.current < pagination.pages %}
+                    <a href="{{ path('don_new', app.request.query.all|merge({page: pagination.current + 1})) }}" 
+                       class="px-3 py-1 bg-white border rounded hover:bg-gray-100 transition">
+                        →
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('typeDonSelect').addEventListener('change', function() {
+    document.getElementById('sanguinField').classList.toggle('hidden', this.value !== 'sang');
+    document.getElementById('organeField').classList.toggle('hidden', this.value !== 'organe');
+});
+</script>
+{% endblock %}

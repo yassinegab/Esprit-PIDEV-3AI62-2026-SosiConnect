@@ -1,0 +1,286 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Ticket #{{ ticket.id }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+.chat-container {
+    max-height: 500px;
+    overflow-y: auto;
+}
+.chat-bubble-admin {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 1rem 1rem 0.25rem 1rem;
+}
+.chat-bubble-user {
+    background: #f3f4f6;
+    color: #1f2937;
+    border-radius: 1rem 1rem 1rem 0.25rem;
+}
+.action-btn {
+    transition: all 0.3s ease;
+}
+.action-btn:hover {
+    transform: translateY(-2px);
+}
+.status-timeline {
+    position: relative;
+    padding-left: 24px;
+}
+.status-timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e5e7eb;
+}
+.status-dot {
+    position: absolute;
+    left: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #e5e7eb;
+}
+.status-dot.active {
+    background: #3b82f6;
+    border-color: #3b82f6;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-6 animate-fadeIn" x-data="{ showAssignModal: false }">
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <a href="{{ path('admin_support') }}" 
+               class="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-xl flex items-center justify-center text-gray-600 transition">
+                ←
+            </a>
+            <div>
+                <div class="flex items-center gap-3">
+                    <h1 class="text-2xl font-bold text-gray-800">Ticket #{{ ticket.id }}</h1>
+                    <span class="px-3 py-1 rounded-full text-sm font-semibold {{ ticket.statusBadgeClass }}">
+                        {% if ticket.status == 'open' %}🟢 Ouvert
+                        {% elseif ticket.status == 'in_progress' %}🟡 En cours
+                        {% elseif ticket.status == 'resolved' %}🟢 Résolu
+                        {% else %}⚫ Fermé{% endif %}
+                    </span>
+                    <span class="px-3 py-1 rounded-full text-sm font-semibold {{ ticket.priorityBadgeClass }}">
+                        {% if ticket.priority == 'critical' %}🔥{% elseif ticket.priority == 'high' %}⚡{% else %}📌{% endif %}
+                        {{ ticket.priority|upper }}
+                    </span>
+                </div>
+                <p class="text-gray-500 mt-1">{{ ticket.subject }}</p>
+            </div>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="window.print()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition flex items-center gap-2">
+                🖨️ Imprimer
+            </button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-6">
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                <div class="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
+                            {{ ticket.userName|first|upper }}
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-800">{{ ticket.userName }}</p>
+                            <p class="text-sm text-gray-500">{{ ticket.userEmail }}</p>
+                        </div>
+                        <div class="ml-auto text-right">
+                            <p class="text-sm text-gray-500">Créé le</p>
+                            <p class="font-medium text-gray-800">{{ ticket.createdAt|date('d/m/Y à H:i') }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-container p-6 space-y-4">
+                    <div class="flex gap-3">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm flex-shrink-0">
+                            👤
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="font-medium text-gray-800">{{ ticket.userName }}</span>
+                                <span class="text-xs text-gray-400">{{ ticket.createdAt|date('H:i') }}</span>
+                            </div>
+                            <div class="chat-bubble-user p-4">
+                                <p class="whitespace-pre-wrap">{{ ticket.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% for message in ticket.messages %}
+                    <div class="flex gap-3 {{ message.isFromAdmin ? 'flex-row-reverse' : '' }}">
+                        <div class="w-8 h-8 {{ message.isFromAdmin ? 'bg-purple-100' : 'bg-blue-100' }} rounded-full flex items-center justify-center text-sm flex-shrink-0">
+                            {{ message.isFromAdmin ? '🎧' : '👤' }}
+                        </div>
+                        <div class="flex-1 {{ message.isFromAdmin ? 'text-right' : '' }}">
+                            <div class="flex items-center gap-2 mb-1 {{ message.isFromAdmin ? 'justify-end' : '' }}">
+                                <span class="text-xs text-gray-400">{{ message.createdAt|date('H:i') }}</span>
+                                <span class="font-medium text-gray-800">{{ message.senderName }}</span>
+                                {% if message.isFromAdmin %}
+                                <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">Staff</span>
+                                {% endif %}
+                            </div>
+                            <div class="{{ message.isFromAdmin ? 'chat-bubble-admin' : 'chat-bubble-user' }} p-4 inline-block text-left max-w-md">
+                                <p class="whitespace-pre-wrap">{{ message.content }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% if ticket.status != 'closed' %}
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="text-xl">💬</span> Répondre
+                </h3>
+                <form method="post">
+                    <textarea name="message" rows="4" required
+                              class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                              placeholder="Écrivez votre réponse au client..."></textarea>
+                    <div class="flex justify-between items-center mt-4">
+                        <div class="flex gap-2">
+                            <button type="button" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm transition">
+                                📎 Joindre
+                            </button>
+                            <button type="button" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm transition">
+                                📝 Template
+                            </button>
+                        </div>
+                        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl font-semibold transition shadow-lg flex items-center gap-2">
+                            📤 Envoyer la réponse
+                        </button>
+                    </div>
+                </form>
+            </div>
+            {% else %}
+            <div class="bg-gradient-to-r from-gray-100 to-gray-200 rounded-2xl p-6 text-center">
+                <div class="text-4xl mb-2">🔒</div>
+                <p class="text-gray-600 font-medium">Ce ticket est fermé</p>
+                <p class="text-gray-500 text-sm">Vous ne pouvez plus envoyer de messages</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="space-y-6">
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="text-xl">📊</span> Statut du ticket
+                </h3>
+                <form method="post" action="{{ path('admin_support_status', {id: ticket.id}) }}">
+                    <div class="space-y-3">
+                        {% set statuses = [
+                            {value: 'open', label: 'Ouvert', icon: '🟢', desc: 'Nouveau ticket'},
+                            {value: 'in_progress', label: 'En cours', icon: '🟡', desc: 'En traitement'},
+                            {value: 'resolved', label: 'Résolu', icon: '✅', desc: 'Problème résolu'},
+                            {value: 'closed', label: 'Fermé', icon: '⚫', desc: 'Archivé'}
+                        ] %}
+                        {% for status in statuses %}
+                        <label class="flex items-center gap-3 p-3 rounded-xl cursor-pointer transition
+                                     {{ ticket.status == status.value ? 'bg-blue-50 border-2 border-blue-500' : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100' }}">
+                            <input type="radio" name="status" value="{{ status.value }}" 
+                                   {{ ticket.status == status.value ? 'checked' }} class="hidden">
+                            <span class="text-xl">{{ status.icon }}</span>
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-800">{{ status.label }}</p>
+                                <p class="text-xs text-gray-500">{{ status.desc }}</p>
+                            </div>
+                            {% if ticket.status == status.value %}
+                            <span class="text-blue-500">✓</span>
+                            {% endif %}
+                        </label>
+                        {% endfor %}
+                    </div>
+                    <button type="submit" class="w-full mt-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition">
+                        Mettre à jour
+                    </button>
+                </form>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="text-xl">👤</span> Assignation
+                </h3>
+                {% if ticket.assignedTo %}
+                <div class="flex items-center gap-3 mb-4 p-3 bg-purple-50 rounded-xl">
+                    <div class="w-10 h-10 bg-purple-200 rounded-full flex items-center justify-center text-purple-700 font-bold">
+                        {{ ticket.assignedTo|first|upper }}
+                    </div>
+                    <div>
+                        <p class="font-medium text-gray-800">{{ ticket.assignedTo }}</p>
+                        <p class="text-xs text-gray-500">Agent assigné</p>
+                    </div>
+                </div>
+                {% endif %}
+                <form method="post" action="{{ path('admin_support_assign', {id: ticket.id}) }}">
+                    <input type="text" name="assignedTo" 
+                           value="{{ ticket.assignedTo }}"
+                           placeholder="Nom de l'agent..."
+                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 mb-3">
+                    <button type="submit" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold transition">
+                        {{ ticket.assignedTo ? 'Réassigner' : 'Assigner' }}
+                    </button>
+                </form>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="text-xl">📋</span> Détails
+                </h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-500">Catégorie</span>
+                        <span class="font-medium text-gray-800 bg-gray-100 px-3 py-1 rounded-lg">{{ ticket.category }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-500">Priorité</span>
+                        <span class="px-3 py-1 rounded-lg {{ ticket.priorityBadgeClass }} font-medium">{{ ticket.priority|upper }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-500">Créé le</span>
+                        <span class="font-medium text-gray-800">{{ ticket.createdAt|date('d/m/Y') }}</span>
+                    </div>
+                    {% if ticket.resolvedAt %}
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-500">Résolu le</span>
+                        <span class="font-medium text-green-600">{{ ticket.resolvedAt|date('d/m/Y') }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="flex justify-between items-center py-2">
+                        <span class="text-gray-500">Messages</span>
+                        <span class="font-medium text-gray-800">{{ ticket.messages|length }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-red-50 to-orange-50 rounded-2xl p-6 border border-red-100">
+                <h3 class="font-bold text-red-800 mb-3 flex items-center gap-2">
+                    <span class="text-xl">⚠️</span> Zone de danger
+                </h3>
+                <p class="text-red-600 text-sm mb-4">La suppression est irréversible. Toutes les données seront perdues.</p>
+                <form method="post" action="{{ path('admin_support_delete', {id: ticket.id}) }}"
+                      onsubmit="return confirm('⚠️ Êtes-vous sûr de vouloir supprimer ce ticket ? Cette action est irréversible.');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ ticket.id) }}">
+                    <button type="submit" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold transition flex items-center justify-center gap-2">
+                        🗑️ Supprimer le ticket
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

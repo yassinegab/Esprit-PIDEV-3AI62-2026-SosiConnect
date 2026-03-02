@@ -3,8 +3,6 @@
 {% block body %}
 <div class="flex min-h-screen bg-gradient-to-br from-pink-50 to-rose-100">
 
-  {% include 'components/sidebar.html.twig' %}
-
   <div class="flex flex-1 flex-col">
     {% include 'components/top-nav.html.twig' %}
 
@@ -124,7 +122,15 @@
           {% else %}
             <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
               <p class="text-green-600 font-semibold">
-                {% if aiAnalysis %}🎉 Aucun cycle irrégulier détecté par l'IA.{% else %}En attente d'analyse IA.{% endif %}
+                {% if aiAnalysis %}
+                    🎉 Aucun cycle irrégulier détecté.
+                {% else %}
+                    {% if lengths|length < 1 %}
+                        Données insuffisantes (min 2 cycles requis).
+                    {% else %}
+                        En attente d'analyse IA.
+                    {% endif %}
+                {% endif %}
               </p>
             </div>
           {% endif %}

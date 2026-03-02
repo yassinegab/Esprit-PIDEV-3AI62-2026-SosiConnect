@@ -11,37 +11,45 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+use Symfony\Bundle\SecurityBundle\Security;
+
 final class CycleController extends AbstractController
 {
-#[Route('/cycle', name: 'cycle_index')]
-public function index(EntityManagerInterface $em): Response
-{
-    $cycles = $em->getRepository(Cycle::class)->findAll();
-    $events = [];
-
-    foreach ($cycles as $cycle) {
-
-        $start = clone $cycle->getDateDebutM();
-        $end   = clone $cycle->getDateFinM();
-
-        while ($start <= $end) {
-
-            $events[] = [
-                'id' => $cycle->getIdCycle(),
-                'title' => '🩸',
-                'start' => $start->format('Y-m-d'),
-                'allDay' => true,
-                'classNames' => ['menstruation-event']
-            ];
-
-            $start->modify('+1 day');
+    #[Route('/cycle', name: 'cycle_index')]
+    public function index(EntityManagerInterface $em, Security $security): Response
+    {
+        $user = $security->getUser();
+        if (!$user || !in_array($user->getSexe(), ['Femme', 'female'])) {
+            $this->addFlash('error', 'Accès réservé aux femmes.');
+            return $this->redirectToRoute('user_wellbeing_index');
         }
-    }
 
-    return $this->render('cycle/calendar.html.twig', [
-        'calendarEvents' => json_encode($events),
-    ]);
-}
+        $cycles = $em->getRepository(Cycle::class)->findBy(['user' => $user]);
+        $events = [];
+
+        foreach ($cycles as $cycle) {
+
+            $start = clone $cycle->getDateDebutM();
+            $end   = clone $cycle->getDateFinM();
+
+            while ($start <= $end) {
+
+                $events[] = [
+                    'id' => $cycle->getIdCycle(),
+                    'title' => '🩸',
+                    'start' => $start->format('Y-m-d'),
+                    'allDay' => true,
+                    'classNames' => ['menstruation-event']
+                ];
+
+                $start->modify('+1 day');
+            }
+        }
+
+        return $this->render('cycle/calendar.html.twig', [
+            'calendarEvents' => json_encode($events),
+        ]);
+    }
 
     #[Route('/cycle/new', name: 'cycle_new')]
     public function new(Request $request, EntityManagerInterface $em): Response
@@ -51,6 +59,7 @@ public function index(EntityManagerInterface $em): Response
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $cycle->setUser($this->getUser());
             $em->persist($cycle);
             $em->flush();
 
@@ -89,7 +98,7 @@ public function index(EntityManagerInterface $em): Response
     public function delete(Request $request, Cycle $cycle, EntityManagerInterface $em): Response
     {
         if ($request->isMethod('POST')) {
-            if (!$this->isCsrfTokenValid('delete-cycle'.$cycle->getIdCycle(), $request->request->get('_token'))) {
+            if (!$this->isCsrfTokenValid('delete-cycle' . $cycle->getIdCycle(), $request->request->get('_token'))) {
                 throw $this->createAccessDeniedException('Token invalide.');
             }
 
@@ -138,7 +147,11 @@ public function index(EntityManagerInterface $em): Response
     #[Route('/cycle/history', name: 'calendar_cycles_history')]
     public function history(CycleRepository $cycleRepository): Response
     {
-        $cycles = $cycleRepository->findBy([], ['dateDebutM' => 'ASC']);
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+        $cycles = $cycleRepository->findBy(['user' => $user], ['dateDebutM' => 'ASC']);
 
         return $this->render('cycle/history.html.twig', [
             'cycles' => $cycles,
@@ -148,7 +161,11 @@ public function index(EntityManagerInterface $em): Response
     #[Route('/cycle/stats', name: 'cycle_stats')]
     public function stats(CycleRepository $cycleRepository): Response
     {
-        $cycles = $cycleRepository->findBy([], ['dateDebutM' => 'ASC']);
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+        $cycles = $cycleRepository->findBy(['user' => $user], ['dateDebutM' => 'ASC']);
 
         $cycleDurations = [];
         $totalDays = 0;

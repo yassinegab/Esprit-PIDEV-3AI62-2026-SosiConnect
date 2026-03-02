@@ -17,7 +17,12 @@ final class CycleAnalysisController extends AbstractController
         CycleAnalyzerService $analyzerService,
         CyclePredictionService $predictionService
     ): Response {
-        $cycles = $cycleRepository->findBy([], ['dateDebutM' => 'ASC']);
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $cycles = $cycleRepository->findBy(['user' => $user], ['dateDebutM' => 'ASC']);
 
         $lengths = $analyzerService->calculateCycleLengths($cycles);
         $labels = $analyzerService->buildLabels($cycles);
@@ -26,9 +31,9 @@ final class CycleAnalysisController extends AbstractController
 
         $aiAnalysis = null;
         $irregularFromAi = [];
-        $advice = 'Données insuffisantes pour analyse.';
+        $advice = 'Données insuffisantes pour analyse. Veuillez enregistrer au moins 2 cycles.';
 
-        if (count($lengths) >= 2) {
+        if (count($lengths) >= 1) {
             try {
                 $aiResult = $predictionService->analyzeCycles($lengths, $labels);
                 $aiAnalysis = $aiResult;

@@ -16,7 +16,7 @@ services:
 
     App\Service\CyclePredictionService:
         arguments:
-            $groqApiKey: '%env(GROQ_API_KEY)%'
+            $openRouterApiKey: '%env(OPENROUTER_API_KEY)%'
 
     App\Service\SmsService:
         arguments:

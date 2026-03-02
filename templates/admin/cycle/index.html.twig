@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Cycles Menstruels{% endblock %}
+
+{% block body %}
+<div class="flex min-h-screen bg-gray-50" x-data="{ sidebarOpen: false }">
+
+    {% include 'admin/components/sidebar.html.twig' %}
+
+    <div class="flex flex-1 flex-col lg:ml-64">
+
+        {% include 'admin/components/top-nav.html.twig' %}
+
+        <main class="flex-1 overflow-auto p-6">
+
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-3xl font-bold text-gray-900">
+                    <i class="fas fa-venus text-pink-600 mr-2"></i>
+                    Gestion des Cycles Menstruels
+                </h1>
+            </div>
+
+            <div class="bg-white rounded-xl shadow border overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-gray-100 border-b border-gray-200">
+                        <tr>
+                            <th class="p-4 font-semibold text-gray-600">Utilisatrice</th>
+                            <th class="p-4 font-semibold text-gray-600">Date de début</th>
+                            <th class="p-4 font-semibold text-gray-600">Date de fin</th>
+                            <th class="p-4 font-semibold text-gray-600">Durée (jours)</th>
+                            <th class="p-4 text-right font-semibold text-gray-600">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for cycle in cycles %}
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="p-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="h-8 w-8 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 font-bold text-xs">
+                                            {{ cycle.user.prenom[:1]|upper }}{{ cycle.user.nom[:1]|upper }}
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-gray-900">{{ cycle.user.prenom }} {{ cycle.user.nom }}</p>
+                                            <p class="text-xs text-gray-500">ID: {{ cycle.user.id }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="p-4 text-gray-700">
+                                    {{ cycle.dateDebutM|date('d/m/Y') }}
+                                </td>
+                                <td class="p-4 text-gray-700">
+                                    {{ cycle.dateFinM|date('d/m/Y') }}
+                                </td>
+                                <td class="p-4">
+                                    {% set duration = cycle.dateFinM.diff(cycle.dateDebutM).days + 1 %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
+                                        {{ duration }} jours
+                                    </span>
+                                </td>
+                                <td class="p-4 text-right">
+                                    <button class="text-gray-400 hover:text-red-600 transition-colors" title="Supprimer (Non implémenté)">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="p-8 text-center text-gray-500">
+                                    <div class="flex flex-col items-center justify-center">
+                                        <i class="fas fa-calendar-times text-4xl text-gray-300 mb-3"></i>
+                                        <p>Aucun cycle menstruel enregistré.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+</div>
+{% endblock %}

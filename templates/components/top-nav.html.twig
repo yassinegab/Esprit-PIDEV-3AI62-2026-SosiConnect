@@ -16,8 +16,13 @@
           {'id': 'activity', 'label': 'Activité physique', 'icon': 'fas fa-running', 'color': 'text-blue-500', 'path': '#'},
           {'id': 'social', 'label': 'Journal Intime', 'icon': 'fas fa-book', 'color': 'text-amber-500', 'path': path('user_journal_index')},
           {'id': 'assistance', 'label': 'Aide & Don', 'icon': 'fas fa-hand-holding-heart', 'color': 'text-pink-500', 'path': '#'},
-          {'id': 'cycle', 'label': 'Cycle menstruel', 'icon': 'fas fa-venus-mars', 'color': 'text-rose-500', 'path': '#'}
         ] %}
+        
+        {% if app.user and (app.user.sexe == 'Femme' or app.user.sexe == 'female') %}
+          {% set menuItems = menuItems|merge([
+            {'id': 'cycle', 'label': 'Cycle menstruel', 'icon': 'fas fa-venus-mars', 'color': 'text-rose-500', 'path': path('cycle_index')}
+          ]) %}
+        {% endif %}
         {% for item in menuItems %}
           {% set isActive = (activeModule is defined and activeModule == item.id) %}
           <a href="{{ item.path }}" class="group relative flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all duration-300

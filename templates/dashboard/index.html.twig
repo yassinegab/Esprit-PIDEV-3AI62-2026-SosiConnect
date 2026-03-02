@@ -105,6 +105,41 @@
                     </div>
                 </div>
                 
+                <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm animate-fadeIn" style="animation-delay: 0.45s;">
+                    <div class="mb-4 flex items-center justify-between">
+                        <h2 class="text-lg font-semibold text-gray-900">
+                            <i class="fas fa-venus text-rose-600 mr-2"></i>
+                            Cycle menstruel
+                        </h2>
+                    </div>
+                    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                        <a href="{{ path('cycle_index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-rose-50 hover:border-rose-300 transition-colors">
+                            <i class="fas fa-calendar-alt text-rose-600"></i>
+                            <span class="text-sm font-semibold text-gray-900">Calendrier</span>
+                        </a>
+                        <a href="{{ path('cycle_analyse') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-rose-50 hover:border-rose-300 transition-colors">
+                            <i class="fas fa-chart-line text-rose-600"></i>
+                            <span class="text-sm font-semibold text-gray-900">Analyse</span>
+                        </a>
+                        <a href="{{ path('cycle_phases') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-rose-50 hover:border-rose-300 transition-colors">
+                            <i class="fas fa-flask text-rose-600"></i>
+                            <span class="text-sm font-semibold text-gray-900">Phases</span>
+                        </a>
+                        <a href="{{ path('calendar_cycles_history') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-rose-50 hover:border-rose-300 transition-colors">
+                            <i class="fas fa-history text-rose-600"></i>
+                            <span class="text-sm font-semibold text-gray-900">Historique</span>
+                        </a>
+                        <a href="{{ path('cycle_stats') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-rose-50 hover:border-rose-300 transition-colors">
+                            <i class="fas fa-chart-bar text-rose-600"></i>
+                            <span class="text-sm font-semibold text-gray-900">Statistiques</span>
+                        </a>
+                        <a href="{{ path('events_index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-rose-50 hover:border-rose-300 transition-colors">
+                            <i class="fas fa-calendar-check text-rose-600"></i>
+                            <span class="text-sm font-semibold text-gray-900">Événements</span>
+                        </a>
+                    </div>
+                </div>
+                
             </div>
         </main>
         

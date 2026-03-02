@@ -18,7 +18,12 @@ class CyclePhasePageController extends AbstractController
     #[Route('/phases/events', name: 'cycle_phases_events')]
     public function events(CycleRepository $repo, HormonalPhaseService $phaseService): JsonResponse
     {
-        $cycles = $repo->findBy([], ['dateDebutM' => 'ASC']);
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse([]);
+        }
+
+        $cycles = $repo->findBy(['user' => $user], ['dateDebutM' => 'ASC']);
         $events = [];
 
         foreach ($cycles as $cycle) {

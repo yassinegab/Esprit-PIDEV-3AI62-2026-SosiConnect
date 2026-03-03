@@ -1,0 +1,48 @@
+<div class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all hover:shadow-md">
+    <div class="mb-4 flex items-center justify-between">
+        <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider">Activité & Engagement</h3>
+        <i class="fas fa-running text-green-400"></i>
+    </div>
+
+    {% if latestWellBeing %}
+        <div class="space-y-6 py-2">
+            <div>
+                <div class="mb-2 flex items-center justify-between">
+                    <span class="text-xs font-medium text-gray-600">Assiduité en classe</span>
+                    <span class="text-xs font-bold text-green-600">{{ latestWellBeing.classAttendance * 20 }}%</span>
+                </div>
+                <div class="h-2 w-full rounded-full bg-gray-100">
+                    <div class="h-full rounded-full bg-green-500" style="width: {{ latestWellBeing.classAttendance * 20 }}%;"></div>
+                </div>
+            </div>
+
+            <div>
+                <div class="mb-2 flex items-center justify-between">
+                    <span class="text-xs font-medium text-gray-600">Confiance académique</span>
+                    <span class="text-xs font-bold text-blue-600">{{ latestWellBeing.lowAcademicConfidence * 20 }}%</span>
+                </div>
+                <div class="h-2 w-full rounded-full bg-gray-100">
+                    <div class="h-full rounded-full bg-blue-500" style="width: {{ (6 - latestWellBeing.lowAcademicConfidence) * 20 }}%;"></div>
+                </div>
+                <p class="mt-1 text-[10px] text-gray-400 italic">Score basé sur vos derniers ressentis.</p>
+            </div>
+
+            <div class="rounded-lg border border-dashed border-gray-200 p-3">
+                <div class="flex items-center gap-3">
+                    <div class="rounded-full bg-orange-100 p-2 text-orange-600">
+                        <i class="fas fa-heartbeat text-sm"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold uppercase text-gray-400">Palpitations</p>
+                        <p class="text-sm font-semibold text-gray-900">{{ latestWellBeing.heartbeatPalpitations }}/5</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="flex flex-col items-center justify-center py-8 text-center text-gray-400">
+            <i class="fas fa-walking text-3xl mb-3 opacity-20"></i>
+            <p class="text-xs italic">Bougez un peu, restez en forme !</p>
+        </div>
+    {% endif %}
+</div>

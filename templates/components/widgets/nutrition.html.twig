@@ -1,0 +1,44 @@
+{% set nutritionVal = nutrition|default({'calories': 0, 'count': 0, 'sugar': 0, 'protein': 0}) %}
+<div class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all hover:shadow-md">
+    <div class="mb-4 flex items-center justify-between">
+        <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider">Nutrition du Jour</h3>
+        <i class="fas fa-utensils text-orange-400"></i>
+    </div>
+
+    <div class="space-y-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-3xl font-bold text-gray-900">{{ nutritionVal.calories|number_format(0) }}</p>
+                <p class="text-[10px] font-medium uppercase text-gray-400 tracking-widest">Kcal consommées</p>
+            </div>
+            <div class="h-12 w-12 rounded-full border-4 border-orange-100 flex items-center justify-center">
+                <span class="text-xs font-bold text-orange-500">{{ (nutritionVal.calories / 20)|round }}%</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="rounded-lg bg-blue-50 p-3">
+                <p class="text-[10px] font-bold uppercase text-blue-400">Protéines</p>
+                <p class="text-lg font-bold text-blue-700">{{ nutritionVal.protein|number_format(1) }}g</p>
+            </div>
+            <div class="rounded-lg bg-pink-50 p-3">
+                <p class="text-[10px] font-bold uppercase text-pink-400">Sucre</p>
+                <p class="text-lg font-bold text-pink-700">{{ nutritionVal.sugar|number_format(1) }}g</p>
+            </div>
+        </div>
+
+        <div class="border-t border-gray-100 pt-4">
+            <p class="text-[10px] font-bold uppercase text-gray-400 mb-2">Historique récent</p>
+            <p class="text-xs text-gray-600">
+                Vous avez enregistré <strong>{{ nutritionVal.count }}</strong> repas aujourd'hui.
+                {% if nutritionVal.count == 0 %}
+                    <span class="text-orange-500 italic">Commencez à noter vos repas !</span>
+                {% elseif nutritionVal.count < 3 %}
+                    <span class="text-blue-500 italic">Continuez sur cette lancée.</span>
+                {% else %}
+                    <span class="text-green-500 italic">Excellent suivi !</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</div>

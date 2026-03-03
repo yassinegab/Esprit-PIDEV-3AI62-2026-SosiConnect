@@ -1,0 +1,52 @@
+<div class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all hover:shadow-md">
+    <div class="mb-4 flex items-center justify-between">
+        <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider">Suivi du Cycle</h3>
+        <i class="fas fa-moon text-pink-400"></i>
+    </div>
+
+    {% if latestCycle %}
+        {% set daysElapsed = date().diff(date(latestCycle.dateDebutM)).days %}
+        <div class="flex flex-col items-center py-2">
+            <div class="mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-pink-50 to-rose-100 text-pink-600 shadow-inner">
+                <div class="text-center">
+                    <p class="text-3xl font-black">J{{ daysElapsed + 1 }}</p>
+                    <p class="text-[8px] font-bold uppercase tracking-widest text-pink-400">du cycle</p>
+                </div>
+            </div>
+
+            <div class="w-full space-y-4">
+                <div class="relative pt-1">
+                    <div class="mb-2 flex items-center justify-between">
+                        <div>
+                            <span class="inline-block rounded-full bg-pink-100 px-2 py-1 text-[10px] font-semibold uppercase text-pink-600">
+                                {% if daysElapsed < 5 %}Phase Menstruelle{% elseif daysElapsed < 14 %}Phase Folliculaire{% elseif daysElapsed < 17 %}Ovulation{% else %}Phase Lutéale{% endif %}
+                            </span>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] font-semibold text-gray-400">Prochaines règles: dans {{ (28 - daysElapsed) > 0 ? (28 - daysElapsed) : 'quelques' }} jours</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-2">
+                    <a href="{{ path('cycle_index') }}" class="flex-1 rounded-lg border border-pink-100 py-2 text-center text-[10px] font-bold text-pink-600 transition-colors hover:bg-pink-50">
+                        CALENDRIER
+                    </a>
+                    <a href="{{ path('cycle_analyse') }}" class="flex-1 rounded-lg bg-pink-500 py-2 text-center text-[10px] font-bold text-white transition-colors hover:bg-pink-600 shadow-sm">
+                        ANALYSER AI
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="flex flex-col items-center justify-center py-8 text-center">
+            <div class="mb-3 rounded-full bg-pink-50 p-4">
+                <i class="fas fa-calendar-alt text-2xl text-pink-200"></i>
+            </div>
+            <p class="text-sm text-gray-500">Commencez à suivre votre cycle pour des prédictions personnalisées.</p>
+            <a href="{{ path('cycle_index') }}" class="mt-4 rounded-lg bg-pink-500 px-4 py-2 text-xs font-bold text-white transition-all hover:bg-pink-600 shadow-sm">
+                Activer le suivi
+            </a>
+        </div>
+    {% endif %}
+</div>

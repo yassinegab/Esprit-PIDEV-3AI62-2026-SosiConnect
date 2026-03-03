@@ -48,14 +48,12 @@ class TransportConfig
     }
 
     /**
-     * @param ParamConfigurator|list<ParamConfigurator|mixed> $value
-     *
      * @return $this
      */
-    public function options(ParamConfigurator|array $value): static
+    public function option(string $key, mixed $value): static
     {
         $this->_usedProperties['options'] = true;
-        $this->options = $value;
+        $this->options[$key] = $value;
 
         return $this;
     }

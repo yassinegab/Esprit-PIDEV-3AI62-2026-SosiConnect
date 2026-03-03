@@ -36,10 +36,35 @@
 
                 {# Medical Stats #}
                 <div class="grid gap-6 md:grid-cols-3 animate-fadeIn" style="animation-delay: 0.05s;">
-                    
-                    
-                   
-                    
+                    <div class="flex items-center gap-4 rounded-xl border border-blue-100 bg-blue-50/50 p-4 transition-all hover:shadow-md">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+                            <i class="fas fa-clock text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-blue-600 uppercase tracking-wider">Rendez-vous à venir</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ upcomingAppointments }}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4 rounded-xl border border-green-100 bg-green-50/50 p-4 transition-all hover:shadow-md">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 text-green-600">
+                            <i class="fas fa-check-circle text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-green-600 uppercase tracking-wider">Consultations terminées</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ completedConsultations }}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4 rounded-xl border border-purple-100 bg-purple-50/50 p-4 transition-all hover:shadow-md">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100 text-purple-600">
+                            <i class="fas fa-hospital text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-purple-600 uppercase tracking-wider">Hôpitaux dispo</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ availableHospitals }}</p>
+                        </div>
+                    </div>
                 </div>
                 
                 {# Stat Cards #}

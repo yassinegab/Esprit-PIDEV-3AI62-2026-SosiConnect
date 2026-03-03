@@ -13,10 +13,12 @@ use Symfony\Component\Routing\Attribute\Route;
 
 use Symfony\Bundle\SecurityBundle\Security;
 
+use App\Service\CycleCalculatorService;
+
 final class CycleController extends AbstractController
 {
     #[Route('/cycle', name: 'cycle_index')]
-    public function index(EntityManagerInterface $em, Security $security): Response
+    public function index(EntityManagerInterface $em, Security $security, CycleCalculatorService $calculator): Response
     {
         $user = $security->getUser();
         if (!$user || !in_array($user->getSexe(), ['Femme', 'female'])) {
@@ -24,30 +26,15 @@ final class CycleController extends AbstractController
             return $this->redirectToRoute('user_wellbeing_index');
         }
 
-        $cycles = $em->getRepository(Cycle::class)->findBy(['user' => $user]);
-        $events = [];
+        $cycles = $em->getRepository(Cycle::class)->findBy(['user' => $user], ['dateDebutM' => 'ASC']);
 
-        foreach ($cycles as $cycle) {
-
-            $start = clone $cycle->getDateDebutM();
-            $end   = clone $cycle->getDateFinM();
-
-            while ($start <= $end) {
-
-                $events[] = [
-                    'id' => $cycle->getIdCycle(),
-                    'title' => '🩸',
-                    'start' => $start->format('Y-m-d'),
-                    'allDay' => true,
-                    'classNames' => ['menstruation-event']
-                ];
-
-                $start->modify('+1 day');
-            }
-        }
+        $data = $calculator->generateCalendarEvents($cycles);
+        $events = $data['events'] ?? [];
+        $stats = $data['stats'] ?? null;
 
         return $this->render('cycle/calendar.html.twig', [
             'calendarEvents' => json_encode($events),
+            'stats' => $stats
         ]);
     }
 

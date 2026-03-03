@@ -116,14 +116,12 @@ class SerializerConfig
     }
 
     /**
-     * @param ParamConfigurator|list<ParamConfigurator|mixed> $value
-     *
      * @return $this
      */
-    public function defaultContext(ParamConfigurator|array $value): static
+    public function defaultContext(string $key, mixed $value): static
     {
         $this->_usedProperties['defaultContext'] = true;
-        $this->defaultContext = $value;
+        $this->defaultContext[$key] = $value;
 
         return $this;
     }

@@ -4,6 +4,9 @@ namespace App\Controller;
 
 use App\Repository\HopitalRepository;
 use App\Repository\RendezVousRepository;
+use App\Repository\MealRepository;
+use App\Repository\UserWellBeingDataRepository;
+use App\Repository\CycleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +19,10 @@ class DashboardController extends AbstractController
     public function index(
         EntityManagerInterface $em,
         RendezVousRepository $rendezVousRepository,
-        HopitalRepository $hopitalRepository
+        HopitalRepository $hopitalRepository,
+        MealRepository $mealRepository,
+        UserWellBeingDataRepository $wellBeingRepository,
+        CycleRepository $cycleRepository
     ): Response
     {
         $user = $this->getUser();
@@ -40,11 +46,33 @@ class DashboardController extends AbstractController
             'serviceUrgenceDispo' => true
         ]);
 
-        // Données utilisateur pour l'affichage (si nécessaire, sinon utiliser app.user dans twig)
-        $userData = [
-            'prenom' => $user->getPrenom(),
-            'nom' => $user->getNom(),
+        // Well-Being Data
+        $latestWellBeing = $wellBeingRepository->findOneBy(['user' => $user], ['createdAt' => 'DESC']);
+
+        // Nutrition Data (Today)
+        $today = new \DateTimeImmutable('today');
+        $meals = $mealRepository->createQueryBuilder('m')
+            ->where('m.user = :user')
+            ->andWhere('m.createAt >= :today')
+            ->setParameter('user', $user)
+            ->setParameter('today', $today)
+            ->getQuery()
+            ->getResult();
+
+        $nutrition = [
+            'calories' => 0,
+            'sugar' => 0,
+            'protein' => 0,
+            'count' => count($meals)
         ];
+        foreach ($meals as $meal) {
+            $nutrition['calories'] += $meal->getCalories() ?? 0;
+            $nutrition['sugar'] += $meal->getSugar() ?? 0;
+            $nutrition['protein'] += $meal->getProtein() ?? 0;
+        }
+
+        // Cycle Data
+        $latestCycle = $cycleRepository->findOneBy(['user' => $user], ['dateDebutM' => 'DESC']);
 
         // Actions rapides
         $quickActions = [
@@ -54,7 +82,7 @@ class DashboardController extends AbstractController
             ['emoji' => '🥗', 'label' => 'Nutrition'],
         ];
 
-        // Stress Statistics for Admin (or User History)
+        // Stress Statistics (Admin/Global)
         $allPredictions = $em->getRepository(StressPrediction::class)->findBy([], ['createdAt' => 'ASC']);
         
         $stats = [
@@ -79,13 +107,16 @@ class DashboardController extends AbstractController
         }
 
         return $this->render('dashboard/index.html.twig', [
-            'user' => $userData,
+            'user' => $user,
             'quickActions' => $quickActions,
             'stressStats' => $stats,
             'scatterData' => $scatterData,
             'upcomingAppointments' => $upcomingAppointments,
             'completedConsultations' => $completedConsultations,
             'availableHospitals' => $availableHospitals,
+            'latestWellBeing' => $latestWellBeing,
+            'nutrition' => $nutrition,
+            'latestCycle' => $latestCycle,
         ]);
     }
 }

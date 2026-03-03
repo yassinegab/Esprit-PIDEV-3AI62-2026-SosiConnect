@@ -30,11 +30,13 @@ class UserWellBeingDataRepository extends ServiceEntityRepository
                 ->setParameter('term', '%' . $term . '%');
         }
 
-        return $qb->orderBy('u.createdAt', 'DESC')
-            ->getQuery()
-            ->getResult();
+        return $qb->orderBy('u.createdAt', 'DESC');
     }
-    public function findBySearchAndSort(?string $term, ?array $sort = []): array
+    
+    /**
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function findBySearchAndSortQueryBuilder(?string $term, ?array $sort = []): \Doctrine\ORM\QueryBuilder
     {
         $qb = $this->createQueryBuilder('u');
 
@@ -63,7 +65,12 @@ class UserWellBeingDataRepository extends ServiceEntityRepository
             $qb->orderBy('u.createdAt', 'DESC');
         }
 
-        return $qb->getQuery()->getResult();
+        return $qb;
+    }
+
+    public function findBySearchAndSort(?string $term, ?array $sort = []): array
+    {
+        return $this->findBySearchAndSortQueryBuilder($term, $sort)->getQuery()->getResult();
     }
     public function getStatistics(?string $searchTerm = null): array
     {

@@ -1,0 +1,40 @@
+<div class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all hover:shadow-md">
+    <div class="mb-4 flex items-center justify-between">
+        <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider">Résumé de santé</h3>
+        <span class="rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-600">
+            Dernière mise à jour: {{ latestWellBeing ? latestWellBeing.createdAt|date('d/m/Y') : 'N/A' }}
+        </span>
+    </div>
+
+    {% if latestWellBeing %}
+        <div class="space-y-4">
+            {% set factors = [
+                { 'label': 'Environnement de travail', 'value': latestWellBeing.workEnvironment, 'icon': '🏢' },
+                { 'label': 'Problèmes de sommeil', 'value': latestWellBeing.sleepProblems, 'icon': '🌙' },
+                { 'label': 'Maux de tête', 'value': latestWellBeing.headaches, 'icon': '🤕' },
+                { 'label': 'Agitation', 'value': latestWellBeing.restlessness, 'icon': '🧘' }
+            ] %}
+
+            {% for factor in factors %}
+                <div>
+                    <div class="mb-1 flex items-center justify-between text-xs">
+                        <span class="font-medium text-gray-600">{{ factor.icon }} {{ factor.label }}</span>
+                        <span class="font-bold text-gray-900">{{ factor.value }}/5</span>
+                    </div>
+                    <div class="h-1.5 w-full rounded-full bg-gray-100">
+                        <div class="h-full rounded-full transition-all duration-500 {{ factor.value > 3 ? 'bg-red-400' : (factor.value > 1 ? 'bg-yellow-400' : 'bg-green-400') }}"
+                             style="width: {{ factor.value * 20 }}%;"></div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="flex flex-col items-center justify-center py-8 text-center">
+            <div class="mb-3 rounded-full bg-gray-50 p-4">
+                <i class="fas fa-clipboard-list text-2xl text-gray-300"></i>
+            </div>
+            <p class="text-sm text-gray-500">Aucune donnée de bien-être récente.</p>
+            <a href="#" class="mt-4 text-xs font-semibold text-blue-600 hover:text-blue-700">Remplir le questionnaire →</a>
+        </div>
+    {% endif %}
+</div>

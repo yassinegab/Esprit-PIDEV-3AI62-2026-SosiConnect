@@ -4,6 +4,9 @@ namespace App\Controller\Front_office;
 
 use App\Repository\RendezVousRepository;
 use App\Repository\HopitalRepository;
+use App\Repository\MealRepository;
+use App\Repository\UserWellBeingDataRepository;
+use App\Repository\CycleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +19,10 @@ class DashboardController extends AbstractController
     public function index(
         EntityManagerInterface $em,
         RendezVousRepository $rendezVousRepository,
-        HopitalRepository $hopitalRepository
+        HopitalRepository $hopitalRepository,
+        MealRepository $mealRepository,
+        UserWellBeingDataRepository $wellBeingRepository,
+        CycleRepository $cycleRepository
     ): Response
     {
         $user = $this->getUser();
@@ -39,6 +45,34 @@ class DashboardController extends AbstractController
         $availableHospitals = $hopitalRepository->count([
             'serviceUrgenceDispo' => true
         ]);
+
+        // Well-Being Data
+        $latestWellBeing = $wellBeingRepository->findOneBy(['user' => $user], ['createdAt' => 'DESC']);
+
+        // Nutrition Data (Today)
+        $today = new \DateTimeImmutable('today');
+        $meals = $mealRepository->createQueryBuilder('m')
+            ->where('m.user = :user')
+            ->andWhere('m.createAt >= :today')
+            ->setParameter('user', $user)
+            ->setParameter('today', $today)
+            ->getQuery()
+            ->getResult();
+
+        $nutrition = [
+            'calories' => 0,
+            'sugar' => 0,
+            'protein' => 0,
+            'count' => count($meals)
+        ];
+        foreach ($meals as $meal) {
+            $nutrition['calories'] += $meal->getCalories() ?? 0;
+            $nutrition['sugar'] += $meal->getSugar() ?? 0;
+            $nutrition['protein'] += $meal->getProtein() ?? 0;
+        }
+
+        // Cycle Data
+        $latestCycle = $cycleRepository->findOneBy(['user' => $user], ['dateDebutM' => 'DESC']);
 
         // ── Actions rapides ─────────────────────────────────────
         $quickActions = [
@@ -75,19 +109,21 @@ class DashboardController extends AbstractController
                 ];
             }
         } catch (\Exception $e) {
-            // Si l'entité StressPrediction n'existe pas encore → graphiques vides
             $stressStats = ['Low' => 0, 'Moderate' => 0, 'High' => 0];
             $scatterData = [];
         }
 
         return $this->render('dashboard/index.html.twig', [
-            'user'                   => $user,          // objet User réel (prenom, nom, etc.)
+            'user'                   => $user,
             'quickActions'           => $quickActions,
             'upcomingAppointments'   => $upcomingAppointments,
             'completedConsultations' => $completedConsultations,
             'availableHospitals'     => $availableHospitals,
-            'stressStats'            => $stressStats,   // ✅ dynamique
-            'scatterData'            => $scatterData,   // ✅ dynamique
+            'stressStats'            => $stressStats,
+            'scatterData'            => $scatterData,
+            'latestWellBeing'        => $latestWellBeing,
+            'nutrition'              => $nutrition,
+            'latestCycle'            => $latestCycle,
         ]);
     }
 }

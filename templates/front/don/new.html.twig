@@ -107,8 +107,8 @@
                     <div>
                         <select name="typeDon" class="border border-gray-300 rounded-lg px-3 py-2">
                             <option value="">Tous types</option>
-                            <option value="sang" {{ filters.typeDon == 'sang' ? 'selected' }}>Sang</option>
-                            <option value="organe" {{ filters.typeDon == 'organe' ? 'selected' }}>Organe</option>
+                            <option value="sang" {{ filters.typeDon|default('') == 'sang' ? 'selected' }}>Sang</option>
+                            <option value="organe" {{ filters.typeDon|default('') == 'organe' ? 'selected' }}>Organe</option>
                         </select>
                     </div>
                     <button type="submit" class="bg-gray-800 hover:bg-black text-white px-4 py-2 rounded-lg transition">

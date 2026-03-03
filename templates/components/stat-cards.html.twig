@@ -1,8 +1,12 @@
+{% set nutritionVal = nutrition|default({'calories': 0, 'count': 0, 'sugar': 0, 'protein': 0}) %}
+{% set wellBeingVal = latestWellBeing|default(null) %}
+{% set cycleVal = latestCycle|default(null) %}
+
 {% set stats = [
   {
     'id': 'calories',
-    'label': 'Calories consommées',
-    'value': '1,842',
+    'label': 'Calories aujourd\'hui',
+    'value': nutritionVal.calories|number_format(0, '.', ','),
     'unit': 'kcal',
     'target': '/ 2,000',
     'subtitle': null,
@@ -10,94 +14,92 @@
     'color': 'text-orange-500',
     'barColor': 'bg-orange-500',
     'bgColor': 'bg-orange-50',
-    'progress': 92
+    'progress': (nutritionVal.calories / 20) > 100 ? 100 : (nutritionVal.calories / 20)
   },
   {
     'id': 'stress',
-    'label': 'Niveau de stress',
-    'value': 'Faible',
+    'label': 'Dernier Stress',
+    'value': wellBeingVal ? (wellBeingVal.anxietyTension > 3 ? 'Élevé' : (wellBeingVal.anxietyTension > 1 ? 'Modéré' : 'Faible')) : 'N/A',
     'unit': null,
     'target': null,
-    'subtitle': 'Score: 28/100',
+    'subtitle': wellBeingVal ? 'Score: ' ~ (wellBeingVal.anxietyTension * 20) ~ '/100' : 'Aucune donnée',
     'icon': '🧠',
-    'color': 'text-primary',
-    'barColor': 'bg-primary',
-    'bgColor': 'bg-primary/10',
-    'progress': 28
+    'color': 'text-blue-500',
+    'barColor': 'bg-blue-500',
+    'bgColor': 'bg-blue-50',
+    'progress': wellBeingVal ? (wellBeingVal.anxietyTension * 20) : 0
   },
   {
-    'id': 'activity',
-    'label': 'Activité physique',
-    'value': '8,456',
-    'unit': 'pas',
-    'target': '/ 10,000',
-    'subtitle': null,
-    'icon': '👣',
-    'color': 'text-secondary',
-    'barColor': 'bg-secondary',
-    'bgColor': 'bg-secondary/10',
-    'progress': 85
-  },
-  {
-    'id': 'mood',
-    'label': 'Humeur du jour',
-    'value': 'Joyeuse',
-    'unit': null,
+    'id': 'meals',
+    'label': 'Repas enregistrés',
+    'value': nutritionVal.count,
+    'unit': 'repas',
     'target': null,
-    'subtitle': 'Énergie: Haute',
-    'icon': '😊',
-    'color': 'text-yellow-500',
-    'barColor': null,
-    'bgColor': 'bg-yellow-50',
-    'progress': null
+    'subtitle': 'Aujourd\'hui',
+    'icon': '🥗',
+    'color': 'text-green-500',
+    'barColor': 'bg-green-500',
+    'bgColor': 'bg-green-50',
+    'progress': (nutritionVal.count * 25) > 100 ? 100 : (nutritionVal.count * 25)
+  },
+  {
+    'id': 'sleep',
+    'label': 'Sommeil',
+    'value': wellBeingVal ? (6 - wellBeingVal.sleepProblems) : 'N/A',
+    'unit': '/ 5',
+    'target': null,
+    'subtitle': 'Qualité perçue',
+    'icon': '😴',
+    'color': 'text-indigo-500',
+    'barColor': 'bg-indigo-500',
+    'bgColor': 'bg-indigo-50',
+    'progress': wellBeingVal ? ((5 - wellBeingVal.sleepProblems + 1) * 20) : 0
   },
   {
     'id': 'cycle',
     'label': 'Cycle menstruel',
-    'value': 'Phase folliculaire',
+    'value': cycleVal ? 'Jour ' ~ date().diff(date(cycleVal.dateDebutM)).days : 'N/A',
     'unit': null,
     'target': null,
-    'subtitle': 'Jour 8 sur 28',
+    'subtitle': cycleVal ? 'Début: ' ~ cycleVal.dateDebutM|date('d M') : 'Non suivi',
     'icon': '🌸',
     'color': 'text-pink-500',
     'barColor': 'bg-pink-500',
     'bgColor': 'bg-pink-50',
-    'progress': 29
+    'progress': cycleVal ? (date().diff(date(cycleVal.dateDebutM)).days * 3.5)|round : 0
   }
 ] %}
 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
   {% for stat in stats %}
-    <div class="overflow-hidden rounded-lg border border-border bg-card">
+    <div class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-md hover:-translate-y-1">
       <div class="p-4">
         <div class="flex items-start justify-between">
           <div class="flex-1">
-            <p class="text-xs font-medium text-muted-foreground">{{ stat.label }}</p>
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ stat.label }}</p>
             <div class="mt-2 flex items-baseline gap-1">
-              <span class="text-2xl font-bold text-card-foreground">{{ stat.value }}</span>
+              <span class="text-2xl font-bold text-gray-900">{{ stat.value }}</span>
               {% if stat.unit %}
-                <span class="text-sm text-muted-foreground">{{ stat.unit }}</span>
+                <span class="text-sm font-medium text-gray-500">{{ stat.unit }}</span>
               {% endif %}
             </div>
             
-            {# This handles both target and subtitle without errors #}
             {% if stat.target or stat.subtitle %}
-              <p class="text-xs text-muted-foreground">
+              <p class="text-xs text-gray-400 mt-1">
                 {{ stat.target }} {{ stat.subtitle }}
               </p>
             {% endif %}
           </div>
           
-          <div class="rounded-lg p-2.5 {{ stat.bgColor }}">
-            <span class="{{ stat.color }}">{{ stat.icon }}</span>
+          <div class="rounded-xl p-3 {{ stat.bgColor }} flex items-center justify-center">
+            <span class="text-xl {{ stat.color }}">{{ stat.icon }}</span>
           </div>
         </div>
 
-        {% if stat.progress %}
-          <div class="mt-3">
-            <div class="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-              {# CSS Variable trick to avoid IDE warnings on the style tag #}
-              <div class="h-full rounded-full transition-all {{ stat.barColor }}"
-                   style="--width: {{ stat.progress }}%; width: var(--width);">
+        {% if stat.progress is not null %}
+          <div class="mt-4">
+            <div class="h-2 w-full overflow-hidden rounded-full bg-gray-100">
+              <div class="h-full rounded-full transition-all duration-1000 ease-out {{ stat.barColor }}"
+                   style="width: {{ stat.progress }}%;">
               </div>
             </div>
           </div>

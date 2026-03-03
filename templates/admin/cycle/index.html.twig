@@ -1,83 +1,194 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/layout.html.twig' %}
 
 {% block title %}Gestion des Cycles Menstruels{% endblock %}
 
-{% block body %}
-<div class="flex min-h-screen bg-gray-50" x-data="{ sidebarOpen: false }">
+{% block content %}
+<div class="space-y-6 animate-fadeIn">
 
-    {% include 'admin/components/sidebar.html.twig' %}
+    <!-- Header & Stats -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                <span class="text-3xl">🌸</span> Gestion des Cycles
+            </h1>
+            <p class="text-gray-500 mt-1">Suivi et analyse des données de santé féminine</p>
+        </div>
+        <div class="flex gap-3">
+            <button class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition shadow-sm">
+                <i class="fas fa-download mr-2"></i> Exporter
+            </button>
+        </div>
+    </div>
 
-    <div class="flex flex-1 flex-col lg:ml-64">
-
-        {% include 'admin/components/top-nav.html.twig' %}
-
-        <main class="flex-1 overflow-auto p-6">
-
-            <div class="flex items-center justify-between mb-6">
-                <h1 class="text-3xl font-bold text-gray-900">
-                    <i class="fas fa-venus text-pink-600 mr-2"></i>
-                    Gestion des Cycles Menstruels
-                </h1>
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-xl p-6 shadow-sm border border-pink-100 hover:shadow-md transition">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Cycles enregistrés</p>
+                    <h3 class="text-3xl font-bold text-gray-900 mt-2">{{ stats.total }}</h3>
+                </div>
+                <div class="p-3 bg-pink-50 rounded-lg text-pink-600">
+                    <i class="fas fa-calendar-alt text-xl"></i>
+                </div>
             </div>
+        </div>
 
-            <div class="bg-white rounded-xl shadow border overflow-hidden">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-gray-100 border-b border-gray-200">
-                        <tr>
-                            <th class="p-4 font-semibold text-gray-600">Utilisatrice</th>
-                            <th class="p-4 font-semibold text-gray-600">Date de début</th>
-                            <th class="p-4 font-semibold text-gray-600">Date de fin</th>
-                            <th class="p-4 font-semibold text-gray-600">Durée (jours)</th>
-                            <th class="p-4 text-right font-semibold text-gray-600">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        {% for cycle in cycles %}
-                            <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="p-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="h-8 w-8 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 font-bold text-xs">
-                                            {{ cycle.user.prenom[:1]|upper }}{{ cycle.user.nom[:1]|upper }}
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-gray-900">{{ cycle.user.prenom }} {{ cycle.user.nom }}</p>
-                                            <p class="text-xs text-gray-500">ID: {{ cycle.user.id }}</p>
-                                        </div>
+        <div class="bg-white rounded-xl p-6 shadow-sm border border-purple-100 hover:shadow-md transition">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Utilisatrices actives</p>
+                    <h3 class="text-3xl font-bold text-gray-900 mt-2">{{ stats.users }}</h3>
+                </div>
+                <div class="p-3 bg-purple-50 rounded-lg text-purple-600">
+                    <i class="fas fa-users text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl p-6 shadow-sm border border-blue-100 hover:shadow-md transition">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Durée moyenne</p>
+                    <h3 class="text-3xl font-bold text-gray-900 mt-2">{{ stats.avgDuration }} <span class="text-sm font-normal text-gray-500">jours</span></h3>
+                </div>
+                <div class="p-3 bg-blue-50 rounded-lg text-blue-600">
+                    <i class="fas fa-clock text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters & Search -->
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+        <div class="flex flex-col md:flex-row gap-4 justify-between">
+            <div class="relative flex-1 max-w-md">
+                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <input type="text" placeholder="Rechercher une utilisatrice..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500">
+            </div>
+            <div class="flex gap-3">
+                <select class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pink-500">
+                    <option>Tous les statuts</option>
+                    <option>Régulier</option>
+                    <option>Irrégulier</option>
+                </select>
+                <select class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pink-500">
+                    <option>Trier par date</option>
+                    <option>Trier par nom</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cycles Table -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="p-4 font-semibold text-gray-600 text-sm uppercase tracking-wider">Utilisatrice</th>
+                        <th class="p-4 font-semibold text-gray-600 text-sm uppercase tracking-wider">Période</th>
+                        <th class="p-4 font-semibold text-gray-600 text-sm uppercase tracking-wider">Durée</th>
+                        <th class="p-4 font-semibold text-gray-600 text-sm uppercase tracking-wider">Statut</th>
+                        <th class="p-4 text-right font-semibold text-gray-600 text-sm uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for cycle in cycles %}
+                        <tr class="hover:bg-gray-50 transition-colors group">
+                            <td class="p-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="h-10 w-10 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white font-bold shadow-sm">
+                                        {{ cycle.user.prenom[:1]|upper }}{{ cycle.user.nom[:1]|upper }}
                                     </div>
-                                </td>
-                                <td class="p-4 text-gray-700">
-                                    {{ cycle.dateDebutM|date('d/m/Y') }}
-                                </td>
-                                <td class="p-4 text-gray-700">
-                                    {{ cycle.dateFinM|date('d/m/Y') }}
-                                </td>
-                                <td class="p-4">
-                                    {% set duration = cycle.dateFinM.diff(cycle.dateDebutM).days + 1 %}
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
-                                        {{ duration }} jours
+                                    <div>
+                                        <p class="font-semibold text-gray-900">{{ cycle.user.prenom }} {{ cycle.user.nom }}</p>
+                                        <p class="text-xs text-gray-500">{{ cycle.user.email }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="p-4">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-medium text-gray-900">
+                                        {{ cycle.dateDebutM|date('d M Y') }}
                                     </span>
-                                </td>
-                                <td class="p-4 text-right">
-                                    <button class="text-gray-400 hover:text-red-600 transition-colors" title="Supprimer (Non implémenté)">
+                                    <span class="text-xs text-gray-500">
+                                        au {{ cycle.dateFinM|date('d M Y') }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="p-4">
+                                {% set duration = cycle.dateFinM.diff(cycle.dateDebutM).days + 1 %}
+                                <div class="flex items-center gap-2">
+                                    <div class="w-full max-w-[80px] h-2 bg-gray-100 rounded-full overflow-hidden">
+                                        <div class="h-full bg-pink-500 rounded-full" style="width: {{ (duration * 10) > 100 ? 100 : (duration * 10) }}%"></div>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-700">{{ duration }}j</span>
+                                </div>
+                            </td>
+                            <td class="p-4">
+                                {% if duration >= 3 and duration <= 7 %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                                        <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span> Normal
+                                    </span>
+                                {% else %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+                                        <span class="w-1.5 h-1.5 bg-yellow-500 rounded-full mr-1.5"></span> Atypique
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="p-4 text-right">
+                                <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <a href="#" class="p-2 bg-white border border-gray-200 rounded-lg text-gray-600 hover:text-blue-600 hover:border-blue-300 hover:shadow-sm transition">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button class="p-2 bg-white border border-gray-200 rounded-lg text-gray-600 hover:text-red-600 hover:border-red-300 hover:shadow-sm transition">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
-                                </td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="5" class="p-8 text-center text-gray-500">
-                                    <div class="flex flex-col items-center justify-center">
-                                        <i class="fas fa-calendar-times text-4xl text-gray-300 mb-3"></i>
-                                        <p>Aucun cycle menstruel enregistré.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="p-12 text-center text-gray-500">
+                                <div class="flex flex-col items-center justify-center">
+                                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                                        <i class="fas fa-inbox text-2xl text-gray-400"></i>
                                     </div>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                                    <h3 class="text-lg font-medium text-gray-900">Aucune donnée</h3>
+                                    <p class="text-sm text-gray-500 mt-1">Aucun cycle menstruel n'a encore été enregistré.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination (Mockup) -->
+        <div class="bg-gray-50 px-4 py-3 border-t border-gray-200 flex items-center justify-between sm:px-6">
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-sm text-gray-700">
+                        Affichage de <span class="font-medium">1</span> à <span class="font-medium">{{ cycles|length }}</span> sur <span class="font-medium">{{ cycles|length }}</span> résultats
+                    </p>
+                </div>
+                <div>
+                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <span class="sr-only">Précédent</span>
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                        <a href="#" aria-current="page" class="z-10 bg-pink-50 border-pink-500 text-pink-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">1</a>
+                        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <span class="sr-only">Suivant</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </nav>
+                </div>
             </div>
-
-        </main>
+        </div>
     </div>
+
 </div>
 {% endblock %}

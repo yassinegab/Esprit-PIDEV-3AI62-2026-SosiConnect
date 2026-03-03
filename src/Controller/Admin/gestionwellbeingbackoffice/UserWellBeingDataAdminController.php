@@ -13,22 +13,32 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+use Knp\Component\Pager\PaginatorInterface;
+
 #[Route('/admin/well-being-data', name: 'app_user_well_being_data_')]
 class UserWellBeingDataAdminController extends AbstractController
 {
     #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(Request $request, UserWellBeingDataRepository $repository): Response
+    public function index(Request $request, UserWellBeingDataRepository $repository, PaginatorInterface $paginator): Response
     {
         $searchTerm = $request->query->get('search');
         $sortField = $request->query->get('sortField', 'createdAt');
         $sortDirection = $request->query->get('sortDirection', 'desc');
 
         $sort = [$sortField => $sortDirection];
-        $userWellBeingDatas = $repository->findBySearchAndSort($searchTerm, $sort);
+        // Use query builder for pagination instead of result array
+        $queryBuilder = $repository->findBySearchAndSortQueryBuilder($searchTerm, $sort);
+        
+        $pagination = $paginator->paginate(
+            $queryBuilder, /* query NOT result */
+            $request->query->getInt('page', 1), /* page number */
+            10 /* limit per page */
+        );
+
         $stats = $repository->getStatistics($searchTerm);
 
         return $this->render('admin/gestionwellbeingbackoffice/user_well_being_data/index.html.twig', [
-            'user_well_being_datas' => $userWellBeingDatas,
+            'user_well_being_datas' => $pagination, // Pass pagination object instead of array
             'stats' => $stats,
             'searchTerm' => $searchTerm,
             'sortField' => $sortField,

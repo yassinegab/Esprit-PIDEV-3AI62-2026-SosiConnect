@@ -152,6 +152,11 @@
         </tbody>
     </table>
 
+    {# ---------------- PAGINATION ---------------- #}
+    <div class="mt-4 flex justify-center">
+        {{ knp_pagination_render(user_well_being_datas) }}
+    </div>
+
     <a href="{{ path('app_user_well_being_data_new') }}" class="mt-4 inline-block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
         Create new
     </a>

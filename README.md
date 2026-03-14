@@ -4,9 +4,30 @@
 
 # 🌿 SosI Connect - Écosystème Bien-être
 
+## Overview
+
+This project was developed as part of the PIDEV – 3rd Year Engineering Program at **Esprit School of Engineering** (Academic Year 2025–2026).
+
 SOSI Connect est une solution complète de suivi du bien-être personnel. Ce projet démontre l'intégration entre une application de bureau performante et une infrastructure web robuste.
 
-## 📌 Architecture du Projet
+## Features
+
+- [x] **Authentification unifiée :** Connexion sécurisée sur les deux plateformes.
+- [ ] **Tableau de bord :** Visualisation des indicateurs de santé et de bien-être.
+
+## Tech Stack
+
+### Frontend
+- **Interface (Desktop) :** JavaFX (avec SceneBuilder pour le FXML)
+- **Web Client :** Twig, Tailwind CSS (via npm & Webpack Encore/AssetMapper)
+
+### Backend
+- **Framework :** Symfony 6.x / 7.x
+- **Langage :** PHP 8.2+
+- **Base de données :** MySQL
+- **Authentification :** JWT (LexikJWTAuthenticationBundle)
+
+## Architecture
 
 L'écosystème se divise en deux parties distinctes qui communiquent via une **API REST** :
 
@@ -15,38 +36,26 @@ L'écosystème se divise en deux parties distinctes qui communiquent via une **A
 
 [Image of a REST API architecture diagram connecting a web server and a desktop client]
 
----
+## Contributors
 
-## 🛠️ Stack Technique
+- [Votre Nom ou les Membres de l'Équipe]
 
-### Backend / API
-* **Framework :** Symfony 6.x / 7.x
-* **Langage :** PHP 8.2+
-* **Base de données :** MySQL
-* **Authentification :** JWT (LexikJWTAuthenticationBundle)
+## Academic Context
 
-### Desktop
-* **Langage :** Java 17+
-* **Interface :** JavaFX (avec SceneBuilder pour le FXML)
-* **Gestionnaire de dépendances :** Maven / Gradle
-* **Client HTTP :** Java HttpClient
+Developed at **Esprit School of Engineering – Tunisia**
+PIDEV – 3A | 2025–2026
 
----
+## Getting Started
 
-## ✨ Fonctionnalités
-
-- [x] **Authentification unifiée :** Connexion sécurisée sur les deux plateformes.
-- [ ] **Tableau de bord :** Visualisation des indicateurs de santé et de bien-être.
-
-
----
-
-## 🚀 Installation
-
-### 1. Configuration du Backend (Symfony)
+### Configuration du Backend (Symfony)
 ```bash
 cd HealthCareWebDesktopApplication
 # dans le terminal taper 
 npm install -D tailwindcss@3 postcss autoprefixer
 npx tailwindcss -i ./assets/app.css -o ./public/build/tailwind.css --watch
 symfony server:start 
+```
+
+## Acknowledgments
+
+- **Esprit School of Engineering**

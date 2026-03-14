@@ -64,7 +64,11 @@ HealthCareWebDesktopApplication/
 
 ## Contributors
 
-- [Your Name or Team Members]
+- Yassine gabsi
+- Souha mabrouk
+- Nessrin sayari
+- Dhia majdi
+- Sahar kloula
 
 ## Academic Context
 

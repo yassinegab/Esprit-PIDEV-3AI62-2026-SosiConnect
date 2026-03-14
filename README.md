@@ -12,8 +12,17 @@ SOSI Connect is a comprehensive personal wellbeing tracking solution. This proje
 
 ## Features
 
-- [x] **Unified Authentication:** Secure login across both platforms.
-- [ ] **Dashboard:** Visualization of health and wellbeing indicators.
+## Features
+
+- [x] **Unified Authentication:** Secure login & session management across Web and Desktop platforms.
+- [x] **Wellbeing & Daily Tracking:** Track daily meals, emotions, symptoms, sleep, and generate personalized wellbeing insights.
+- [x] **AI-Powered Analysis:** Integrate Hugging Face AI and Deepgram for stress prediction, emotion analysis, and voice-assisted journaling.
+- [x] **Menstrual Cycle Tracking:** Detailed cycle and phase tracking tailored to user health data.
+- [x] **Medical Appointments & Records:** Find hospitals/medical locations, book appointments (Rendez-vous), and manage medical records (Dossier Médical).
+- [x] **Donations Management:** Platform for managing blood/organ donation requests and responses.
+- [x] **Interactive Support & Chatbot:** 24/7 AI chatbot assistance, FAQ system, and user support ticketing.
+- [x] **Community Events:** Create, manage, and participate in health and wellbeing events.
+- [ ] **Dashboard Analytics:** Comprehensive visualization of health indicators and stress statistics for end-users and administrators.
 
 ## Tech Stack
 

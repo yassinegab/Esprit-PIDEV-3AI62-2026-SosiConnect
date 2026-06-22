@@ -64,7 +64,11 @@ HealthCareWebDesktopApplication/
 
 ## Contributors
 
-- [Your Name or Team Members]
+- Yassine gabsi
+- Souha mabrouk
+- Nessrin sayari
+- Dhia majdi
+- Sahar kloula
 
 ## Academic Context
 
@@ -85,3 +89,4 @@ symfony server:start
 ## Acknowledgments
 
 - **Esprit School of Engineering**
+- Mr Akrem Khemiri : khemiri.akram@esprit.tn

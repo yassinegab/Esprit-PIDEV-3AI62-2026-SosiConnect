@@ -32,6 +32,10 @@ class MedicalAIService
     /**
      * ✅ Analyse complète 100% DYNAMIQUE
      */
+    /**
+     * @param array<string, mixed> $dossierData
+     * @return array<string, mixed>
+     */
     public function analyzeMedicalRecord(array $dossierData): array
     {
         if (empty($this->apiKey)) {
@@ -76,6 +80,10 @@ class MedicalAIService
     /**
      * ✅ Appel API Groq avec prompt INTELLIGENT
      */
+    /**
+     * @param array<string, mixed> $dossier
+     * @return array<string, mixed>
+     */
     private function callGroqAPI(array $dossier): array
     {
         $prompt = $this->buildIntelligentPrompt($dossier);
@@ -116,6 +124,9 @@ class MedicalAIService
 
     /**
      * ✅ Prompt OPTIMISÉ pour analyse PRÉCISE
+     */
+    /**
+     * @param array<string, mixed> $dossier
      */
     private function buildIntelligentPrompt(array $dossier): string
     {

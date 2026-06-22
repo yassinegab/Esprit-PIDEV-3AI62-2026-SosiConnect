@@ -98,10 +98,17 @@ class DashboardController extends AbstractController
                 $stats[$label]++;
             }
             
+            $date = $p->getCreatedAt();
+            $wellBeing = $p->getUserWellBeingData();
+            $userName = 'Anon';
+            if ($wellBeing && $wellBeing->getUser()) {
+                $userName = (string)$wellBeing->getUser()->getNom();
+            }
+
             $scatterData[] = [
-                'x' => $p->getCreatedAt()->format('Y-m-d H:i'),
+                'x' => $date ? $date->format('Y-m-d H:i') : 'N/A',
                 'y' => $p->getConfidenceScore(),
-                'user' => $p->getUserWellBeingData()->getUser() ? $p->getUserWellBeingData()->getUser()->getNom() : 'Anon',
+                'user' => $userName,
                 'category' => $label
             ];
         }

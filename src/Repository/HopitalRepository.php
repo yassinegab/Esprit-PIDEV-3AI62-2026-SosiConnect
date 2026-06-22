@@ -72,6 +72,7 @@ class HopitalRepository extends ServiceEntityRepository
     /**
      * Recherche paginée avec tri (retourne data + total)
      * Compatible avec pagination manuelle ou Twig
+     * @return array{data: array<int, Hopital>, total: int}
      */
     public function searchPaginated(
         string $term = '',
@@ -112,6 +113,7 @@ class HopitalRepository extends ServiceEntityRepository
 
     /**
      * Liste paginée de tous les hôpitaux (sans recherche)
+     * @return array{data: array<int, Hopital>, total: int}
      */
     public function findPaginated(
         int $page = 1,

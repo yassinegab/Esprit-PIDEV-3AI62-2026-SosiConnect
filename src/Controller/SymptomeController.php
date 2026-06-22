@@ -18,11 +18,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class SymptomeController extends AbstractController
 {
 
-private $httpClient;
-
-    public function __construct(HttpClientInterface $httpClient)
+    public function __construct()
     {
-        $this->httpClient = $httpClient;
     }
 
     #[Route('/symptome', name: 'symptome_index')]

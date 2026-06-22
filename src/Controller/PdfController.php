@@ -23,8 +23,18 @@ class PdfController extends AbstractController
         });
 
         // Déterminer la période du rapport
-        $start_date = !empty($cycles) ? $cycles[0]->getDateDebutM()->format('d/m/Y') : '';
-        $end_date = !empty($cycles) ? end($cycles)->getDateFinM()->format('d/m/Y') : '';
+        $start_date = '';
+        if (!empty($cycles)) {
+            $firstDate = $cycles[0]->getDateDebutM();
+            $start_date = $firstDate ? $firstDate->format('d/m/Y') : '';
+        }
+        
+        $end_date = '';
+        if (!empty($cycles)) {
+            $lastCycle = end($cycles);
+            $lastDate = $lastCycle->getDateFinM();
+            $end_date = $lastDate ? $lastDate->format('d/m/Y') : '';
+        }
 
         // Générer le HTML pour le PDF
         $html = $this->renderView('pdf/rapport_cycle.html.twig', [

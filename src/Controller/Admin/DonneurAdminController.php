@@ -14,16 +14,17 @@ use Symfony\Component\Routing\Annotation\Route;
 class DonneurAdminController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager
     ) {}
 
     #[Route('', name: 'admin_donneurs')]
     public function index(Request $request, DonneurRepository $repository): Response
     {
         $page = max(1, (int) $request->query->get('page', 1));
-        $search = $request->query->get('search');
-        $groupe = $request->query->get('groupe');
+        $search = (string)$request->query->get('search', '');
+        $groupe = (string)$request->query->get('groupe', '');
         $disponible = $request->query->get('disponible');
+        /** @var string|null $disponible */
 
         $qb = $repository->createQueryBuilder('d')
             ->orderBy('d.createdAt', 'DESC');
@@ -51,7 +52,7 @@ class DonneurAdminController extends AbstractController
 
         $totalQb = clone $qb;
         $totalQb->select('COUNT(d.id)');
-        $total = $totalQb->getQuery()->getSingleScalarResult();
+        $total = (int) $totalQb->getQuery()->getSingleScalarResult();
 
         return $this->render('admin/don/donneurs.html.twig', [
             'donneurs' => $donneurs,
@@ -72,7 +73,7 @@ class DonneurAdminController extends AbstractController
     #[Route('/toggle/{id}', name: 'admin_donneur_toggle', methods: ['POST'])]
     public function toggle(Donneur $donneur, Request $request): Response
     {
-        if (!$this->isCsrfTokenValid('toggle' . $donneur->getId(), $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('toggle' . $donneur->getId(), (string)$request->request->get('_token'))) {
             $this->addFlash('error', 'Token de sécurité invalide');
             return $this->redirectToRoute('admin_donneurs');
         }
@@ -89,7 +90,7 @@ class DonneurAdminController extends AbstractController
     #[Route('/delete/{id}', name: 'admin_donneur_delete', methods: ['POST'])]
     public function delete(Donneur $donneur, Request $request): Response
     {
-        if (!$this->isCsrfTokenValid('delete' . $donneur->getId(), $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete' . $donneur->getId(), (string)$request->request->get('_token'))) {
             $this->addFlash('error', 'Token de sécurité invalide');
             return $this->redirectToRoute('admin_donneurs');
         }

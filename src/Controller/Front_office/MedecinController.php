@@ -26,6 +26,7 @@ class MedecinController extends AbstractController
         RendezVousRepository $rdvRepository,
         UserRepository $userRepository
     ): Response {
+        /** @var \App\Entity\User $user */
         $user = $this->getUser();
         
         // Statistiques

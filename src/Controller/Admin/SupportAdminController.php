@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class SupportAdminController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager
     ) {}
 
     #[Route('', name: 'admin_support')]
@@ -40,7 +40,7 @@ class SupportAdminController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $message = new ChatMessage();
-            $message->setContent($request->request->get('message'));
+            $message->setContent((string)$request->request->get('content'));
             $message->setSenderName('Support');
             $message->setSenderType('admin');
             $message->setTicket($ticket);
@@ -66,7 +66,7 @@ class SupportAdminController extends AbstractController
     #[Route('/{id}/status', name: 'admin_support_status', methods: ['POST'])]
     public function updateStatus(SupportTicket $ticket, Request $request): Response
     {
-        $status = $request->request->get('status');
+        $status = (string)$request->request->get('status');
         
         if (in_array($status, [SupportTicket::STATUS_OPEN, SupportTicket::STATUS_IN_PROGRESS, SupportTicket::STATUS_RESOLVED, SupportTicket::STATUS_CLOSED])) {
             $ticket->setStatus($status);
@@ -81,7 +81,7 @@ class SupportAdminController extends AbstractController
     #[Route('/{id}/assign', name: 'admin_support_assign', methods: ['POST'])]
     public function assign(SupportTicket $ticket, Request $request): Response
     {
-        $ticket->setAssignedTo($request->request->get('assignedTo'));
+        $ticket->setAssignedTo($request->request->get('assignedTo') ? (string)$request->request->get('assignedTo') : null);
         $this->entityManager->flush();
 
         $this->addFlash('success', 'Ticket assigné');
@@ -91,7 +91,7 @@ class SupportAdminController extends AbstractController
     #[Route('/{id}/delete', name: 'admin_support_delete', methods: ['POST'])]
     public function delete(SupportTicket $ticket, Request $request): Response
     {
-        if (!$this->isCsrfTokenValid('delete' . $ticket->getId(), $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete' . $ticket->getId(), (string)$request->request->get('_token'))) {
             $this->addFlash('error', 'Token invalide');
             return $this->redirectToRoute('admin_support');
         }

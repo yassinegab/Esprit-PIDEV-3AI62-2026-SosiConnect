@@ -1,65 +1,64 @@
-<aside class="fixed inset-y-0 left-0 z-50 w-64 transform border-r border-gray-200 bg-white transition-transform lg:translate-x-0"
+<aside class="fixed inset-y-0 left-0 z-50 w-64 flex flex-col border-r border-border bg-card transition-transform lg:translate-x-0"
        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
        x-cloak>
-         
+
     {# Logo / Header #}
-    <div class="flex h-16 items-center justify-between border-b border-gray-200 px-6">
+    <div class="flex h-16 items-center justify-between border-b border-border px-5">
         <div class="flex items-center gap-3">
-            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-purple-600">
-                <i class="fas fa-heartbeat text-white"></i>
+            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
+                <i class="fas fa-heartbeat text-white text-sm"></i>
             </div>
             <div>
-                <span class="text-lg font-bold text-gray-900">Sosi</span>
-                <span class="block text-xs text-gray-500">Admin Panel</span>
+                <span class="text-base font-bold text-foreground">Sosi</span>
+                <span class="block text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Admin Panel</span>
             </div>
         </div>
-        <button @click="sidebarOpen = false" class="lg:hidden">
-            <i class="fas fa-times text-gray-600"></i>
+        <button @click="sidebarOpen = false" class="lg:hidden rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+            <i class="fas fa-times text-sm"></i>
         </button>
     </div>
-        
+
     {# Navigation #}
-    <nav class="flex-1 space-y-1 p-4 overflow-y-auto max-h-[calc(100vh-8rem)]">
+    <nav class="flex-1 overflow-y-auto p-3 space-y-0.5">
         {% set adminMenuItems = [
             {'id': 'dashboard', 'label': 'Dashboard', 'icon': 'fa-chart-line', 'route': 'admin_dashboard'},
             {'separator': true},
             {'id': 'users', 'label': 'Gestion Utilisateurs', 'icon': 'fa-users', 'route': '#', 'description': 'Comptes et profils'},
-            {'id': 'services', 'label': 'Gestion Services Médicaux', 'icon': 'fa-hospital', 'route': 'admin_rendez_vous_index', 'description': 'RDV et consultations'},
-            {'id': 'cycle', 'label': 'Gestion Cycle Menstruel', 'icon': 'fa-venus', 'route': 'admin_cycle_index', 'description': 'Suivi féminin'},
-            {'id': 'wellbeing', 'label': 'Gestion Bien-être', 'icon': 'fa-spa', 'route': 'app_user_well_being_data_index', 'description': 'Santé mentale et habitudes'},
-            {'id': 'assistance', 'label': 'Gestion Aide/Don', 'icon': 'fa-hand-holding-heart', 'route': 'admin_don', 'description': 'Handicap et dons'},
+            {'id': 'services', 'label': 'Services Médicaux', 'icon': 'fa-hospital', 'route': 'admin_rendez_vous_index', 'description': 'RDV et consultations'},
+            {'id': 'cycle', 'label': 'Cycle Menstruel', 'icon': 'fa-venus', 'route': 'admin_cycle_index', 'description': 'Suivi féminin'},
+            {'id': 'wellbeing', 'label': 'Bien-être', 'icon': 'fa-spa', 'route': 'app_user_well_being_data_index', 'description': 'Santé mentale'},
+            {'id': 'assistance', 'label': 'Aide & Dons', 'icon': 'fa-hand-holding-heart', 'route': 'admin_don', 'description': 'Solidarité'},
             {'separator': true},
             {'id': 'analytics', 'label': 'Analytiques', 'icon': 'fa-chart-pie', 'route': '#'},
             {'id': 'settings', 'label': 'Paramètres', 'icon': 'fa-cog', 'route': '#'}
         ] %}
-                
+
         {% for item in adminMenuItems %}
             {% if item.separator is defined %}
-                <div class="my-2 border-t border-gray-200"></div>
+                <div class="my-2 border-t border-border"></div>
             {% else %}
                 {% set isActive = (app.request.get('_route') == item.route) %}
-                <a href="{{ item.route != '#' ? path(item.route) : '#' }}" 
-                   class="group flex w-full flex-col rounded-lg px-3 py-2.5 text-sm font-medium transition-all
-                   {{ isActive ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-100' }}">
+                <a href="{{ item.route != '#' ? path(item.route) : '#' }}"
+                   class="{{ isActive ? 'flex w-full flex-col rounded-lg px-3 py-2.5 text-sm font-medium bg-primary/10 text-primary' : 'flex w-full flex-col rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all' }}">
                     <div class="flex items-center gap-3">
-                        <i class="fas {{ item.icon }} {{ isActive ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-700' }}"></i>
+                        <i class="fas {{ item.icon }} text-sm {{ isActive ? 'text-primary' : 'text-muted-foreground' }} w-4 text-center"></i>
                         <span class="flex-1">{{ item.label }}</span>
                     </div>
                     {% if item.description is defined %}
-                        <span class="ml-8 text-xs {{ isActive ? 'text-blue-600' : 'text-gray-500' }}">{{ item.description }}</span>
+                        <span class="ml-7 mt-0.5 text-[10px] {{ isActive ? 'text-primary/70' : 'text-muted-foreground/70' }}">{{ item.description }}</span>
                     {% endif %}
                 </a>
             {% endif %}
         {% endfor %}
     </nav>
-        
+
     {# Footer #}
-    <div class="border-t border-gray-200 p-4">
-        <div class="rounded-lg bg-gradient-to-br from-blue-50 to-purple-50 p-4">
+    <div class="border-t border-border p-4">
+        <div class="rounded-xl bg-muted p-3">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-medium text-gray-700">Système actif</p>
-                    <p class="mt-1 text-sm font-bold text-gray-900">{{ "now"|date("H:i") }}</p>
+                    <p class="text-xs font-medium text-muted-foreground">Système actif</p>
+                    <p class="mt-0.5 text-sm font-bold text-foreground">{{ "now"|date("H:i") }}</p>
                 </div>
                 <div class="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
             </div>
@@ -67,10 +66,10 @@
     </div>
 </aside>
 
-{# Overlay for mobile #}
+{# Mobile Overlay #}
 <div x-show="sidebarOpen"
      @click="sidebarOpen = false"
-     class="fixed inset-0 z-40 bg-black/50 lg:hidden"
+     class="fixed inset-0 z-40 bg-foreground/20 backdrop-blur-sm lg:hidden"
      x-transition
      x-cloak>
 </div>

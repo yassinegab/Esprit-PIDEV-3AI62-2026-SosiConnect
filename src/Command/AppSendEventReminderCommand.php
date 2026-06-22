@@ -15,19 +15,16 @@ class AppSendEventReminderCommand extends Command
     protected static $defaultName = 'app:send-event-reminder';
 
     private EventRepository $eventRepository;
-    private UserRepository $userRepository;
     private SmsService $smsService;
     private string $verifiedNumber;
 
     public function __construct(
         EventRepository $eventRepository,
-        UserRepository $userRepository,
         SmsService $smsService,
         string $verifiedNumber // injecté depuis services.yaml
     ) {
         parent::__construct();
         $this->eventRepository = $eventRepository;
-        $this->userRepository = $userRepository;
         $this->smsService = $smsService;
         $this->verifiedNumber = $verifiedNumber;
     }

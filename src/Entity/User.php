@@ -31,6 +31,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Email(message: "L'email '{{ value }}' n'est pas valide")]
     private ?string $email = null;
 
+    /**
+     * @var array<string>
+     */
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
@@ -95,6 +98,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $specialite = null;
 
     // ================= RELATION DOSSIERS MEDICAUX =================
+    /**
+     * @var Collection<int, DossierMedical>
+     */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: DossierMedical::class, orphanRemoval: true)]
     private Collection $dossiersMedicaux;
 
@@ -127,6 +133,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'attendees')]
     private Collection $events;
 
+    /**
+     * @var Collection<int, ContactUrgence>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ContactUrgence::class, orphanRemoval: true)]
+    private Collection $contactsUrgence;
+
     // ================= CONSTRUCTEUR =================
     public function __construct()
     {
@@ -138,6 +150,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->journals = new ArrayCollection();
         $this->cycles = new ArrayCollection();
         $this->events = new ArrayCollection();
+        $this->contactsUrgence = new ArrayCollection();
         $this->setUserRole(UserRole::PATIENT);
     }
 
@@ -183,6 +196,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             UserRole::ADMIN   => ['ROLE_ADMIN'],
         };
 
+        return $this;
+    }
+
+    /**
+     * @param string[] $roles
+     */
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
         return $this;
     }
 
@@ -236,7 +258,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getCreatedAt(): \DateTimeInterface
     {
-        return $this->created_at;
+        return $this->created_at ?? new \DateTime();
     }
 
     public function getFullName(): string
@@ -341,6 +363,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     // ================= DOSSIERS MEDICAUX =================
+    /**
+     * @return Collection<int, DossierMedical>
+     */
     public function getDossiersMedicaux(): Collection
     {
         return $this->dossiersMedicaux;
@@ -494,11 +519,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
         return $this;
     }
-    public function removeEvent(Event $event): self
+    public function removeEvent(Event $event): static
     {
         if ($this->events->removeElement($event)) {
             $event->removeAttendee($this);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ContactUrgence>
+     */
+    public function getContactsUrgence(): Collection
+    {
+        return $this->contactsUrgence;
+    }
+
+    public function addContactsUrgence(ContactUrgence $contactsUrgence): static
+    {
+        if (!$this->contactsUrgence->contains($contactsUrgence)) {
+            $this->contactsUrgence->add($contactsUrgence);
+            $contactsUrgence->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContactsUrgence(ContactUrgence $contactsUrgence): static
+    {
+        if ($this->contactsUrgence->removeElement($contactsUrgence)) {
+            // set the owning side to null (unless already changed)
+            if ($contactsUrgence->getUser() === $this) {
+                $contactsUrgence->setUser(null);
+            }
+        }
+
         return $this;
     }
 }

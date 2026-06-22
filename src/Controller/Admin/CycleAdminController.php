@@ -24,8 +24,12 @@ class CycleAdminController extends AbstractController
             if ($cycle->getUser()) {
                 $users[$cycle->getUser()->getId()] = true;
             }
-            $diff = $cycle->getDateFinM()->diff($cycle->getDateDebutM())->days + 1;
-            $totalDuration += $diff;
+            $dateDebut = $cycle->getDateDebutM();
+            $dateFin = $cycle->getDateFinM();
+            if ($dateDebut && $dateFin) {
+                $diff = $dateDebut->diff($dateFin);
+                $totalDuration += $diff->days + 1;
+            }
         }
 
         $activeUsers = count($users);

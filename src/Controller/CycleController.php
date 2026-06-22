@@ -20,6 +20,7 @@ final class CycleController extends AbstractController
     #[Route('/cycle', name: 'cycle_index')]
     public function index(EntityManagerInterface $em, Security $security, CycleCalculatorService $calculator): Response
     {
+        /** @var \App\Entity\User|null $user */
         $user = $security->getUser();
         if (!$user || !in_array($user->getSexe(), ['Femme', 'female'])) {
             $this->addFlash('error', 'Accès réservé aux femmes.');
@@ -31,6 +32,14 @@ final class CycleController extends AbstractController
         $data = $calculator->generateCalendarEvents($cycles);
         $events = $data['events'] ?? [];
         $stats = $data['stats'] ?? null;
+
+        if ($stats) {
+            $nextPeriodDate = (isset($stats['next_period']) && $stats['next_period'] !== 'N/A') ? new \DateTime($stats['next_period']) : null;
+            $ovulationDate = (isset($stats['ovulation']) && $stats['ovulation'] !== 'N/A') ? new \DateTime($stats['ovulation']) : null;
+            
+            $stats['google_period_url'] = $nextPeriodDate ? $calculator->generateGoogleCalendarUrl('🔴 Prochaines Règles (SOSI)', $nextPeriodDate, (clone $nextPeriodDate)->modify('+5 days')) : '#';
+            $stats['google_ovulation_url'] = $ovulationDate ? $calculator->generateGoogleCalendarUrl('💜 Ovulation (SOSI)', $ovulationDate, (clone $ovulationDate)->modify('+1 day')) : '#';
+        }
 
         return $this->render('cycle/calendar.html.twig', [
             'calendarEvents' => json_encode($events),
@@ -46,7 +55,9 @@ final class CycleController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $cycle->setUser($this->getUser());
+            /** @var \App\Entity\User|null $user */
+            $user = $this->getUser();
+            $cycle->setUser($user);
             $em->persist($cycle);
             $em->flush();
 
@@ -85,7 +96,7 @@ final class CycleController extends AbstractController
     public function delete(Request $request, Cycle $cycle, EntityManagerInterface $em): Response
     {
         if ($request->isMethod('POST')) {
-            if (!$this->isCsrfTokenValid('delete-cycle' . $cycle->getIdCycle(), $request->request->get('_token'))) {
+            if (!$this->isCsrfTokenValid('delete-cycle' . $cycle->getIdCycle(), (string)$request->request->get('_token'))) {
                 throw $this->createAccessDeniedException('Token invalide.');
             }
 
@@ -120,11 +131,13 @@ final class CycleController extends AbstractController
 
         $data = [];
         foreach ($cycles as $cycle) {
+            $dateDebut = $cycle->getDateDebutM();
+            $dateFin = $cycle->getDateFinM();
             $data[] = [
                 'id' => $cycle->getIdCycle(),
-                'dateDebut' => $cycle->getDateDebutM()->format('Y-m-d'),
-                'dateFin' => $cycle->getDateFinM()->format('Y-m-d'),
-                'duration' => $cycle->getDateDebutM()->diff($cycle->getDateFinM())->days
+                'dateDebut' => $dateDebut ? $dateDebut->format('Y-m-d') : null,
+                'dateFin' => $dateFin ? $dateFin->format('Y-m-d') : null,
+                'duration' => ($dateDebut && $dateFin) ? $dateDebut->diff($dateFin)->days : 0
             ];
         }
 
@@ -146,7 +159,7 @@ final class CycleController extends AbstractController
     }
 
     #[Route('/cycle/stats', name: 'cycle_stats')]
-    public function stats(CycleRepository $cycleRepository): Response
+    public function stats(CycleRepository $cycleRepository, CycleCalculatorService $calculator): Response
     {
         $user = $this->getUser();
         if (!$user) {
@@ -154,30 +167,28 @@ final class CycleController extends AbstractController
         }
         $cycles = $cycleRepository->findBy(['user' => $user], ['dateDebutM' => 'ASC']);
 
-        $cycleDurations = [];
-        $totalDays = 0;
-
-        foreach ($cycles as $cycle) {
-            $days = $cycle->getDateDebutM()->diff($cycle->getDateFinM())->days + 1;
-            $cycleDurations[] = [
-                'start' => $cycle->getDateDebutM()->format('Y-m-d'),
-                'end' => $cycle->getDateFinM()->format('Y-m-d'),
-                'duration' => $days
-            ];
-            $totalDays += $days;
-        }
-
-        $averageCycle = count($cycles) > 0 ? round($totalDays / count($cycles), 1) : 0;
+        $stats = [
+            'total' => count($cycles),
+            'avg_cycle' => $calculator->calculateAverageCycleLength($cycles),
+            'avg_period' => $calculator->calculateAverageMenstruationLength($cycles),
+            'regularity' => $calculator->calculateRegularityRate($cycles),
+            'shortest' => $calculator->calculateShortestCycle($cycles),
+            'longest' => $calculator->calculateLongestCycle($cycles)
+        ];
 
         $labels = [];
         $data = [];
-        foreach ($cycleDurations as $c) {
-            $labels[] = $c['start'];
-            $data[] = $c['duration'];
+        foreach ($cycles as $cycle) {
+            $dateDebut = $cycle->getDateDebutM();
+            $dateFin = $cycle->getDateFinM();
+            if ($dateDebut && $dateFin) {
+                $labels[] = $dateDebut->format('d M Y');
+                $data[] = $dateDebut->diff($dateFin)->days + 1;
+            }
         }
 
         return $this->render('cycle/stats.html.twig', [
-            'averageCycle' => $averageCycle,
+            'stats' => $stats,
             'chartLabels' => json_encode($labels),
             'chartData' => json_encode($data)
         ]);

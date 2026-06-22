@@ -12,6 +12,7 @@ class ChatbotService
 {
     private QwenService $qwenService;
     private ChatbotMessageRepository $messageRepository;
+    private UserWellBeingDataRepository $wellBeingRepository;
     private \App\Repository\MealRepository $mealRepository;
     private \App\Repository\JournalRepository $journalRepository;
     private EntityManagerInterface $entityManager;

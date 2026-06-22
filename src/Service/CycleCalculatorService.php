@@ -12,6 +12,7 @@ class CycleCalculatorService
 
     /**
      * Calcule la durée moyenne du cycle pour l'utilisateur
+     * @param array<int, Cycle> $cycles
      */
     public function calculateAverageCycleLength(array $cycles): int
     {
@@ -29,11 +30,13 @@ class CycleCalculatorService
             $currentStart = $cycles[$i]->getDateDebutM();
             $nextStart = $cycles[$i + 1]->getDateDebutM();
 
-            $diff = $nextStart->diff($currentStart)->days;
-            // Ignorer les cycles aberrants (> 45 jours ou < 21 jours) pour la moyenne
-            if ($diff >= 21 && $diff <= 45) {
-                $totalDays += $diff;
-                $count++;
+            if ($currentStart && $nextStart) {
+                $diff = $nextStart->diff($currentStart)->days;
+                // Ignorer les cycles aberrants (> 45 jours ou < 21 jours) pour la moyenne
+                if ($diff >= 21 && $diff <= 45) {
+                    $totalDays += $diff;
+                    $count++;
+                }
             }
         }
 
@@ -42,10 +45,15 @@ class CycleCalculatorService
 
     /**
      * Prédit les prochains événements basés sur le dernier cycle
+     * @return array<string, mixed>
      */
     public function predictNextEvents(Cycle $lastCycle, int $avgLength): array
     {
-        $lastStart = clone $lastCycle->getDateDebutM();
+        $lastStart = $lastCycle->getDateDebutM();
+        if (!$lastStart) {
+            return [];
+        }
+        $lastStart = clone $lastStart;
 
         // Prochaines règles
         $nextPeriodStart = (clone $lastStart)->modify("+{$avgLength} days");
@@ -70,6 +78,8 @@ class CycleCalculatorService
 
     /**
      * Génère les événements complets pour le calendrier (Passé + Futur)
+     * @param array<int, Cycle> $cycles
+     * @return array<string, mixed>
      */
     public function generateCalendarEvents(array $cycles): array
     {
@@ -85,11 +95,18 @@ class CycleCalculatorService
 
         // 1. Traiter les cycles passés (réels)
         foreach ($cycles as $cycle) {
+            $startDate = $cycle->getDateDebutM();
+            $endDate = $cycle->getDateFinM();
+
+            if (!$startDate || !$endDate) {
+                continue;
+            }
+
             // Règles (Rouge)
             $events[] = [
                 'title' => 'Règles',
-                'start' => $cycle->getDateDebutM()->format('Y-m-d'),
-                'end' => $cycle->getDateFinM()->modify('+1 day')->format('Y-m-d'), // FullCalendar exclude end date
+                'start' => $startDate->format('Y-m-d'),
+                'end' => (clone $endDate)->modify('+1 day')->format('Y-m-d'), // FullCalendar exclude end date
                 'color' => '#ef4444', // Red-500
                 'description' => 'Période de menstruation',
                 'type' => 'menstruation'
@@ -101,10 +118,14 @@ class CycleCalculatorService
         $predictions = $this->predictNextEvents($lastCycle, $avgLength);
 
         // Phase Folliculaire (Bleu) : Fin des dernières règles -> Début fenêtre fertile
-        $follicularStart = clone $lastCycle->getDateFinM();
-        $follicularEnd = clone $predictions['fertile_start'];
+        $lastEndDate = $lastCycle ? $lastCycle->getDateFinM() : null;
+        $fertileStart = $predictions['fertile_start'] ?? null;
 
-        if ($follicularStart < $follicularEnd) {
+        if ($lastEndDate && $fertileStart) {
+            /** @var \DateTime $follicularStart */
+            $follicularStart = clone $lastEndDate;
+            /** @var \DateTime $follicularEnd */
+            $follicularEnd = clone $fertileStart;
             $events[] = [
                 'title' => 'Phase Folliculaire',
                 'start' => $follicularStart->modify('+1 day')->format('Y-m-d'),
@@ -116,14 +137,16 @@ class CycleCalculatorService
         }
 
         // Fenêtre Fertile (Vert)
-        $events[] = [
-            'title' => 'Fenêtre Fertile',
-            'start' => $predictions['fertile_start']->format('Y-m-d'),
-            'end' => $predictions['fertile_end']->modify('+1 day')->format('Y-m-d'),
-            'color' => '#10b981', // Emerald-500
-            'display' => 'background',
-            'type' => 'fertile'
-        ];
+        if (isset($predictions['fertile_start'], $predictions['fertile_end'])) {
+            $events[] = [
+                'title' => 'Fenêtre Fertile',
+                'start' => $predictions['fertile_start']->format('Y-m-d'),
+                'end' => isset($predictions['fertile_end']) ? (clone $predictions['fertile_end'])->modify('+1 day')->format('Y-m-d') : '',
+                'color' => '#10b981', // Emerald-500
+                'display' => 'background',
+                'type' => 'fertile'
+            ];
+        }
 
         // Ovulation (Violet)
         $events[] = [
@@ -170,6 +193,9 @@ class CycleCalculatorService
         ];
     }
 
+    /**
+     * @param array<string, mixed> $predictions
+     */
     private function determineCurrentPhase(Cycle $lastCycle, array $predictions): string
     {
         $today = new \DateTime();
@@ -193,6 +219,10 @@ class CycleCalculatorService
         return 'Inconnue';
     }
 
+    /**
+     * @param array<string, mixed> $predictions
+     * @return array<int, array<string, string>>
+     */
     private function generateNotifications(Cycle $lastCycle, array $predictions, int $avgLength): array
     {
         $notifications = [];
@@ -230,5 +260,97 @@ class CycleCalculatorService
         }
 
         return $notifications;
+    }
+    /**
+     * Calcule le cycle le plus court
+     */
+    public function calculateShortestCycle(array $cycles): int
+    {
+        $lengths = $this->getCycleLengths($cycles);
+        return empty($lengths) ? 0 : (int) min($lengths);
+    }
+
+    /**
+     * Calcule le cycle le plus long
+     */
+    public function calculateLongestCycle(array $cycles): int
+    {
+        $lengths = $this->getCycleLengths($cycles);
+        return empty($lengths) ? 0 : (int) max($lengths);
+    }
+
+    /**
+     * Calcule la durée moyenne des règles
+     */
+    public function calculateAverageMenstruationLength(array $cycles): float
+    {
+        if (empty($cycles)) return 0;
+        
+        $totalDays = 0;
+        foreach ($cycles as $cycle) {
+            $start = $cycle->getDateDebutM();
+            $end = $cycle->getDateFinM();
+            if ($start && $end) {
+                $totalDays += $start->diff($end)->days + 1;
+            }
+        }
+        return round($totalDays / count($cycles), 1);
+    }
+
+    /**
+     * Calcule le taux de régularité
+     * Un cycle est considéré irrégulier si < 21j ou > 35j
+     */
+    public function calculateRegularityRate(array $cycles): float
+    {
+        $lengths = $this->getCycleLengths($cycles);
+        if (empty($lengths)) return 100.0;
+
+        $irregularCount = 0;
+        foreach ($lengths as $length) {
+            if ($length < 21 || $length > 35) {
+                $irregularCount++;
+            }
+        }
+
+        return round(100.0 - (($irregularCount / count($lengths)) * 100.0), 1);
+    }
+
+    /**
+     * Helper pour obtenir les durées de cycles réels
+     */
+    private function getCycleLengths(array $cycles): array
+    {
+        if (count($cycles) < 2) return [];
+        
+        usort($cycles, fn(Cycle $a, Cycle $b) => $a->getDateDebutM() <=> $b->getDateDebutM());
+        
+        $lengths = [];
+        for ($i = 0; $i < count($cycles) - 1; $i++) {
+            $currentStart = $cycles[$i]->getDateDebutM();
+            $nextStart = $cycles[$i + 1]->getDateDebutM();
+            if ($currentStart && $nextStart) {
+                $lengths[] = $nextStart->diff($currentStart)->days;
+            }
+        }
+        return $lengths;
+    }
+    /**
+     * Génère un lien Google Calendar pour un événement
+     */
+    public function generateGoogleCalendarUrl(string $title, \DateTime $start, \DateTime $end): string
+    {
+        $fmt = 'Ymd\THis\Z';
+        // Convert to UTC for Google
+        $s = (clone $start)->setTimezone(new \DateTimeZone('UTC'))->format($fmt);
+        $e = (clone $end)->setTimezone(new \DateTimeZone('UTC'))->format($fmt);
+        
+        return sprintf(
+            'https://www.google.com/calendar/render?action=TEMPLATE&text=%s&dates=%s/%s&details=%s&sf=true&output=xml',
+            urlencode($title),
+            $s,
+            $e,
+            urlencode('Rappel santé SOSI Healthcare')
+        );
     }
 }

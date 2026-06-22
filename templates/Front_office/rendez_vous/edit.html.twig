@@ -1,101 +1,129 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier Rendez-vous #{{ rendez_vous.id }}{% endblock %}
+{% block title %}Modifier Rendez-vous #{{ rendez_vous.id }} - Sosi{% endblock %}
 
 {% block body %}
+<div class="flex flex-col min-h-screen">
+    {% include 'components/top-nav.html.twig' %}
 
-{% include 'components/top-nav.html.twig' %}
+    <main class="flex-1 animate-page-enter pb-12">
+        <div class="mx-auto max-w-4xl space-y-8 p-4 lg:p-8">
 
-<main class="flex-1 overflow-auto bg-gray-50 min-h-screen pb-12">
-    <div class="mx-auto max-w-4xl space-y-6 p-4 lg:p-8">
-
-        {# ── HEADER ── #}
-        <div class="flex items-center justify-between flex-wrap gap-3">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900">
-                    <i class="fas fa-edit text-blue-600 mr-2"></i>
-                    Modifier Rendez-vous #{{ rendez_vous.id }}
-                </h1>
-                <p class="text-gray-600 mt-2">Modifiez les informations du rendez-vous</p>
-            </div>
-            <a href="{{ path('app_rendez_vous_index') }}"
-               class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition">
-                <i class="fas fa-arrow-left mr-2"></i> Retour
-            </a>
-        </div>
-
-        {# ── FLASH ERRORS ── #}
-        {% for message in app.flashes('error') %}
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" role="alert">
-                <i class="fas fa-exclamation-circle mr-2"></i>{{ message }}
-            </div>
-        {% endfor %}
-
-        {# ── FORMULAIRE ── #}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-            {{ form_start(form, {'attr': {'class': 'space-y-6', 'novalidate': 'novalidate'}}) }}
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {# ── Page Header ── #}
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    {{ form_label(form.patient, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
-                    {{ form_widget(form.patient, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500'}}) }}
-                    {{ form_errors(form.patient) }}
+                    <h1 class="page-title flex items-center gap-3">
+                        <span class="stat-icon w-10 h-10 text-lg bg-primary/10 text-primary"><i class="fas fa-edit"></i></span>
+                        Modifier le Rendez-vous
+                    </h1>
+                    <p class="page-subtitle mt-1">Mise à jour de la consultation <span class="text-foreground font-black">#{{ rendez_vous.id }}</span></p>
                 </div>
-
-                <div>
-                    {{ form_label(form.medecin, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
-                    {{ form_widget(form.medecin, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500'}}) }}
-                    {{ form_errors(form.medecin) }}
-                </div>
-
-                <div>
-                    {{ form_label(form.hopital, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
-                    {{ form_widget(form.hopital, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500'}}) }}
-                    {{ form_errors(form.hopital) }}
-                </div>
-
-                <div>
-                    {{ form_label(form.dateRendezVous, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
-                    {{ form_widget(form.dateRendezVous, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500'}}) }}
-                    {{ form_errors(form.dateRendezVous) }}
-                </div>
-
-                <div>
-                    {{ form_label(form.typeConsultation, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
-                    {{ form_widget(form.typeConsultation, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500'}}) }}
-                    {{ form_errors(form.typeConsultation) }}
-                </div>
-
-                <div>
-                    {{ form_label(form.statut, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
-                    {{ form_widget(form.statut, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500'}}) }}
-                    {{ form_errors(form.statut) }}
-                </div>
-            </div>
-
-            {% if form.notes is defined %}
-            <div>
-                {{ form_label(form.notes, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
-                {{ form_widget(form.notes, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500', 'rows': '4'}}) }}
-                {{ form_errors(form.notes) }}
-            </div>
-            {% endif %}
-
-            <div class="flex gap-4 pt-4">
-                <button type="submit"
-                        class="flex-1 px-4 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition shadow-md">
-                    <i class="fas fa-save mr-2"></i> Enregistrer les modifications
-                </button>
-                <a href="{{ path('app_rendez_vous_index') }}"
-                   class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition">
-                    Annuler
+                <a href="{{ path('app_rendez_vous_index') }}" class="btn-secondary">
+                    <i class="fas fa-arrow-left mr-2"></i> Retour
                 </a>
             </div>
 
-            {{ form_end(form) }}
+            {# ── Form Card ── #}
+            <div class="card p-8">
+                {{ form_start(form, {'attr': {'class': 'space-y-8', 'novalidate': 'novalidate'}}) }}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {# Patient #}
+                    <div>
+                        <label class="form-label flex items-center gap-2">
+                            <i class="fas fa-user-injured text-primary"></i>
+                            Patient
+                        </label>
+                        {{ form_widget(form.patient, {'attr': {'class': 'input-field cursor-not-allowed bg-muted/20', 'readonly': 'readonly'}}) }}
+                        <div class="text-primary text-xs font-bold mt-1">{{ form_errors(form.patient) }}</div>
+                    </div>
+
+                    {# Medecin #}
+                    <div>
+                        <label class="form-label flex items-center gap-2">
+                            <i class="fas fa-user-md text-primary"></i>
+                            Médecin
+                        </label>
+                        {{ form_widget(form.medecin, {'attr': {'class': 'input-field'}}) }}
+                        <div class="text-primary text-xs font-bold mt-1">{{ form_errors(form.medecin) }}</div>
+                    </div>
+
+                    {# Hôpital #}
+                    <div>
+                        <label class="form-label flex items-center gap-2">
+                            <i class="fas fa-hospital text-primary"></i>
+                            Hôpital
+                        </label>
+                        {{ form_widget(form.hopital, {'attr': {'class': 'input-field'}}) }}
+                        <div class="text-primary text-xs font-bold mt-1">{{ form_errors(form.hopital) }}</div>
+                    </div>
+
+                    {# Date #}
+                    <div>
+                        <label class="form-label flex items-center gap-2">
+                            <i class="fas fa-calendar-day text-primary"></i>
+                            Date et heure
+                        </label>
+                        {{ form_widget(form.dateRendezVous, {'attr': {'class': 'input-field'}}) }}
+                        <div class="text-primary text-xs font-bold mt-1">{{ form_errors(form.dateRendezVous) }}</div>
+                    </div>
+
+                    {# Type #}
+                    <div>
+                        <label class="form-label flex items-center gap-2">
+                            <i class="fas fa-stethoscope text-primary"></i>
+                            Type de consultation
+                        </label>
+                        {{ form_widget(form.typeConsultation, {'attr': {'class': 'input-field'}}) }}
+                        <div class="text-primary text-xs font-bold mt-1">{{ form_errors(form.typeConsultation) }}</div>
+                    </div>
+
+                    {# Statut #}
+                    <div>
+                        <label class="form-label flex items-center gap-2">
+                            <i class="fas fa-info-circle text-primary"></i>
+                            Statut
+                        </label>
+                        {{ form_widget(form.statut, {'attr': {'class': 'input-field'}}) }}
+                        <div class="text-primary text-xs font-bold mt-1">{{ form_errors(form.statut) }}</div>
+                    </div>
+                </div>
+
+                {# Notes #}
+                {% if form.notes is defined %}
+                <div class="pt-6 border-t border-border">
+                    <label class="form-label flex items-center gap-2">
+                        <i class="fas fa-notes-medical text-primary"></i>
+                        Notes additionnelles
+                    </label>
+                    {{ form_widget(form.notes, {'attr': {'class': 'input-field h-32 py-3 resize-none'}}) }}
+                    <div class="text-primary text-xs font-bold mt-1">{{ form_errors(form.notes) }}</div>
+                </div>
+                {% endif %}
+
+                {# ── Actions ── #}
+                <div class="flex flex-col sm:flex-row gap-4 pt-8 mt-8 border-t border-border">
+                    <button type="submit" class="btn-primary flex-1 py-4 text-base shadow-xl shadow-primary/20 font-black uppercase tracking-widest">
+                        <i class="fas fa-save mr-2"></i>
+                        Enregistrer les modifications
+                    </button>
+                    <a href="{{ path('app_rendez_vous_index') }}" class="btn-secondary py-4 px-10 text-base font-black uppercase tracking-widest">
+                        Annuler
+                    </a>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+
+            {# ── Error Notifications ── #}
+            {% for message in app.flashes('error') %}
+                <div class="animate-shake bg-primary/10 border border-primary/20 text-primary px-6 py-4 rounded-2xl flex items-center gap-3">
+                    <i class="fas fa-exclamation-circle text-lg"></i>
+                    <span class="font-bold text-sm uppercase tracking-tight">{{ message }}</span>
+                </div>
+            {% endfor %}
+
         </div>
-
-    </div>
-</main>
-
+    </main>
+</div>
 {% endblock %}

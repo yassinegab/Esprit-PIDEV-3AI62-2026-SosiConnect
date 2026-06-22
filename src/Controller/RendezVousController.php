@@ -19,6 +19,7 @@ class RendezVousController extends AbstractController
 public function index(RendezVousRepository $rendezVousRepository): Response
 {
     // Récupérer l'utilisateur connecté
+        /** @var \App\Entity\User|null $user */
     $user = $this->getUser();
     
     // Vérifier que c'est bien un patient
@@ -46,6 +47,7 @@ public function index(RendezVousRepository $rendezVousRepository): Response
 public function new(Request $request, EntityManagerInterface $entityManager): Response
 {
     // Récupérer le patient connecté
+        /** @var \App\Entity\User|null $user */
     $user = $this->getUser();
     
     if (!$user || !in_array('ROLE_PATIENT', $user->getRoles())) {
@@ -81,9 +83,10 @@ public function new(Request $request, EntityManagerInterface $entityManager): Re
 }
 
 #[Route('/{id}', name: 'app_rendez_vous_show', methods: ['GET'])]
-public function show($id, RendezVousRepository $rendezVousRepository): Response
+    public function show(int $id, RendezVousRepository $rendezVousRepository): Response
 {
     // Vérifier l'utilisateur connecté
+        /** @var \App\Entity\User|null $user */
     $user = $this->getUser();
     
     if (!$user || !in_array('ROLE_PATIENT', $user->getRoles())) {
@@ -91,11 +94,10 @@ public function show($id, RendezVousRepository $rendezVousRepository): Response
     }
     
     // Vérifier que l'ID est valide
-    if (!is_numeric($id) || (int)$id <= 0) {
+    if ($id <= 0) {
         throw $this->createNotFoundException('ID invalide');
     }
     
-    $id = (int)$id;
     $rendezVous = $rendezVousRepository->find($id);
     
     // Vérifier que le rendez-vous existe ET appartient au patient connecté
@@ -104,7 +106,8 @@ public function show($id, RendezVousRepository $rendezVousRepository): Response
     }
     
     // Vérifier que le patient connecté est bien celui du rendez-vous
-    if ($rendezVous->getPatient()->getId() !== $user->getId()) {
+    $patient = $rendezVous->getPatient();
+    if (!$patient || $patient->getId() !== $user->getId()) {
         throw $this->createAccessDeniedException('Ce rendez-vous ne vous appartient pas');
     }
     
@@ -113,19 +116,19 @@ public function show($id, RendezVousRepository $rendezVousRepository): Response
     ]);
 }
 #[Route('/{id}/modifier', name: 'app_rendez_vous_edit', methods: ['GET', 'POST'])]
-public function edit(Request $request, $id, EntityManagerInterface $entityManager): Response
-{
-    $user = $this->getUser();
+    public function edit(Request $request, int $id, EntityManagerInterface $entityManager): Response
+    {
+        /** @var \App\Entity\User|null $user */
+        $user = $this->getUser();
     
     if (!$user || !in_array('ROLE_PATIENT', $user->getRoles())) {
         throw $this->createAccessDeniedException('Accès réservé aux patients');
     }
     
-    if (!is_numeric($id) || (int)$id <= 0) {
+    if ($id <= 0) {
         throw $this->createNotFoundException('ID invalide');
     }
     
-    $id = (int)$id;
     $rendezVous = $entityManager->getRepository(RendezVous::class)->find($id);
     
     if (!$rendezVous) {
@@ -133,7 +136,8 @@ public function edit(Request $request, $id, EntityManagerInterface $entityManage
     }
     
     // Vérifier l'appartenance
-    if ($rendezVous->getPatient()->getId() !== $user->getId()) {
+    $patient = $rendezVous->getPatient();
+    if (!$patient || $patient->getId() !== $user->getId()) {
         throw $this->createAccessDeniedException('Ce rendez-vous ne vous appartient pas');
     }
     
@@ -163,7 +167,7 @@ public function delete(Request $request, int $id, EntityManagerInterface $entity
         throw $this->createNotFoundException('Rendez-vous non trouvé avec l\'ID: '.$id);
     }
     
-    if ($this->isCsrfTokenValid('delete'.$rendezVous->getId(), $request->request->get('_token'))) {
+    if ($this->isCsrfTokenValid('delete'.$rendezVous->getId(), (string)$request->request->get('_token', ''))) {
         $entityManager->remove($rendezVous);
         $entityManager->flush();
 

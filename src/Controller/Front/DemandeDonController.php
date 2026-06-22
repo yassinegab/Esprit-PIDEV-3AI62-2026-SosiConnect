@@ -19,15 +19,15 @@ class DemandeDonController extends AbstractController
     {
         if ($request->isMethod('POST')) {
 
-            $typeDemande = $request->request->get('type_demande');
-            $typeOrgane  = $request->request->get('type_organe');
-            $typeSanguin = $request->request->get('type_sanguin');
-            $region      = trim($request->request->get('region'));
+            $typeDemande = (string)$request->request->get('type_demande', '');
+            $typeOrgane  = (string)$request->request->get('type_organe', '');
+            $typeSanguin = (string)$request->request->get('type_sanguin', '');
+            $region      = trim((string)$request->request->get('region', ''));
             $urgence     = $request->request->get('urgence') === '1';
-            $description = $request->request->get('description');
-            $patientNom  = $request->request->get('patient_nom');
-            $patientEmail = $request->request->get('patient_email');
-            $patientTelephone = $request->request->get('patient_telephone');
+            $description = (string)$request->request->get('description', '');
+            $patientNom  = (string)$request->request->get('patient_nom', '');
+            $patientEmail = (string)$request->request->get('patient_email', '');
+            $patientTelephone = (string)$request->request->get('patient_telephone', '');
 
             if (!in_array($typeDemande, ['sang', 'organe'])) {
                 $this->addFlash('error', 'Type invalide');
@@ -100,11 +100,11 @@ class DemandeDonController extends AbstractController
         if ($request->isMethod('POST')) {
             $reponse = new ReponseDon();
             $reponse->setDemande($demande);
-            $reponse->setDonneurNom($request->request->get('donneur_nom'));
-            $reponse->setDonneurEmail($request->request->get('donneur_email'));
-            $reponse->setDonneurTelephone($request->request->get('donneur_telephone'));
-            $reponse->setDonneurGroupeSanguin($request->request->get('donneur_groupe_sanguin'));
-            $reponse->setMessage($request->request->get('message'));
+            $reponse->setDonneurNom((string)$request->request->get('donneur_nom', ''));
+            $reponse->setDonneurEmail((string)$request->request->get('donneur_email', ''));
+            $reponse->setDonneurTelephone((string)$request->request->get('donneur_telephone', ''));
+            $reponse->setDonneurGroupeSanguin((string)$request->request->get('donneur_groupe_sanguin', ''));
+            $reponse->setMessage((string)$request->request->get('message', ''));
 
             $em->persist($reponse);
             $em->flush();
@@ -131,7 +131,7 @@ class DemandeDonController extends AbstractController
     #[Route('/demande/edit/{id}', name: 'demande_edit', methods: ['POST'])]
     public function edit(DemandeDon $demande, Request $request, EntityManagerInterface $em): Response
     {
-        $demande->setRegion(trim($request->request->get('region')));
+        $demande->setRegion(trim((string)$request->request->get('region', '')));
         $demande->setUrgence($request->request->get('urgence') === '1');
 
         $em->flush();

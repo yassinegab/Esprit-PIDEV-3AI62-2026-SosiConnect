@@ -3,21 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Admin Dashboard - SmartHealth AI{% endblock %}</title>
-    
-    <!-- Tailwind CSS -->
+    <title>{% block title %}Admin Dashboard — Sosi{% endblock %}</title>
+
+    <!-- Tailwind CSS (CDN with matching design system config) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#fafafa',
+                        foreground: '#09090b',
+                        card: '#ffffff',
+                        popover: '#ffffff',
+                        primary: { DEFAULT: '#ef4444', foreground: '#ffffff' },
+                        muted: { DEFAULT: '#f4f4f5', foreground: '#71717a' },
+                        border: 'hsl(240 5.9% 90%)',
+                        input: '#e4e4e7',
+                        ring: '#ef4444',
+                        destructive: '#ef4444'
+                    }
+                }
+            }
+        }
+    </script>
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        :root {
+            --primary: #ef4444;
+            --background: #fafafa;
+            --foreground: #09090b;
+        }
+        body { background: var(--background); color: var(--foreground); }
+
+        @keyframes page-enter {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .animate-page-enter { animation: page-enter 0.4s cubic-bezier(0.16,1,0.3,1) both; }
+    </style>
+
     {% block stylesheets %}{% endblock %}
 </head>
-<body class="bg-gray-50" x-data="{ sidebarOpen: false }">
+<body class="bg-background text-foreground antialiased" x-data="{ sidebarOpen: false }">
 
 <div class="flex min-h-screen">
 
-    {# Sidebar #}
+    {# Admin Sidebar #}
     {% include 'admin/components/sidebar.html.twig' %}
 
     {# Main content wrapper #}
@@ -27,14 +65,14 @@
         {% include 'admin/components/top-nav.html.twig' %}
 
         {# Main page content #}
-        <main class="flex-1 overflow-auto p-6">
+        <main class="flex-1 overflow-auto p-6 animate-page-enter">
             {% block body %}{% endblock %}
         </main>
 
     </div>
 </div>
 
-<!-- Alpine.js for interactivity -->
+<!-- Alpine.js -->
 <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 {% block javascripts %}{% endblock %}
 </body>

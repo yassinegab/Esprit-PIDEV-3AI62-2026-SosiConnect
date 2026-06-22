@@ -1,0 +1,1179 @@
+﻿ ------ --------------- 
+  Line   Service\Cycle  
+         AnalyzerServi  
+         ce.php         
+ ------ --------------- 
+  :43    Method         
+         App\Service\C  
+         ycleAnalyzerS  
+         ervice::calcu  
+         lateCycleLeng  
+         ths() should   
+         return array<  
+         int> but retu  
+         rns list<int|  
+         false>.        
+         ­ƒ¬¬             
+         return.type    
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Cycle  
+         CalculatorSer  
+         vice.php       
+ ------ --------------- 
+  :121   Ternary        
+         operator       
+         condition is   
+         always true.   
+         ­ƒ¬¬             
+         ternary.alway  
+         sTrue          
+         ­ƒÆí  Because    
+         the type is    
+         coming from a  
+         PHPDoc, you    
+         can turn off   
+         this check by  
+         setting treat  
+         PhpDocTypesAs  
+         Certain:       
+         false in your  
+          phpstan.neon  
+         .              
+  :144   Call to an     
+         undefined      
+         method         
+         object::modif  
+         y().           
+         ­ƒ¬¬             
+         method.notFou  
+         nd             
+  :162   Call to an     
+         undefined      
+         method         
+         object::modif  
+         y().           
+         ­ƒ¬¬             
+         method.notFou  
+         nd             
+  :168   Call to an     
+         undefined      
+         method         
+         object::forma  
+         t().           
+         ­ƒ¬¬             
+         method.notFou  
+         nd             
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Cycle  
+         PredictionSer  
+         vice.php       
+ ------ --------------- 
+  :100   Method         
+         App\Service\C  
+         yclePredictio  
+         nService::cal  
+         culateLocally  
+         () has         
+         parameter      
+         $lengths with  
+         no value type  
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :100   Method         
+         App\Service\C  
+         yclePredictio  
+         nService::cal  
+         culateLocally  
+         () return      
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :169   Method         
+         App\Service\C  
+         yclePredictio  
+         nService::par  
+         seJsonRespons  
+         e() return     
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Donor  
+         MatchingServi  
+         ce.php         
+ ------ --------------- 
+  :51    Method         
+         App\Service\D  
+         onorMatchingS  
+         ervice::findM  
+         atchingReques  
+         ts() return    
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :141   Method         
+         App\Service\D  
+         onorMatchingS  
+         ervice::getMa  
+         tchReasons()   
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :147   Parameter #1   
+         $donorType of  
+         method         
+         App\Service\D  
+         onorMatchingS  
+         ervice::isBlo  
+         odTypeCompati  
+         ble() expects  
+         string,        
+         string|null    
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :147   Parameter #2   
+         $recipientTyp  
+         e of method    
+         App\Service\D  
+         onorMatchingS  
+         ervice::isBlo  
+         odTypeCompati  
+         ble() expects  
+         string,        
+         string|null    
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :167   Method         
+         App\Service\D  
+         onorMatchingS  
+         ervice::autoM  
+         atchDonations  
+         () return      
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Emoti  
+         onAnalysisSer  
+         vice.php       
+ ------ --------------- 
+  :48    Argument of    
+         an invalid     
+         type list<str  
+         ing>|false su  
+         pplied for     
+         foreach, only  
+         iterables are  
+         supported.     
+         ­ƒ¬¬             
+         foreach.nonIt  
+         erable         
+  :103   Method         
+         App\Service\E  
+         motionAnalysi  
+         sService::det  
+         ermineMood()   
+         has parameter  
+         $detectedMood  
+         s with no      
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :114   Method         
+         App\Service\E  
+         motionAnalysi  
+         sService::det  
+         ermineMood()   
+         should return  
+         string but     
+         returns        
+         int|string.    
+         ­ƒ¬¬             
+         return.type    
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Event  
+         MailerService  
+         .php           
+ ------ --------------- 
+  :30    Cannot call    
+         method         
+         format() on    
+         DateTimeInter  
+         face|null.     
+         ­ƒ¬¬             
+         method.nonObj  
+         ect            
+  :36    Cannot call    
+         method         
+         format() on    
+         DateTimeInter  
+         face|null.     
+         ­ƒ¬¬             
+         method.nonObj  
+         ect            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Hormo  
+         nalPhaseServi  
+         ce.php         
+ ------ --------------- 
+  :9     Property       
+         App\Service\H  
+         ormonalPhaseS  
+         ervice::$anal  
+         yzer has no    
+         type           
+         specified.     
+         ­ƒ¬¬             
+         missingType.p  
+         roperty        
+  :19    Method         
+         App\Service\H  
+         ormonalPhaseS  
+         ervice::gener  
+         ateCyclePhase  
+         s() return     
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Medic  
+         alAIService.p  
+         hp             
+ ------ --------------- 
+  :35    Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::analyzeMe  
+         dicalRecord()  
+         has parameter  
+         $dossierData   
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :35    Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::analyzeMe  
+         dicalRecord()  
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :79    Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::callGroqA  
+         PI() has       
+         parameter      
+         $dossier with  
+         no value type  
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :79    Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::callGroqA  
+         PI() return    
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :120   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::buildInte  
+         lligentPrompt  
+         () has         
+         parameter      
+         $dossier with  
+         no value type  
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :247   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::parseAIRe  
+         sponse()       
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :251   Parameter #1   
+         $string of     
+         function trim  
+         expects        
+         string,        
+         string|null    
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :270   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::findRelev  
+         antLocalDocto  
+         rs() has       
+         parameter      
+         $specialitesR  
+         ecommandees    
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :270   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::findRelev  
+         antLocalDocto  
+         rs() return    
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :310   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::findRelev  
+         antLocalHospi  
+         tals() has     
+         parameter      
+         $specialitesR  
+         ecommandees    
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :310   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::findRelev  
+         antLocalHospi  
+         tals() return  
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :399   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::generateD  
+         ynamicStatist  
+         ics() has      
+         parameter      
+         $analysis      
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :399   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::generateD  
+         ynamicStatist  
+         ics() has      
+         parameter      
+         $dossier with  
+         no value type  
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :399   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::generateD  
+         ynamicStatist  
+         ics() return   
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :412   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::calculate  
+         DefaultScores  
+         () has         
+         parameter      
+         $dossier with  
+         no value type  
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :412   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::calculate  
+         DefaultScores  
+         () return      
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :437   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::calculate  
+         PerformanceIn  
+         dicators()     
+         has parameter  
+         $dossier with  
+         no value type  
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :437   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::calculate  
+         PerformanceIn  
+         dicators()     
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :458   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::getFallba  
+         ckRecommendat  
+         ions() has     
+         parameter      
+         $dossierData   
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :458   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::getFallba  
+         ckRecommendat  
+         ions() return  
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Notif  
+         icationServic  
+         e.php          
+ ------ --------------- 
+  :66    Method         
+         App\Service\N  
+         otificationSe  
+         rvice::sendUr  
+         gentDonationR  
+         equest() has   
+         parameter      
+         $matchingDono  
+         rs with no     
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\OpenA  
+         ITtsService.p  
+         hp             
+ ------ --------------- 
+  :32    Method         
+         App\Service\O  
+         penAITtsServi  
+         ce::synthesiz  
+         e() return     
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\OpenR  
+         outerService.  
+         php            
+ ------ --------------- 
+  :54    Method         
+         App\Service\O  
+         penRouterServ  
+         ice::chat()    
+         has parameter  
+         $conversation  
+         History with   
+         no value type  
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :54    Method         
+         App\Service\O  
+         penRouterServ  
+         ice::chat()    
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Pagin  
+         ator.php       
+ ------ --------------- 
+  :9     Method         
+         App\Service\P  
+         aginator::pag  
+         inate()        
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\PdfEx  
+         portService.p  
+         hp             
+ ------ --------------- 
+  :15    Method         
+         App\Service\P  
+         dfExportServi  
+         ce::generateA  
+         nalysisPdf()   
+         has parameter  
+         $analysis      
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :15    Method         
+         App\Service\P  
+         dfExportServi  
+         ce::generateA  
+         nalysisPdf()   
+         has parameter  
+         $dossierData   
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :31    Method         
+         App\Service\P  
+         dfExportServi  
+         ce::buildHtml  
+         () has         
+         parameter      
+         $analysis      
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\QwenS  
+         ervice.php     
+ ------ --------------- 
+  :23    Parameter #1   
+         $string of     
+         function       
+         base64_encode  
+         expects        
+         string,        
+         string|false   
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :82    Method         
+         App\Service\Q  
+         wenService::a  
+         nalyzeMeal()   
+         should return  
+         string but     
+         returns        
+         string|false.  
+         ­ƒ¬¬             
+         return.type    
+  :84    Method         
+         App\Service\Q  
+         wenService::a  
+         nalyzeMeal()   
+         should return  
+         string but     
+         returns        
+         string|false.  
+         ­ƒ¬¬             
+         return.type    
+  :86    Method         
+         App\Service\Q  
+         wenService::a  
+         nalyzeMeal()   
+         should return  
+         string but     
+         returns        
+         string|false.  
+         ­ƒ¬¬             
+         return.type    
+  :124   Method         
+         App\Service\Q  
+         wenService::g  
+         etChatComplet  
+         ion() has      
+         parameter      
+         $messages      
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\SmsSe  
+         rvice.php      
+ ------ --------------- 
+  :18    Method         
+         App\Service\S  
+         msService::se  
+         ndSms() has    
+         no return      
+         type           
+         specified.     
+         ­ƒ¬¬             
+         missingType.r  
+         eturn          
+  :41    Method         
+         App\Service\S  
+         msService::se  
+         nd() has no    
+         return type    
+         specified.     
+         ­ƒ¬¬             
+         missingType.r  
+         eturn          
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Stres  
+         sPredictionSe  
+         rvice.php      
+ ------ --------------- 
+  :124   Ternary        
+         operator       
+         condition is   
+         always true.   
+         ­ƒ¬¬             
+         ternary.alway  
+         sTrue          
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Voice  
+         AssistantServ  
+         ice.php        
+ ------ --------------- 
+  :86    Method         
+         App\Service\V  
+         oiceAssistant  
+         Service::proc  
+         essCommand()   
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :146   Method         
+         App\Service\V  
+         oiceAssistant  
+         Service::getA  
+         vailableComma  
+         nds() return   
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ [ERROR] Found 58      
+         errors        
+

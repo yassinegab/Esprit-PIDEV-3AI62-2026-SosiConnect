@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class VoiceAssistantController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $em
+        private EntityManagerInterface $em
     ) {}
 
     #[Route('/process', name: 'voice_process', methods: ['POST'])]
@@ -78,6 +78,9 @@ class VoiceAssistantController extends AbstractController
         return $this->json($response);
     }
 
+    /**
+     * @return array{id: int|null, sms_count: int, email_count: int}
+     */
     private function declareUrgence(
         ?float $latitude, 
         ?float $longitude,
@@ -125,8 +128,8 @@ class VoiceAssistantController extends AbstractController
                 try {
                     $emailService->sendUrgencyNotification(
                         $contact->getEmail(),
-                        $contact->getNom() ?? 'Contact',
-                        $urgence
+                        $urgence->getMessage() ?? 'Urgence déclenchée par commande vocale',
+                        'Patient Anonyme'
                     );
                     $emailCount++;
                 } catch (\Exception $e) {

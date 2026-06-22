@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/user/chatbot')]
 class ChatbotController extends AbstractController
 {
+    /** @return \App\Entity\User|\Symfony\Component\Security\Core\User\UserInterface|null */
     private function getActualUser(EntityManagerInterface $em)
     {
         return $this->getUser() ?? $em->getRepository(\App\Entity\User::class)->find(1);
@@ -34,25 +35,29 @@ class ChatbotController extends AbstractController
     public function send(Request $request, ChatbotService $chatbotService, EntityManagerInterface $em): JsonResponse
     {
         $user = $this->getActualUser($em);
-        $content = $request->request->get('message');
+        $content = (string)$request->request->get('message', '');
 
-        if (!$content) {
+        if ($content === '') {
             return new JsonResponse(['error' => 'Message is empty'], 400);
         }
 
-        // 1. Save user message
-        $chatbotService->saveMessage($user, $content, 'user');
+        if ($user instanceof \App\Entity\User) {
+            // 1. Save user message
+            $chatbotService->saveMessage($user, $content, 'user');
 
-        // 2. Get AI response
-        $aiResponse = $chatbotService->getResponse($user, $content);
+            // 2. Get AI response
+            $aiResponse = $chatbotService->getResponse($user, $content);
 
-        // 3. Save AI response
-        $chatbotService->saveMessage($user, $aiResponse, 'assistant');
+            // 3. Save AI response
+            $chatbotService->saveMessage($user, $aiResponse, 'assistant');
 
-        return new JsonResponse([
-            'message' => $aiResponse,
-            'role' => 'assistant'
-        ]);
+            return new JsonResponse([
+                'message' => $aiResponse,
+                'role' => 'assistant'
+            ]);
+        }
+        
+        return new JsonResponse(['error' => 'User not found'], 403);
     }
 
     #[Route('/clear', name: 'user_chatbot_clear', methods: ['POST'])]

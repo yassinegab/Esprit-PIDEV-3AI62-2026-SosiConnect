@@ -24,6 +24,9 @@ class EmotionAnalysis
     #[ORM\Column]
     private ?int $stressScore = null;
 
+    /**
+     * @var array<int, string>|null
+     */
     #[ORM\Column(type: 'json', nullable: true)]
     private ?array $keywords = null;
 
@@ -76,11 +79,17 @@ class EmotionAnalysis
         return $this;
     }
 
+    /**
+     * @return array<int, string>|null
+     */
     public function getKeywords(): ?array
     {
         return $this->keywords;
     }
 
+    /**
+     * @param array<int, string>|null $keywords
+     */
     public function setKeywords(?array $keywords): static
     {
         $this->keywords = $keywords;

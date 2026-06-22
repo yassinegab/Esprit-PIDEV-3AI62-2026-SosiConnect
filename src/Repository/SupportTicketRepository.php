@@ -6,6 +6,9 @@ use App\Entity\SupportTicket;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<SupportTicket>
+ */
 class SupportTicketRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -13,6 +16,9 @@ class SupportTicketRepository extends ServiceEntityRepository
         parent::__construct($registry, SupportTicket::class);
     }
 
+    /**
+     * @return SupportTicket[]
+     */
     public function findOpenTickets(): array
     {
         return $this->createQueryBuilder('t')
@@ -24,6 +30,9 @@ class SupportTicketRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return SupportTicket[]
+     */
     public function findByUserEmail(string $email): array
     {
         return $this->createQueryBuilder('t')
@@ -34,12 +43,15 @@ class SupportTicketRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getStats(): array
     {
         $qb = $this->createQueryBuilder('t');
         
         return [
-            'total' => $qb->select('COUNT(t.id)')->getQuery()->getSingleScalarResult(),
+            'total' => (int) $qb->select('COUNT(t.id)')->getQuery()->getSingleScalarResult(),
             'open' => $this->count(['status' => SupportTicket::STATUS_OPEN]),
             'inProgress' => $this->count(['status' => SupportTicket::STATUS_IN_PROGRESS]),
             'resolved' => $this->count(['status' => SupportTicket::STATUS_RESOLVED]),

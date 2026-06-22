@@ -3,7 +3,7 @@
         'name' => '__root__',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'db3b8ba152bc76590313fd1e14a9021d721b254a',
+        'reference' => 'cf6ce4747b6ffa76ef126ce78d24b86ca769531c',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         '__root__' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'db3b8ba152bc76590313fd1e14a9021d721b254a',
+            'reference' => 'cf6ce4747b6ffa76ef126ce78d24b86ca769531c',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -507,6 +507,15 @@
             'install_path' => __DIR__ . '/../phpstan/phpdoc-parser',
             'aliases' => array(),
             'dev_requirement' => false,
+        ),
+        'phpstan/phpstan' => array(
+            'pretty_version' => '2.1.40',
+            'version' => '2.1.40.0',
+            'reference' => '9b2c7aeb83a75d8680ea5e7c9b7fca88052b766b',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../phpstan/phpstan',
+            'aliases' => array(),
+            'dev_requirement' => true,
         ),
         'phpunit/php-code-coverage' => array(
             'pretty_version' => '10.1.16',
@@ -1658,7 +1667,7 @@
             'type' => 'symfony-bundle',
             'install_path' => __DIR__ . '/../symfony/web-profiler-bundle',
             'aliases' => array(),
-            'dev_requirement' => false,
+            'dev_requirement' => true,
         ),
         'symfony/webpack-encore-bundle' => array(
             'pretty_version' => 'v2.4.0',

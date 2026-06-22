@@ -11,8 +11,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
 /**
- * @extends ServiceEntityRepository<User>
- * @implements PasswordUpgraderInterface
+ * @extends \Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository<\App\Entity\User>
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
@@ -61,6 +60,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     /**
      * Trouve tous les médecins (via userRole enum)
+     * @return array<int, User>
      */
     public function findAllMedecins(): array
     {
@@ -69,6 +69,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     /**
      * Trouve tous les patients (via userRole enum)
+     * @return array<int, User>
      */
     public function findAllPatients(): array
     {
@@ -77,6 +78,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     /**
      * Trouve les utilisateurs par rôle (via le champ roles JSON Symfony)
+     * @return array<int, User>
      */
     public function findByRole(string $role): array
     {
@@ -90,6 +92,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     /**
      * Alias pour findAllMedecins() – version avec roles LIKE (plus robuste si plusieurs rôles)
+     * @return array<int, User>
      */
     public function findMedecins(): array
     {
@@ -103,6 +106,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     /**
      * Alias pour findAllPatients() – version avec roles LIKE
+     * @return array<int, User>
      */
     public function findPatients(): array
     {

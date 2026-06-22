@@ -3,95 +3,177 @@
 {% block title %}Admin - Rendez-vous #{{ rendez_vous.id }}{% endblock %}
 
 {% block body %}
-<div class="flex min-h-screen bg-gray-50">
+<div class="flex min-h-screen bg-slate-50">
 
-    {% include 'components/sidebar.html.twig' %}
+    {# Admin Sidebar #}
+    {% include 'admin/components/sidebar.html.twig' %}
 
-    <div class="flex flex-1 flex-col lg:ml-72">
+    <div class="flex flex-1 flex-col lg:ml-64">
 
-        {% include 'components/top-nav.html.twig' %}
+        {# Admin Top Nav #}
+        {% include 'admin/components/top-nav.html.twig' %}
 
-        <main class="flex-1 overflow-auto">
-            <div class="mx-auto max-w-4xl space-y-6 p-4 lg:p-8">
+        <main class="flex-1 animate-page-enter pb-12">
+            <div class="mx-auto max-w-5xl space-y-8 p-4 lg:p-8">
 
-                <div class="flex items-center justify-between">
+                {# ── Page Header ── #}
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 class="text-3xl font-bold text-gray-900">
-                            <i class="fas fa-calendar-check text-blue-600 mr-2"></i>
-                            Rendez-vous #{{ rendez_vous.id }}
+                        <h1 class="page-title flex items-center gap-3">
+                            <span class="stat-icon w-10 h-10 text-lg bg-primary/10 text-primary"><i class="fas fa-calendar-check"></i></span>
+                            Détails de la Consultation
                         </h1>
+                        <p class="page-subtitle mt-1">Dossier de suivi pour le rendez-vous <span class="text-foreground font-black">#{{ rendez_vous.id }}</span></p>
                     </div>
-                    <a href="{{ path('admin_rendez_vous_index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300">
-                        <i class="fas fa-arrow-left mr-2"></i>Retour
-                    </a>
+                    <div class="flex gap-3">
+                        <a href="{{ path('admin_rendez_vous_index') }}" class="btn-secondary">
+                            <i class="fas fa-arrow-left mr-2"></i> Retour
+                        </a>
+                    </div>
                 </div>
 
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-blue-50 rounded-lg p-4">
-                            <dt class="text-sm font-medium text-gray-500 mb-2">Patient</dt>
-                            <dd class="text-lg font-semibold text-gray-900">
-                                {% if rendez_vous.patient %}
-                                    {{ rendez_vous.patient.nom }} {{ rendez_vous.patient.prenom }}
-                                {% else %}
-                                    Non assigné
-                                {% endif %}
-                            </dd>
-                        </div>
-
-                        <div class="bg-green-50 rounded-lg p-4">
-                            <dt class="text-sm font-medium text-gray-500 mb-2">Médecin</dt>
-                            <dd class="text-lg font-semibold text-gray-900">
-                                {% if rendez_vous.medecin %}
-                                    Dr. {{ rendez_vous.medecin.nom }}
-                                {% else %}
-                                    Non assigné
-                                {% endif %}
-                            </dd>
-                        </div>
-
-                        <div class="bg-purple-50 rounded-lg p-4">
-                            <dt class="text-sm font-medium text-gray-500 mb-2">Hôpital</dt>
-                            <dd class="text-lg font-semibold text-gray-900">
-                                {{ rendez_vous.hopital.nom }}
-                            </dd>
-                        </div>
-
-                        <div class="bg-orange-50 rounded-lg p-4">
-                            <dt class="text-sm font-medium text-gray-500 mb-2">Date et heure</dt>
-                            <dd class="text-lg font-semibold text-gray-900">
-                                {{ rendez_vous.dateRendezVous|date('d/m/Y à H:i') }}
-                            </dd>
-                        </div>
-
-                        <div class="bg-indigo-50 rounded-lg p-4">
-                            <dt class="text-sm font-medium text-gray-500 mb-2">Type</dt>
-                            <dd class="text-lg font-semibold text-gray-900">{{ rendez_vous.typeConsultation }}</dd>
-                        </div>
-
-                        <div class="bg-yellow-50 rounded-lg p-4">
-                            <dt class="text-sm font-medium text-gray-500 mb-2">Statut</dt>
-                            <dd class="text-lg font-semibold text-gray-900">{{ rendez_vous.statut }}</dd>
-                        </div>
-
-                        {% if rendez_vous.notes %}
-                            <div class="md:col-span-2 bg-gray-50 rounded-lg p-4">
-                                <dt class="text-sm font-medium text-gray-500 mb-2">Notes</dt>
-                                <dd class="text-gray-900">{{ rendez_vous.notes }}</dd>
+                {# ── Dashboard Grid ── #}
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    
+                    {# Left Column: Quick Actions & Status #}
+                    <div class="lg:col-span-1 space-y-8">
+                        
+                        {# Status Card #}
+                        <div class="card p-8 text-center relative overflow-hidden">
+                            <div class="relative z-10">
+                                <div class="w-20 h-20 bg-primary/5 rounded-3xl flex items-center justify-center text-primary text-3xl mx-auto mb-6 shadow-sm border border-primary/10">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-2">Statut Actuel</p>
+                                <div class="inline-flex items-center px-4 py-2 rounded-full 
+                                    {% if rendez_vous.statut == 'Confirmé' %}bg-green-50 text-green-700 border-green-100
+                                    {% elseif rendez_vous.statut == 'Annulé' %}bg-red-50 text-red-700 border-red-100
+                                    {% else %}bg-amber-50 text-amber-700 border-amber-100{% endif %} 
+                                    text-[10px] font-black uppercase tracking-widest border shadow-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full mr-2 
+                                        {% if rendez_vous.statut == 'Confirmé' %}bg-green-500
+                                        {% elseif rendez_vous.statut == 'Annulé' %}bg-red-500
+                                        {% else %}bg-amber-500{% endif %}"></span>
+                                    {{ rendez_vous.statut|default('En attente') }}
+                                </div>
                             </div>
-                        {% endif %}
-                    </dl>
+                            <div class="absolute -right-6 -bottom-6 opacity-[0.03] text-9xl text-primary -rotate-12">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                        </div>
 
-                    <div class="flex gap-4 mt-6 pt-6 border-t">
-                        <a href="{{ path('admin_rendez_vous_edit', {'id': rendez_vous.id}) }}" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">
-                            <i class="fas fa-edit mr-2"></i>Modifier
-                        </a>
-                        <button onclick="confirmDelete()" class="px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700">
-                            <i class="fas fa-trash mr-2"></i>Supprimer
-                        </button>
-                        <form id="delete-form" method="post" action="{{ path('admin_rendez_vous_delete', {'id': rendez_vous.id}) }}" style="display: none;">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ rendez_vous.id) }}">
-                        </form>
+                        {# Patient & Doctor Quick Info #}
+                        <div class="card divide-y divide-border overflow-hidden">
+                            <div class="p-6 bg-muted/5">
+                                <p class="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-4">Assignations</p>
+                                <div class="space-y-6">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center text-sm font-black shadow-lg shadow-primary/20">
+                                            {{ rendez_vous.patient ? rendez_vous.patient.nom|first|upper ~ rendez_vous.patient.prenom|first|upper : '?' }}
+                                        </div>
+                                        <div>
+                                            <p class="text-[9px] font-black text-muted-foreground uppercase tracking-tighter">Patient</p>
+                                            <p class="text-xs font-black text-foreground">{{ rendez_vous.patient ? rendez_vous.patient.nom ~ ' ' ~ rendez_vous.patient.prenom : 'Non assigné' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center text-sm font-black shadow-lg shadow-slate-900/20">
+                                            DR
+                                        </div>
+                                        <div>
+                                            <p class="text-[9px] font-black text-muted-foreground uppercase tracking-tighter">Praticien</p>
+                                            <p class="text-xs font-black text-foreground">{% if rendez_vous.medecin %}Dr. {{ rendez_vous.medecin.nom }}{% else %}Non assigné{% endif %}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <p class="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-4">Lieu de Consultation</p>
+                                <div class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-white border border-border flex items-center justify-center text-primary shadow-sm">
+                                        <i class="fas fa-hospital"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-black text-foreground">{{ rendez_vous.hopital.nom }}</p>
+                                        <p class="text-[9px] text-muted-foreground font-bold uppercase tracking-tight mt-1 leading-relaxed">
+                                            {{ rendez_vous.hopital.adresse }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Right Column: Full Details & Notes #}
+                    <div class="lg:col-span-2 space-y-8">
+                        <div class="card p-8 sm:p-10">
+                            <h4 class="text-sm font-black uppercase tracking-widest text-foreground mb-10 flex items-center gap-3">
+                                <span class="w-1.5 h-6 bg-primary rounded-full"></span>
+                                Informations de Planification
+                            </h4>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-12">
+                                <div class="space-y-2">
+                                    <p class="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Date & Heure Prévue</p>
+                                    <div class="p-5 bg-muted/10 rounded-2xl border border-border flex items-center gap-4">
+                                        <i class="fas fa-clock text-primary text-xl"></i>
+                                        <div>
+                                            <p class="text-sm font-black text-foreground tracking-tight">{{ rendez_vous.dateRendezVous|date('d F Y') }}</p>
+                                            <p class="text-[10px] font-black text-primary uppercase tracking-widest mt-0.5">{{ rendez_vous.dateRendezVous|date('H:i') }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <p class="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Type de Consultation</p>
+                                    <div class="p-5 bg-muted/10 rounded-2xl border border-border flex items-center gap-4">
+                                        <i class="fas fa-stethoscope text-primary text-xl"></i>
+                                        <div>
+                                            <p class="text-sm font-black text-foreground tracking-tight">{{ rendez_vous.typeConsultation }}</p>
+                                            <p class="text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-0.5">Service Médical</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if rendez_vous.notes %}
+                                <div class="space-y-4">
+                                    <p class="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Notes & Instructions Spéciales</p>
+                                    <div class="p-6 bg-slate-900 text-white rounded-3xl border-none shadow-xl">
+                                        <p class="text-xs font-medium leading-relaxed opacity-80">{{ rendez_vous.notes }}</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {# Actions #}
+                            <div class="flex flex-col sm:flex-row gap-4 mt-12 pt-10 border-t border-border">
+                                <a href="{{ path('admin_rendez_vous_edit', {'id': rendez_vous.id}) }}" class="btn-primary flex-1 py-5 text-sm font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20">
+                                    <i class="fas fa-edit mr-2 text-[10px]"></i>
+                                    Modifier le Rendez-vous
+                                </a>
+                                <button onclick="confirmDelete()" class="btn-secondary py-5 px-10 text-sm font-black uppercase tracking-[0.2em] text-primary hover:bg-primary/10">
+                                    <i class="fas fa-trash mr-2 text-[10px]"></i>
+                                    Supprimer
+                                </button>
+                                
+                                <form id="delete-form" method="post" action="{{ path('admin_rendez_vous_delete', {'id': rendez_vous.id}) }}" style="display: none;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('approve' ~ rendez_vous.id) }}">
+                                </form>
+                            </div>
+                        </div>
+
+                        {# Footer Meta #}
+                        <div class="card p-6 bg-white flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-muted/20 flex items-center justify-center text-muted-foreground">
+                                    <i class="fas fa-history text-[10px]"></i>
+                                </div>
+                                <p class="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Enregistré le : <span class="text-foreground">{{ rendez_vous.dateRendezVous|date('d/m/Y') }}</span></p>
+                            </div>
+                            <div class="text-[10px] font-black text-primary uppercase tracking-[0.3em]">
+                                SOSI HEALTHCARE
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -103,7 +185,7 @@
 
 <script>
 function confirmDelete() {
-    if (confirm('Supprimer ce rendez-vous ?')) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ? Cette action est irréversible.')) {
         document.getElementById('delete-form').submit();
     }
 }

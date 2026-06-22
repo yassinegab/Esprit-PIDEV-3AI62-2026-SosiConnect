@@ -9,6 +9,9 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<StressPrediction>
  */
+/**
+ * @extends ServiceEntityRepository<StressPrediction>
+ */
 class StressPredictionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -16,6 +19,10 @@ class StressPredictionRepository extends ServiceEntityRepository
         parent::__construct($registry, StressPrediction::class);
     }
 
+    /**
+     * @param \App\Entity\User $user
+     * @return array<int, StressPrediction>
+     */
     public function findAllForUser($user): array
     {
         return $this->createQueryBuilder('s')

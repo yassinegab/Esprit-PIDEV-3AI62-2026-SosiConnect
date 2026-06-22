@@ -9,6 +9,9 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<AnalyseAI>
  */
+/**
+ * @extends ServiceEntityRepository<AnalyseAI>
+ */
 class AnalyseAIRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

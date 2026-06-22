@@ -6,6 +6,9 @@ use App\Entity\RendezVous;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<RendezVous>
+ */
 class RendezVousRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -15,6 +18,7 @@ class RendezVousRepository extends ServiceEntityRepository
 
     /**
      * Recherche paginée filtrée par patient connecté
+     * @return array{data: RendezVous[], total: int}
      */
     public function searchPaginatedByPatient(
         int $patientId,
@@ -68,12 +72,13 @@ class RendezVousRepository extends ServiceEntityRepository
 
         return [
             'data' => $data,
-            'total' => $total
+            'total' => (int) $total
         ];
     }
 
     /**
      * Liste paginée filtrée par patient connecté (sans recherche)
+     * @return array{data: RendezVous[], total: int}
      */
     public function findPaginatedByPatient(
         int $patientId,
@@ -92,6 +97,7 @@ class RendezVousRepository extends ServiceEntityRepository
 
     /**
      * Recherche paginée (TOUS les rendez-vous - pour admin)
+     * @return array{data: RendezVous[], total: int}
      */
     public function searchPaginated(
         string $search,
@@ -142,12 +148,13 @@ class RendezVousRepository extends ServiceEntityRepository
 
         return [
             'data' => $data,
-            'total' => $total
+            'total' => (int) $total
         ];
     }
 
     /**
      * Liste paginée (TOUS les rendez-vous - pour admin)
+     * @return array{data: RendezVous[], total: int}
      */
     public function findPaginated(
         int $page,
@@ -160,5 +167,19 @@ class RendezVousRepository extends ServiceEntityRepository
             $itemsPerPage,
             $sort
         );
+    }
+
+    /**
+     * @return RendezVous[]
+     */
+    public function search(string $term): array
+    {
+        return $this->createQueryBuilder('r')
+            ->leftJoin('r.patient', 'p')
+            ->leftJoin('r.medecin', 'm')
+            ->where('p.nom LIKE :term OR p.prenom LIKE :term OR m.nom LIKE :term OR m.prenom LIKE :term OR r.statut LIKE :term')
+            ->setParameter('term', '%' . $term . '%')
+            ->getQuery()
+            ->getResult();
     }
 }

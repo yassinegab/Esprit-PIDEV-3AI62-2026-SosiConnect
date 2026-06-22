@@ -35,10 +35,11 @@ final class EventFrontController extends AbstractController
     public function attend(Event $event, Request $request, EventMailerService $mailer): RedirectResponse
     {
         // Vérifie le token CSRF
-        if (!$this->isCsrfTokenValid('attend-event'.$event->getId(), $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('attend-event'.$event->getId(), (string)$request->request->get('_token', ''))) {
             throw $this->createAccessDeniedException('Token invalide.');
         }
 
+        /** @var \App\Entity\User|null $user */
         $user = $this->getUser();
 
         try {

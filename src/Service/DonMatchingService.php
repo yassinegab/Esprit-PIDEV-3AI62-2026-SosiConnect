@@ -7,6 +7,10 @@ use App\Entity\DemandeDon;
 
 class DonMatchingService
 {
+    /**
+     * @param Don[] $dons
+     * @return array<int, array{don: Don, score: int}>
+     */
     public function matchDemandes(DemandeDon $demande, array $dons): array
     {
         $results = [];

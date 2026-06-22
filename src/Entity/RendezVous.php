@@ -195,9 +195,7 @@ class RendezVous
 
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
-        $this->updatedAt = $updatedAt instanceof \DateTime
-            ? \DateTimeImmutable::createFromMutable($updatedAt)
-            : $updatedAt;
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

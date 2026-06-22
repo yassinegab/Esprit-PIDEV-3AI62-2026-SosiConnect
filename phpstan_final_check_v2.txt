@@ -1,0 +1,4274 @@
+﻿ ------ --------------- 
+  Line   Controller\Ad  
+         min\gestionwe  
+         llbeingbackof  
+         fice\MealAdmi  
+         nController.p  
+         hp             
+ ------ --------------- 
+  :71    Binary         
+         operation "."  
+         between        
+         array|bool|fl  
+         oat|int|strin  
+         g|UnitEnum|nu  
+         ll and '/'     
+         results in an  
+         error.         
+         ­ƒ¬¬             
+         binaryOp.inva  
+         lid            
+  :76    Parameter #1   
+         $json of       
+         function       
+         json_decode    
+         expects        
+         string,        
+         string|null    
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :134   Binary         
+         operation "."  
+         between        
+         array|bool|fl  
+         oat|int|strin  
+         g|UnitEnum|nu  
+         ll and '/'     
+         results in an  
+         error.         
+         ­ƒ¬¬             
+         binaryOp.inva  
+         lid            
+  :139   Parameter #1   
+         $json of       
+         function       
+         json_decode    
+         expects        
+         string,        
+         string|null    
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :173   Parameter #2   
+         $token of      
+         method         
+         Symfony\Bundl  
+         e\FrameworkBu  
+         ndle\Controll  
+         er\AbstractCo  
+         ntroller::isC  
+         srfTokenValid  
+         () expects     
+         string|null,   
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Cy  
+         clePhasePageC  
+         ontroller.php  
+ ------ --------------- 
+  :13    Method         
+         App\Controlle  
+         r\CyclePhaseP  
+         ageController  
+         ::index() has  
+         invalid        
+         return type    
+         App\Controlle  
+         r\Response.    
+         ­ƒ¬¬             
+         class.notFoun  
+         d              
+  :15    Method         
+         App\Controlle  
+         r\CyclePhaseP  
+         ageController  
+         ::index()      
+         should return  
+         App\Controlle  
+         r\Response     
+         but returns    
+         Symfony\Compo  
+         nent\HttpFoun  
+         dation\Respon  
+         se.            
+         ­ƒ¬¬             
+         return.type    
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Ev  
+         entController  
+         .php           
+ ------ --------------- 
+  :41    Parameter #2   
+         $eventId of    
+         method         
+         App\Service\E  
+         ventLoggerSer  
+         vice::logEven  
+         t() expects    
+         int, int|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :66    Parameter #2   
+         $eventId of    
+         method         
+         App\Service\E  
+         ventLoggerSer  
+         vice::logEven  
+         t() expects    
+         int, int|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :86    Parameter #2   
+         $eventId of    
+         method         
+         App\Service\E  
+         ventLoggerSer  
+         vice::logEven  
+         t() expects    
+         int, int|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Ev  
+         entFrontContr  
+         oller.php      
+ ------ --------------- 
+  :38    Parameter #2   
+         $token of      
+         method         
+         Symfony\Bundl  
+         e\FrameworkBu  
+         ndle\Controll  
+         er\AbstractCo  
+         ntroller::isC  
+         srfTokenValid  
+         () expects     
+         string|null,   
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Fr  
+         ont\AideContr  
+         oller.php      
+ ------ --------------- 
+  :102   Parameter #1   
+         $subject of    
+         method         
+         App\Entity\Su  
+         pportTicket::  
+         setSubject()   
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :103   Parameter #1   
+         $description   
+         of method      
+         App\Entity\Su  
+         pportTicket::  
+         setDescriptio  
+         n() expects    
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :104   Parameter #1   
+         $category of   
+         method         
+         App\Entity\Su  
+         pportTicket::  
+         setCategory()  
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :105   Parameter #1   
+         $priority of   
+         method         
+         App\Entity\Su  
+         pportTicket::  
+         setPriority()  
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :106   Parameter #1   
+         $userEmail of  
+         method         
+         App\Entity\Su  
+         pportTicket::  
+         setUserEmail(  
+         ) expects      
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :107   Parameter #1   
+         $userName of   
+         method         
+         App\Entity\Su  
+         pportTicket::  
+         setUserName()  
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :149   Parameter #1   
+         $content of    
+         method         
+         App\Entity\Ch  
+         atMessage::se  
+         tContent()     
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :181   Parameter #1   
+         $comment of    
+         method         
+         App\Entity\Su  
+         pportFeedback  
+         ::setComment(  
+         ) expects      
+         string|null,   
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Fr  
+         ont\AideMapCo  
+         ntroller.php   
+ ------ --------------- 
+  :45    Parameter #1   
+         $lieu of       
+         method         
+         App\Repositor  
+         y\LieuMedical  
+         ReviewReposit  
+         ory::getAvera  
+         geRating()     
+         expects        
+         App\Entity\Li  
+         euMedical,     
+         object given.  
+         ­ƒ¬¬             
+         argument.type  
+  :46    Parameter #1   
+         $lieu of       
+         method         
+         App\Repositor  
+         y\LieuMedical  
+         ReviewReposit  
+         ory::getRevie  
+         wCount()       
+         expects        
+         App\Entity\Li  
+         euMedical,     
+         object given.  
+         ­ƒ¬¬             
+         argument.type  
+  :48    Call to an     
+         undefined      
+         method         
+         object::getId  
+         ().            
+         ­ƒ¬¬             
+         method.notFou  
+         nd             
+  :49    Call to an     
+         undefined      
+         method         
+         object::getNo  
+         m().           
+         ­ƒ¬¬             
+         method.notFou  
+         nd             
+  :50    Call to an     
+         undefined      
+         method         
+         object::getCa  
+         tegorie().     
+         ­ƒ¬¬             
+         method.notFou  
+         nd             
+  :51    Call to an     
+         undefined      
+         method         
+         object::getAd  
+         resse().       
+         ­ƒ¬¬             
+         method.notFou  
+         nd             
+  :52    Call to an     
+         undefined      
+         method         
+         object::getTe  
+         lephone().     
+         ­ƒ¬¬             
+         method.notFou  
+         nd             
+  :53    Call to an     
+         undefined      
+         method         
+         object::getLa  
+         titude().      
+         ­ƒ¬¬             
+         method.notFou  
+         nd             
+  :54    Call to an     
+         undefined      
+         method         
+         object::getLo  
+         ngitude().     
+         ­ƒ¬¬             
+         method.notFou  
+         nd             
+  :149   Parameter #1   
+         $authorName    
+         of method      
+         App\Entity\Li  
+         euMedicalRevi  
+         ew::setAuthor  
+         Name()         
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :150   Parameter #1   
+         $authorEmail   
+         of method      
+         App\Entity\Li  
+         euMedicalRevi  
+         ew::setAuthor  
+         Email()        
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :152   Parameter #1   
+         $comment of    
+         method         
+         App\Entity\Li  
+         euMedicalRevi  
+         ew::setCommen  
+         t() expects    
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Fr  
+         ont\DemandeDo  
+         nController.p  
+         hp             
+ ------ --------------- 
+  :25    Parameter #1   
+         $string of     
+         function trim  
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :53    Parameter #1   
+         $typeDemande   
+         of method      
+         App\Entity\De  
+         mandeDon::set  
+         TypeDemande()  
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :58    Parameter #1   
+         $description   
+         of method      
+         App\Entity\De  
+         mandeDon::set  
+         Description()  
+         expects        
+         string|null,   
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :59    Parameter #1   
+         $patientNom    
+         of method      
+         App\Entity\De  
+         mandeDon::set  
+         PatientNom()   
+         expects        
+         string|null,   
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :60    Parameter #1   
+         $patientEmail  
+         of method      
+         App\Entity\De  
+         mandeDon::set  
+         PatientEmail(  
+         ) expects      
+         string|null,   
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :61    Parameter #1   
+         $patientTelep  
+         hone of        
+         method         
+         App\Entity\De  
+         mandeDon::set  
+         PatientTeleph  
+         one() expects  
+         string|null,   
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :64    Parameter #1   
+         $typeOrgane    
+         of method      
+         App\Entity\De  
+         mandeDon::set  
+         TypeOrgane()   
+         expects        
+         string|null,   
+         float|int<min  
+         , -1>|int<1,   
+         max>|string|t  
+         rue given.     
+         ­ƒ¬¬             
+         argument.type  
+  :67    Parameter #1   
+         $typeSanguin   
+         of method      
+         App\Entity\De  
+         mandeDon::set  
+         TypeSanguin()  
+         expects        
+         string|null,   
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :103   Parameter #1   
+         $donneurNom    
+         of method      
+         App\Entity\Re  
+         ponseDon::set  
+         DonneurNom()   
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :104   Parameter #1   
+         $donneurEmail  
+         of method      
+         App\Entity\Re  
+         ponseDon::set  
+         DonneurEmail(  
+         ) expects      
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :105   Parameter #1   
+         $donneurTelep  
+         hone of        
+         method         
+         App\Entity\Re  
+         ponseDon::set  
+         DonneurTeleph  
+         one() expects  
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :106   Parameter #1   
+         $donneurGroup  
+         eSanguin of    
+         method         
+         App\Entity\Re  
+         ponseDon::set  
+         DonneurGroupe  
+         Sanguin()      
+         expects        
+         string|null,   
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :107   Parameter #1   
+         $message of    
+         method         
+         App\Entity\Re  
+         ponseDon::set  
+         Message()      
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :134   Parameter #1   
+         $string of     
+         function trim  
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Fr  
+         ont\DonContro  
+         ller.php       
+ ------ --------------- 
+  :54    Parameter #1   
+         $typeDon of    
+         method         
+         App\Entity\Do  
+         n::setTypeDon  
+         () expects     
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :55    Parameter #1   
+         $typeSanguin   
+         of method      
+         App\Entity\Do  
+         n::setTypeSan  
+         guin()         
+         expects        
+         string|null,   
+         float|int<min  
+         , -1>|int<1,   
+         max>|string|t  
+         rue|null       
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :56    Parameter #1   
+         $typeOrgane    
+         of method      
+         App\Entity\Do  
+         n::setTypeOrg  
+         ane() expects  
+         string|null,   
+         float|int<min  
+         , -1>|int<1,   
+         max>|string|t  
+         rue|null       
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :57    Parameter #1   
+         $region of     
+         method         
+         App\Entity\Do  
+         n::setRegion(  
+         ) expects      
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :132   Parameter #2   
+         $token of      
+         method         
+         Symfony\Bundl  
+         e\FrameworkBu  
+         ndle\Controll  
+         er\AbstractCo  
+         ntroller::isC  
+         srfTokenValid  
+         () expects     
+         string|null,   
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Fr  
+         ont\DonneurCo  
+         ntroller.php   
+ ------ --------------- 
+  :21    Parameter #1   
+         $string of     
+         function trim  
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :22    Parameter #1   
+         $string of     
+         function trim  
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :24    Parameter #1   
+         $string of     
+         function trim  
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :55    Parameter #1   
+         $groupeSangui  
+         n of method    
+         App\Entity\Do  
+         nneur::setGro  
+         upeSanguin()   
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :93    Parameter #2   
+         $groupeSangui  
+         n of method    
+         App\Service\Q  
+         rCodeService:  
+         :generateDono  
+         rCardQr()      
+         expects        
+         string,        
+         string|null    
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Fr  
+         ont\TutorialC  
+         ontroller.php  
+ ------ --------------- 
+  :27    Parameter #1   
+         $query of      
+         method         
+         App\Repositor  
+         y\VideoTutori  
+         alRepository:  
+         :search()      
+         expects        
+         string,        
+         float|int<min  
+         , -1>|int<1,   
+         max>|string|t  
+         rue given.     
+         ­ƒ¬¬             
+         argument.type  
+  :29    Parameter #1   
+         $category of   
+         method         
+         App\Repositor  
+         y\VideoTutori  
+         alRepository:  
+         :findByCatego  
+         ry() expects   
+         string,        
+         float|int<min  
+         , -1>|int<1,   
+         max>|string|t  
+         rue given.     
+         ­ƒ¬¬             
+         argument.type  
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Fr  
+         ont\VoiceAssi  
+         stantControll  
+         er.php         
+ ------ --------------- 
+  :81    Method         
+         App\Controlle  
+         r\Front\Voice  
+         AssistantCont  
+         roller::decla  
+         reUrgence()    
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Fr  
+         ont_office\Da  
+         shboardContro  
+         ller.php       
+ ------ --------------- 
+  :105   Cannot call    
+         method         
+         format() on    
+         DateTimeInter  
+         face|null.     
+         ­ƒ¬¬             
+         method.nonObj  
+         ect            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Fr  
+         ont_office\Do  
+         ssierMedicalC  
+         ontroller.php  
+ ------ --------------- 
+  :85    Parameter #2   
+         $token of      
+         method         
+         Symfony\Bundl  
+         e\FrameworkBu  
+         ndle\Controll  
+         er\AbstractCo  
+         ntroller::isC  
+         srfTokenValid  
+         () expects     
+         string|null,   
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :161   Parameter #2   
+         $options of    
+         function       
+         curl_setopt_a  
+         rray expects   
+         array{19913:   
+         bool, 47:      
+         bool, 10023:   
+         array<int, st  
+         ring>, 10015:  
+          array|string  
+         , 13: int,     
+         64: bool},     
+         array{19913:   
+         true, 47:      
+         true, 10023:   
+         array{non-fal  
+         sy-string,     
+         'Content-Type  
+         :ÔÇª'}, 10015:   
+         non-empty-str  
+         ing|false,     
+         13: 30, 64:    
+         true} given.   
+         ­ƒ¬¬             
+         argument.type  
+         ­ƒÆí  Offset     
+         10015          
+         (array|string  
+         ) does not     
+         accept type    
+         string|false.  
+  :195   Parameter #1   
+         $json of       
+         function       
+         json_decode    
+         expects        
+         string,        
+         bool|string    
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :202   Parameter #1   
+         $string of     
+         function       
+         substr         
+         expects        
+         string,        
+         bool|string    
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :205   Parameter #1   
+         $array of      
+         function       
+         arsort         
+         expects        
+         array,         
+         array|null     
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :208   Parameter #1   
+         $string of     
+         function       
+         substr         
+         expects        
+         string,        
+         bool|string    
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :293   Cannot call    
+         method         
+         getEmail() on  
+         App\Entity\Us  
+         er|null.       
+         ­ƒ¬¬             
+         method.nonObj  
+         ect            
+  :293   Cannot call    
+         method         
+         getNom() on    
+         App\Entity\Us  
+         er|null.       
+         ­ƒ¬¬             
+         method.nonObj  
+         ect            
+  :293   Cannot call    
+         method         
+         getPrenom()    
+         on             
+         App\Entity\Us  
+         er|null.       
+         ­ƒ¬¬             
+         method.nonObj  
+         ect            
+  :293   Parameter #1   
+         $address of    
+         method         
+         PHPMailer\PHP  
+         Mailer\PHPMai  
+         ler::addAddre  
+         ss() expects   
+         string,        
+         string|null    
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :302   Cannot call    
+         method         
+         getEmail() on  
+         App\Entity\Us  
+         er|null.       
+         ­ƒ¬¬             
+         method.nonObj  
+         ect            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Fr  
+         ont_office\Ge  
+         stionWellBein  
+         g\ChatbotCont  
+         roller.php     
+ ------ --------------- 
+  :17    Method         
+         App\Controlle  
+         r\Front_offic  
+         e\GestionWell  
+         Being\Chatbot  
+         Controller::g  
+         etActualUser(  
+         ) has no       
+         return type    
+         specified.     
+         ­ƒ¬¬             
+         missingType.r  
+         eturn          
+  :44    Parameter #2   
+         $content of    
+         method         
+         App\Service\C  
+         hatbotService  
+         ::saveMessage  
+         () expects     
+         string,        
+         float|int<min  
+         , -1>|int<1,   
+         max>|string|t  
+         rue given.     
+         ­ƒ¬¬             
+         argument.type  
+  :47    Parameter #2   
+         $userMessage   
+         of method      
+         App\Service\C  
+         hatbotService  
+         ::getResponse  
+         () expects     
+         string,        
+         float|int<min  
+         , -1>|int<1,   
+         max>|string|t  
+         rue given.     
+         ­ƒ¬¬             
+         argument.type  
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Fr  
+         ont_office\Ge  
+         stionWellBein  
+         g\JournalCont  
+         roller.php     
+ ------ --------------- 
+  :18    Method         
+         App\Controlle  
+         r\Front_offic  
+         e\GestionWell  
+         Being\Journal  
+         Controller::g  
+         etActualUser(  
+         ) has no       
+         return type    
+         specified.     
+         ­ƒ¬¬             
+         missingType.r  
+         eturn          
+  :33    Parameter #1   
+         $content of    
+         method         
+         App\Entity\Jo  
+         urnal::setCon  
+         tent()         
+         expects        
+         string,        
+         float|int<min  
+         , -1>|int<1,   
+         max>|string|t  
+         rue given.     
+         ­ƒ¬¬             
+         argument.type  
+  :66    Parameter #2   
+         $token of      
+         method         
+         Symfony\Bundl  
+         e\FrameworkBu  
+         ndle\Controll  
+         er\AbstractCo  
+         ntroller::isC  
+         srfTokenValid  
+         () expects     
+         string|null,   
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Fr  
+         ont_office\Ge  
+         stionWellBein  
+         g\MealFrontCo  
+         ntroller.php   
+ ------ --------------- 
+  :23    Method         
+         App\Controlle  
+         r\Front_offic  
+         e\GestionWell  
+         Being\MealFro  
+         ntController:  
+         :getActualUse  
+         r() has no     
+         return type    
+         specified.     
+         ­ƒ¬¬             
+         missingType.r  
+         eturn          
+  :55    Binary         
+         operation "."  
+         between        
+         array|bool|fl  
+         oat|int|strin  
+         g|UnitEnum|nu  
+         ll and '/'     
+         results in an  
+         error.         
+         ­ƒ¬¬             
+         binaryOp.inva  
+         lid            
+  :60    Parameter #1   
+         $json of       
+         function       
+         json_decode    
+         expects        
+         string,        
+         string|null    
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :114   Binary         
+         operation "."  
+         between        
+         array|bool|fl  
+         oat|int|strin  
+         g|UnitEnum|nu  
+         ll and '/'     
+         results in an  
+         error.         
+         ­ƒ¬¬             
+         binaryOp.inva  
+         lid            
+  :119   Parameter #1   
+         $json of       
+         function       
+         json_decode    
+         expects        
+         string,        
+         string|null    
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :154   Parameter #2   
+         $token of      
+         method         
+         Symfony\Bundl  
+         e\FrameworkBu  
+         ndle\Controll  
+         er\AbstractCo  
+         ntroller::isC  
+         srfTokenValid  
+         () expects     
+         string|null,   
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Fr  
+         ont_office\Ge  
+         stionWellBein  
+         g\UserWellBei  
+         ngDataFrontCo  
+         ntroller.php   
+ ------ --------------- 
+  :117   Ternary        
+         operator       
+         condition is   
+         always true.   
+         ­ƒ¬¬             
+         ternary.alway  
+         sTrue          
+  :154   Ternary        
+         operator       
+         condition is   
+         always true.   
+         ­ƒ¬¬             
+         ternary.alway  
+         sTrue          
+         ­ƒÆí  Because    
+         the type is    
+         coming from a  
+         PHPDoc, you    
+         can turn off   
+         this check by  
+         setting treat  
+         PhpDocTypesAs  
+         Certain:       
+         false in your  
+          phpstan.neon  
+         .              
+  :283   Parameter #2   
+         $token of      
+         method         
+         Symfony\Bundl  
+         e\FrameworkBu  
+         ndle\Controll  
+         er\AbstractCo  
+         ntroller::isC  
+         srfTokenValid  
+         () expects     
+         string|null,   
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Fr  
+         ont_office\Re  
+         ndezVousContr  
+         oller.php      
+ ------ --------------- 
+  :127   Parameter #4   
+         $hopitalNom    
+         of method      
+         App\Service\E  
+         mailService::  
+         sendRdvConfir  
+         mation()       
+         expects        
+         string,        
+         string|null    
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :128   Parameter #5   
+         $dateRdv of    
+         method         
+         App\Service\E  
+         mailService::  
+         sendRdvConfir  
+         mation()       
+         expects        
+         DateTime,      
+         DateTime|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :159   Parameter #1   
+         $rdvId of      
+         method         
+         App\Service\Q  
+         rCodeService:  
+         :generateRdvQ  
+         rCode()        
+         expects int,   
+         int|null       
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :166   Parameter #4   
+         $hopitalNom    
+         of method      
+         App\Service\Q  
+         rCodeService:  
+         :generateRdvQ  
+         rCode()        
+         expects        
+         string,        
+         string|null    
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :207   Parameter #2   
+         $token of      
+         method         
+         Symfony\Bundl  
+         e\FrameworkBu  
+         ndle\Controll  
+         er\AbstractCo  
+         ntroller::isC  
+         srfTokenValid  
+         () expects     
+         string|null,   
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Fr  
+         ont_office\Si  
+         gnup\Registra  
+         tionControlle  
+         r.php          
+ ------ --------------- 
+  :24    Parameter #2   
+         $token of      
+         method         
+         Symfony\Bundl  
+         e\FrameworkBu  
+         ndle\Controll  
+         er\AbstractCo  
+         ntroller::isC  
+         srfTokenValid  
+         () expects     
+         string|null,   
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :44    Parameter #1   
+         $string of     
+         function trim  
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :58    Parameter #1   
+         $string of     
+         function trim  
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :59    Parameter #1   
+         $string of     
+         function trim  
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :61    Parameter #1   
+         $string of     
+         function trim  
+         expects        
+         string,        
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :66    Parameter #1   
+         $value of      
+         static method  
+         App\Enum\User  
+         Role::from()   
+         expects        
+         int|string,    
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :97    Parameter #1   
+         $sexe of       
+         method         
+         App\Entity\Us  
+         er::setSexe()  
+         expects        
+         string|null,   
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :105   Parameter #2   
+         $plainPasswor  
+         d of method    
+         Symfony\Compo  
+         nent\Password  
+         Hasher\Hasher  
+         \UserPassword  
+         HasherInterfa  
+         ce::hashPassw  
+         ord() expects  
+         string,        
+         float|int<min  
+         , -1>|int<1,   
+         max>|string|t  
+         rue given.     
+         ­ƒ¬¬             
+         argument.type  
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Pd  
+         fController.p  
+         hp             
+ ------ --------------- 
+  :26    Cannot call    
+         method         
+         format() on    
+         DateTime|null  
+         .              
+         ­ƒ¬¬             
+         method.nonObj  
+         ect            
+  :27    Cannot call    
+         method         
+         format() on    
+         DateTime|null  
+         .              
+         ­ƒ¬¬             
+         method.nonObj  
+         ect            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Controller\Re  
+         ndezVousContr  
+         oller.php      
+ ------ --------------- 
+  :109   Cannot call    
+         method         
+         getId() on     
+         App\Entity\Us  
+         er|null.       
+         ­ƒ¬¬             
+         method.nonObj  
+         ect            
+  :138   Cannot call    
+         method         
+         getId() on     
+         App\Entity\Us  
+         er|null.       
+         ­ƒ¬¬             
+         method.nonObj  
+         ect            
+  :168   Parameter #2   
+         $token of      
+         method         
+         Symfony\Bundl  
+         e\FrameworkBu  
+         ndle\Controll  
+         er\AbstractCo  
+         ntroller::isC  
+         srfTokenValid  
+         () expects     
+         string|null,   
+         bool|float|in  
+         t|string|null  
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Entity\Conver  
+         sation.php     
+ ------ --------------- 
+  :33    Property       
+         App\Entity\Co  
+         nversation::$  
+         messages with  
+         generic        
+         interface      
+         Doctrine\Comm  
+         on\Collection  
+         s\Collection   
+         does not       
+         specify its    
+         types: TKey,   
+         T              
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+  :91    Method         
+         App\Entity\Co  
+         nversation::g  
+         etMessages()   
+         return type    
+         with generic   
+         interface      
+         Doctrine\Comm  
+         on\Collection  
+         s\Collection   
+         does not       
+         specify its    
+         types: TKey,   
+         T              
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Entity\Demand  
+         eDon.php       
+ ------ --------------- 
+  :59    Property       
+         App\Entity\De  
+         mandeDon::$re  
+         ponses with    
+         generic        
+         interface      
+         Doctrine\Comm  
+         on\Collection  
+         s\Collection   
+         does not       
+         specify its    
+         types: TKey,   
+         T              
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+  :206   Method         
+         App\Entity\De  
+         mandeDon::get  
+         Reponses()     
+         return type    
+         with generic   
+         interface      
+         Doctrine\Comm  
+         on\Collection  
+         s\Collection   
+         does not       
+         specify its    
+         types: TKey,   
+         T              
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Entity\Emotio  
+         nAnalysis.php  
+ ------ --------------- 
+  :28    Property       
+         App\Entity\Em  
+         otionAnalysis  
+         ::$keywords    
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :87    Method         
+         App\Entity\Em  
+         otionAnalysis  
+         ::setKeywords  
+         () has         
+         parameter      
+         $keywords      
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Entity\Hopita  
+         l.php          
+ ------ --------------- 
+  :115   Property       
+         App\Entity\Ho  
+         pital::$rende  
+         zVous with     
+         generic        
+         interface      
+         Doctrine\Comm  
+         on\Collection  
+         s\Collection   
+         does not       
+         specify its    
+         types: TKey,   
+         T              
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+  :256   Method         
+         App\Entity\Ho  
+         pital::getSpe  
+         cialitesArray  
+         () return      
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Entity\LieuMe  
+         dicalReview.p  
+         hp             
+ ------ --------------- 
+  :138   Method         
+         App\Entity\Li  
+         euMedicalRevi  
+         ew::getStars(  
+         ) return type  
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Entity\Suppor  
+         tTicket.php    
+ ------ --------------- 
+  :75    Property       
+         App\Entity\Su  
+         pportTicket::  
+         $messages      
+         with generic   
+         interface      
+         Doctrine\Comm  
+         on\Collection  
+         s\Collection   
+         does not       
+         specify its    
+         types: TKey,   
+         T              
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+  :208   Method         
+         App\Entity\Su  
+         pportTicket::  
+         getMessages()  
+         return type    
+         with generic   
+         interface      
+         Doctrine\Comm  
+         on\Collection  
+         s\Collection   
+         does not       
+         specify its    
+         types: TKey,   
+         T              
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Entity\User.p  
+         hp             
+ ------ --------------- 
+  :254   Method         
+         App\Entity\Us  
+         er::getCreate  
+         dAt() should   
+         return         
+         DateTimeInter  
+         face but       
+         returns        
+         DateTimeInter  
+         face|null.     
+         ­ƒ¬¬             
+         return.type    
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Entity\UserSe  
+         ssion.php      
+ ------ --------------- 
+  :37    Property       
+         App\Entity\Us  
+         erSession::$c  
+         onversations   
+         with generic   
+         interface      
+         Doctrine\Comm  
+         on\Collection  
+         s\Collection   
+         does not       
+         specify its    
+         types: TKey,   
+         T              
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+  :105   Method         
+         App\Entity\Us  
+         erSession::ge  
+         tConversation  
+         s() return     
+         type with      
+         generic        
+         interface      
+         Doctrine\Comm  
+         on\Collection  
+         s\Collection   
+         does not       
+         specify its    
+         types: TKey,   
+         T              
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Entity\VideoT  
+         utorial.php    
+ ------ --------------- 
+  :233   Parameter #1   
+         $path of       
+         function       
+         basename       
+         expects        
+         string,        
+         string|false|  
+         null given.    
+         ­ƒ¬¬             
+         argument.type  
+  :247   Parameter #1   
+         $path of       
+         function       
+         basename       
+         expects        
+         string,        
+         string|false|  
+         null given.    
+         ­ƒ¬¬             
+         argument.type  
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Repository\Ch  
+         atMessageRepo  
+         sitory.php     
+ ------ --------------- 
+  :19    Method         
+         App\Repositor  
+         y\ChatMessage  
+         Repository::f  
+         indUnreadByTi  
+         cket() return  
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Repository\Ch  
+         atbotMessageR  
+         epository.php  
+ ------ --------------- 
+  :25    Method         
+         App\Repositor  
+         y\ChatbotMess  
+         ageRepository  
+         ::findByUser(  
+         ) has          
+         parameter      
+         $user with no  
+         type           
+         specified.     
+         ­ƒ¬¬             
+         missingType.p  
+         arameter       
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Repository\Co  
+         nversationRep  
+         ository.php    
+ ------ --------------- 
+  :9     Class          
+         App\Repositor  
+         y\Conversatio  
+         nRepository    
+         extends        
+         generic class  
+         Doctrine\Bund  
+         le\DoctrineBu  
+         ndle\Reposito  
+         ry\ServiceEnt  
+         ityRepository  
+         but does not   
+         specify its    
+         types: T       
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Repository\Cy  
+         cleRepository  
+         .php           
+ ------ --------------- 
+  :25    Method         
+         App\Repositor  
+         y\CycleReposi  
+         tory::getAver  
+         ageCycleLengt  
+         h() should     
+         return         
+         float|null     
+         but returns    
+         bool|float|in  
+         t|string|null  
+         .              
+         ­ƒ¬¬             
+         return.type    
+  :30    Method         
+         App\Repositor  
+         y\CycleReposi  
+         tory::findAll  
+         CyclesWithCyc  
+         leLength()     
+         has no return  
+         type           
+         specified.     
+         ­ƒ¬¬             
+         missingType.r  
+         eturn          
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Repository\De  
+         mandeDonRepos  
+         itory.php      
+ ------ --------------- 
+  :8     Class          
+         App\Repositor  
+         y\DemandeDonR  
+         epository      
+         extends        
+         generic class  
+         Doctrine\Bund  
+         le\DoctrineBu  
+         ndle\Reposito  
+         ry\ServiceEnt  
+         ityRepository  
+         but does not   
+         specify its    
+         types: T       
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Repository\Do  
+         nRepository.p  
+         hp             
+ ------ --------------- 
+  :10    Class          
+         App\Repositor  
+         y\DonReposito  
+         ry extends     
+         generic class  
+         Doctrine\Bund  
+         le\DoctrineBu  
+         ndle\Reposito  
+         ry\ServiceEnt  
+         ityRepository  
+         but does not   
+         specify its    
+         types: T       
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+  :19    Method         
+         App\Repositor  
+         y\DonReposito  
+         ry::findPagin  
+         ated() has     
+         parameter      
+         $filters with  
+         no value type  
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :19    Method         
+         App\Repositor  
+         y\DonReposito  
+         ry::findPagin  
+         ated() return  
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :70    Method         
+         App\Repositor  
+         y\DonReposito  
+         ry::getStats(  
+         ) return type  
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :85    Method         
+         App\Repositor  
+         y\DonReposito  
+         ry::findByTyp  
+         e() return     
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :95    Method         
+         App\Repositor  
+         y\DonReposito  
+         ry::findRecen  
+         t() return     
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Repository\Do  
+         ssierMedicalR  
+         epository.php  
+ ------ --------------- 
+  :89    Method         
+         App\Repositor  
+         y\DossierMedi  
+         calRepository  
+         ::findAllDoss  
+         iers() return  
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :136   Method         
+         App\Repositor  
+         y\DossierMedi  
+         calRepository  
+         ::findPatient  
+         Dossiers()     
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Repository\Em  
+         otionAnalysis  
+         Repository.ph  
+         p              
+ ------ --------------- 
+  :9     Class          
+         App\Repositor  
+         y\EmotionAnal  
+         ysisRepositor  
+         y extends      
+         generic class  
+         Doctrine\Bund  
+         le\DoctrineBu  
+         ndle\Reposito  
+         ry\ServiceEnt  
+         ityRepository  
+         but does not   
+         specify its    
+         types: T       
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Repository\Ev  
+         entRepository  
+         .php           
+ ------ --------------- 
+  :9     Class          
+         App\Repositor  
+         y\EventReposi  
+         tory extends   
+         generic class  
+         Doctrine\Bund  
+         le\DoctrineBu  
+         ndle\Reposito  
+         ry\ServiceEnt  
+         ityRepository  
+         but does not   
+         specify its    
+         types: T       
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+  :16    Method         
+         App\Repositor  
+         y\EventReposi  
+         tory::findUpc  
+         oming()        
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Repository\FA  
+         QRepository.p  
+         hp             
+ ------ --------------- 
+  :9     Class          
+         App\Repositor  
+         y\FAQReposito  
+         ry extends     
+         generic class  
+         Doctrine\Bund  
+         le\DoctrineBu  
+         ndle\Reposito  
+         ry\ServiceEnt  
+         ityRepository  
+         but does not   
+         specify its    
+         types: T       
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Repository\Li  
+         euMedicalRepo  
+         sitory.php     
+ ------ --------------- 
+  :9     Class          
+         App\Repositor  
+         y\LieuMedical  
+         Repository     
+         extends        
+         generic class  
+         Doctrine\Bund  
+         le\DoctrineBu  
+         ndle\Reposito  
+         ry\ServiceEnt  
+         ityRepository  
+         but does not   
+         specify its    
+         types: T       
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Repository\Li  
+         euMedicalRevi  
+         ewRepository.  
+         php            
+ ------ --------------- 
+  :10    Class          
+         App\Repositor  
+         y\LieuMedical  
+         ReviewReposit  
+         ory extends    
+         generic class  
+         Doctrine\Bund  
+         le\DoctrineBu  
+         ndle\Reposito  
+         ry\ServiceEnt  
+         ityRepository  
+         but does not   
+         specify its    
+         types: T       
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+  :17    Method         
+         App\Repositor  
+         y\LieuMedical  
+         ReviewReposit  
+         ory::findByLi  
+         eu() return    
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :44    Method         
+         App\Repositor  
+         y\LieuMedical  
+         ReviewReposit  
+         ory::getRecen  
+         tReviews()     
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Repository\Me  
+         ssageReposito  
+         ry.php         
+ ------ --------------- 
+  :9     Class          
+         App\Repositor  
+         y\MessageRepo  
+         sitory         
+         extends        
+         generic class  
+         Doctrine\Bund  
+         le\DoctrineBu  
+         ndle\Reposito  
+         ry\ServiceEnt  
+         ityRepository  
+         but does not   
+         specify its    
+         types: T       
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+  :16    Method         
+         App\Repositor  
+         y\MessageRepo  
+         sitory::findB  
+         yConversation  
+         () return      
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Repository\Re  
+         ponseDonRepos  
+         itory.php      
+ ------ --------------- 
+  :10    Class          
+         App\Repositor  
+         y\ReponseDonR  
+         epository      
+         extends        
+         generic class  
+         Doctrine\Bund  
+         le\DoctrineBu  
+         ndle\Reposito  
+         ry\ServiceEnt  
+         ityRepository  
+         but does not   
+         specify its    
+         types: T       
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+  :17    Method         
+         App\Repositor  
+         y\ReponseDonR  
+         epository::fi  
+         ndByDemande()  
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :27    Method         
+         App\Repositor  
+         y\ReponseDonR  
+         epository::fi  
+         ndByEmail()    
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :39    Method         
+         App\Repositor  
+         y\ReponseDonR  
+         epository::co  
+         untByDemande(  
+         ) should       
+         return int     
+         but returns    
+         bool|float|in  
+         t|string|null  
+         .              
+         ­ƒ¬¬             
+         return.type    
+  :49    Method         
+         App\Repositor  
+         y\ReponseDonR  
+         epository::ge  
+         tPendingCount  
+         ByDemande()    
+         should return  
+         int but        
+         returns        
+         bool|float|in  
+         t|string|null  
+         .              
+         ­ƒ¬¬             
+         return.type    
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Repository\Su  
+         pportFeedback  
+         Repository.ph  
+         p              
+ ------ --------------- 
+  :9     Class          
+         App\Repositor  
+         y\SupportFeed  
+         backRepositor  
+         y extends      
+         generic class  
+         Doctrine\Bund  
+         le\DoctrineBu  
+         ndle\Reposito  
+         ry\ServiceEnt  
+         ityRepository  
+         but does not   
+         specify its    
+         types: T       
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+  :26    Method         
+         App\Repositor  
+         y\SupportFeed  
+         backRepositor  
+         y::getRecentF  
+         eedback()      
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :35    Method         
+         App\Repositor  
+         y\SupportFeed  
+         backRepositor  
+         y::getRatingD  
+         istribution()  
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Repository\Su  
+         pportTicketRe  
+         pository.php   
+ ------ --------------- 
+  :9     Class          
+         App\Repositor  
+         y\SupportTick  
+         etRepository   
+         extends        
+         generic class  
+         Doctrine\Bund  
+         le\DoctrineBu  
+         ndle\Reposito  
+         ry\ServiceEnt  
+         ityRepository  
+         but does not   
+         specify its    
+         types: T       
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+  :16    Method         
+         App\Repositor  
+         y\SupportTick  
+         etRepository:  
+         :findOpenTick  
+         ets() return   
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :27    Method         
+         App\Repositor  
+         y\SupportTick  
+         etRepository:  
+         :findByUserEm  
+         ail() return   
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :37    Method         
+         App\Repositor  
+         y\SupportTick  
+         etRepository:  
+         :getStats()    
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Repository\Us  
+         erSessionRepo  
+         sitory.php     
+ ------ --------------- 
+  :9     Class          
+         App\Repositor  
+         y\UserSession  
+         Repository     
+         extends        
+         generic class  
+         Doctrine\Bund  
+         le\DoctrineBu  
+         ndle\Reposito  
+         ry\ServiceEnt  
+         ityRepository  
+         but does not   
+         specify its    
+         types: T       
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Repository\Us  
+         erWellBeingDa  
+         taRepository.  
+         php            
+ ------ --------------- 
+  :42    Method         
+         App\Repositor  
+         y\UserWellBei  
+         ngDataReposit  
+         ory::findBySe  
+         archAndSortQu  
+         eryBuilder()   
+         has parameter  
+         $sort with no  
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Repository\Vi  
+         deoTutorialRe  
+         pository.php   
+ ------ --------------- 
+  :9     Class          
+         App\Repositor  
+         y\VideoTutori  
+         alRepository   
+         extends        
+         generic class  
+         Doctrine\Bund  
+         le\DoctrineBu  
+         ndle\Reposito  
+         ry\ServiceEnt  
+         ityRepository  
+         but does not   
+         specify its    
+         types: T       
+         ­ƒ¬¬             
+         missingType.g  
+         enerics        
+  :16    Method         
+         App\Repositor  
+         y\VideoTutori  
+         alRepository:  
+         :findPublishe  
+         d() return     
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :26    Method         
+         App\Repositor  
+         y\VideoTutori  
+         alRepository:  
+         :findByCatego  
+         ry() return    
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :37    Method         
+         App\Repositor  
+         y\VideoTutori  
+         alRepository:  
+         :search()      
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :48    Method         
+         App\Repositor  
+         y\VideoTutori  
+         alRepository:  
+         :getCategorie  
+         s() return     
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :57    Method         
+         App\Repositor  
+         y\VideoTutori  
+         alRepository:  
+         :getPopular()  
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Security\Logi  
+         nSuccessHandl  
+         er.php         
+ ------ --------------- 
+  :21    Cannot call    
+         method         
+         getRoles() on  
+         Symfony\Compo  
+         nent\Security  
+         \Core\User\Us  
+         erInterface|n  
+         ull.           
+         ­ƒ¬¬             
+         method.nonObj  
+         ect            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Cycle  
+         AnalyzerServi  
+         ce.php         
+ ------ --------------- 
+  :15    Cannot call    
+         method diff()  
+         on             
+         DateTime|null  
+         .              
+         ­ƒ¬¬             
+         method.nonObj  
+         ect            
+  :23    Method         
+         App\Service\C  
+         ycleAnalyzerS  
+         ervice::calcu  
+         lateCycleLeng  
+         ths() has      
+         parameter      
+         $cycles with   
+         no value type  
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :23    Method         
+         App\Service\C  
+         ycleAnalyzerS  
+         ervice::calcu  
+         lateCycleLeng  
+         ths() return   
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :41    Method         
+         App\Service\C  
+         ycleAnalyzerS  
+         ervice::calcu  
+         lateAverage()  
+         has parameter  
+         $cycles with   
+         no value type  
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :55    Method         
+         App\Service\C  
+         ycleAnalyzerS  
+         ervice::build  
+         Labels() has   
+         parameter      
+         $cycles with   
+         no value type  
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :55    Method         
+         App\Service\C  
+         ycleAnalyzerS  
+         ervice::build  
+         Labels()       
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :67    Method         
+         App\Service\C  
+         ycleAnalyzerS  
+         ervice::predi  
+         ctNextCycle()  
+         has parameter  
+         $cycles with   
+         no value type  
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :77    Call to an     
+         undefined      
+         method         
+         object::modif  
+         y().           
+         ­ƒ¬¬             
+         method.notFou  
+         nd             
+  :79    Method         
+         App\Service\C  
+         ycleAnalyzerS  
+         ervice::predi  
+         ctNextCycle()  
+         should return  
+         DateTime|null  
+         but returns    
+         object.        
+         ­ƒ¬¬             
+         return.type    
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Cycle  
+         CalculatorSer  
+         vice.php       
+ ------ --------------- 
+  :33    Cannot call    
+         method diff()  
+         on             
+         DateTime|null  
+         .              
+         ­ƒ¬¬             
+         method.nonObj  
+         ect            
+  :50    Cannot clone   
+         DateTime|null  
+         .              
+         ­ƒ¬¬             
+         clone.nonObje  
+         ct             
+  :115   Ternary        
+         operator       
+         condition is   
+         always true.   
+         ­ƒ¬¬             
+         ternary.alway  
+         sTrue          
+         ­ƒÆí  Because    
+         the type is    
+         coming from a  
+         PHPDoc, you    
+         can turn off   
+         this check by  
+         setting treat  
+         PhpDocTypesAs  
+         Certain:       
+         false in your  
+          phpstan.neon  
+         .              
+  :138   Call to an     
+         undefined      
+         method         
+         object::modif  
+         y().           
+         ­ƒ¬¬             
+         method.notFou  
+         nd             
+  :156   Call to an     
+         undefined      
+         method         
+         object::modif  
+         y().           
+         ­ƒ¬¬             
+         method.notFou  
+         nd             
+  :162   Call to an     
+         undefined      
+         method         
+         object::forma  
+         t().           
+         ­ƒ¬¬             
+         method.notFou  
+         nd             
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Cycle  
+         PredictionSer  
+         vice.php       
+ ------ --------------- 
+  :21    Method         
+         App\Service\C  
+         yclePredictio  
+         nService::ana  
+         lyzeCycles()   
+         has parameter  
+         $cycleDates    
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :21    Method         
+         App\Service\C  
+         yclePredictio  
+         nService::ana  
+         lyzeCycles()   
+         has parameter  
+         $cycleLengths  
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :21    Method         
+         App\Service\C  
+         yclePredictio  
+         nService::ana  
+         lyzeCycles()   
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :98    Method         
+         App\Service\C  
+         yclePredictio  
+         nService::cal  
+         culateLocally  
+         () has         
+         parameter      
+         $lengths with  
+         no value type  
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :98    Method         
+         App\Service\C  
+         yclePredictio  
+         nService::cal  
+         culateLocally  
+         () return      
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :167   Method         
+         App\Service\C  
+         yclePredictio  
+         nService::par  
+         seJsonRespons  
+         e() return     
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\DonMa  
+         tchingService  
+         .php           
+ ------ --------------- 
+  :10    Method         
+         App\Service\D  
+         onMatchingSer  
+         vice::matchDe  
+         mandes() has   
+         parameter      
+         $dons with no  
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :10    Method         
+         App\Service\D  
+         onMatchingSer  
+         vice::matchDe  
+         mandes()       
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Donor  
+         MatchingServi  
+         ce.php         
+ ------ --------------- 
+  :20    Method         
+         App\Service\D  
+         onorMatchingS  
+         ervice::findM  
+         atchingDonors  
+         () return      
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :48    Method         
+         App\Service\D  
+         onorMatchingS  
+         ervice::findM  
+         atchingReques  
+         ts() return    
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :138   Method         
+         App\Service\D  
+         onorMatchingS  
+         ervice::getMa  
+         tchReasons()   
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :144   Parameter #1   
+         $donorType of  
+         method         
+         App\Service\D  
+         onorMatchingS  
+         ervice::isBlo  
+         odTypeCompati  
+         ble() expects  
+         string,        
+         string|null    
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :144   Parameter #2   
+         $recipientTyp  
+         e of method    
+         App\Service\D  
+         onorMatchingS  
+         ervice::isBlo  
+         odTypeCompati  
+         ble() expects  
+         string,        
+         string|null    
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :164   Method         
+         App\Service\D  
+         onorMatchingS  
+         ervice::autoM  
+         atchDonations  
+         () return      
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Emoti  
+         onAnalysisSer  
+         vice.php       
+ ------ --------------- 
+  :34    Method         
+         App\Service\E  
+         motionAnalysi  
+         sService::ana  
+         lyze() return  
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :45    Argument of    
+         an invalid     
+         type list<str  
+         ing>|false su  
+         pplied for     
+         foreach, only  
+         iterables are  
+         supported.     
+         ­ƒ¬¬             
+         foreach.nonIt  
+         erable         
+  :100   Method         
+         App\Service\E  
+         motionAnalysi  
+         sService::det  
+         ermineMood()   
+         has parameter  
+         $detectedMood  
+         s with no      
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :111   Method         
+         App\Service\E  
+         motionAnalysi  
+         sService::det  
+         ermineMood()   
+         should return  
+         string but     
+         returns        
+         int|string.    
+         ­ƒ¬¬             
+         return.type    
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Event  
+         MailerService  
+         .php           
+ ------ --------------- 
+  :30    Cannot call    
+         method         
+         format() on    
+         DateTimeInter  
+         face|null.     
+         ­ƒ¬¬             
+         method.nonObj  
+         ect            
+  :36    Cannot call    
+         method         
+         format() on    
+         DateTimeInter  
+         face|null.     
+         ­ƒ¬¬             
+         method.nonObj  
+         ect            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Hormo  
+         nalPhaseServi  
+         ce.php         
+ ------ --------------- 
+  :9     Property       
+         App\Service\H  
+         ormonalPhaseS  
+         ervice::$anal  
+         yzer has no    
+         type           
+         specified.     
+         ­ƒ¬¬             
+         missingType.p  
+         roperty        
+  :19    Method         
+         App\Service\H  
+         ormonalPhaseS  
+         ervice::gener  
+         ateCyclePhase  
+         s() return     
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Medic  
+         alAIService.p  
+         hp             
+ ------ --------------- 
+  :35    Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::analyzeMe  
+         dicalRecord()  
+         has parameter  
+         $dossierData   
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :35    Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::analyzeMe  
+         dicalRecord()  
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :79    Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::callGroqA  
+         PI() has       
+         parameter      
+         $dossier with  
+         no value type  
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :79    Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::callGroqA  
+         PI() return    
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :120   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::buildInte  
+         lligentPrompt  
+         () has         
+         parameter      
+         $dossier with  
+         no value type  
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :247   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::parseAIRe  
+         sponse()       
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :251   Parameter #1   
+         $string of     
+         function trim  
+         expects        
+         string,        
+         string|null    
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :270   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::findRelev  
+         antLocalDocto  
+         rs() has       
+         parameter      
+         $specialitesR  
+         ecommandees    
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :270   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::findRelev  
+         antLocalDocto  
+         rs() return    
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :310   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::findRelev  
+         antLocalHospi  
+         tals() has     
+         parameter      
+         $specialitesR  
+         ecommandees    
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :310   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::findRelev  
+         antLocalHospi  
+         tals() return  
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :399   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::generateD  
+         ynamicStatist  
+         ics() has      
+         parameter      
+         $analysis      
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :399   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::generateD  
+         ynamicStatist  
+         ics() has      
+         parameter      
+         $dossier with  
+         no value type  
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :399   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::generateD  
+         ynamicStatist  
+         ics() return   
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :412   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::calculate  
+         DefaultScores  
+         () has         
+         parameter      
+         $dossier with  
+         no value type  
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :412   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::calculate  
+         DefaultScores  
+         () return      
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :437   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::calculate  
+         PerformanceIn  
+         dicators()     
+         has parameter  
+         $dossier with  
+         no value type  
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :437   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::calculate  
+         PerformanceIn  
+         dicators()     
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :458   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::getFallba  
+         ckRecommendat  
+         ions() has     
+         parameter      
+         $dossierData   
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :458   Method         
+         App\Service\M  
+         edicalAIServi  
+         ce::getFallba  
+         ckRecommendat  
+         ions() return  
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Notif  
+         icationServic  
+         e.php          
+ ------ --------------- 
+  :66    Method         
+         App\Service\N  
+         otificationSe  
+         rvice::sendUr  
+         gentDonationR  
+         equest() has   
+         parameter      
+         $matchingDono  
+         rs with no     
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\OpenA  
+         ITtsService.p  
+         hp             
+ ------ --------------- 
+  :32    Method         
+         App\Service\O  
+         penAITtsServi  
+         ce::synthesiz  
+         e() return     
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\OpenR  
+         outerService.  
+         php            
+ ------ --------------- 
+  :54    Method         
+         App\Service\O  
+         penRouterServ  
+         ice::chat()    
+         has parameter  
+         $conversation  
+         History with   
+         no value type  
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :54    Method         
+         App\Service\O  
+         penRouterServ  
+         ice::chat()    
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Pagin  
+         ator.php       
+ ------ --------------- 
+  :9     Method         
+         App\Service\P  
+         aginator::pag  
+         inate()        
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\PdfEx  
+         portService.p  
+         hp             
+ ------ --------------- 
+  :15    Method         
+         App\Service\P  
+         dfExportServi  
+         ce::generateA  
+         nalysisPdf()   
+         has parameter  
+         $analysis      
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :15    Method         
+         App\Service\P  
+         dfExportServi  
+         ce::generateA  
+         nalysisPdf()   
+         has parameter  
+         $dossierData   
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :31    Method         
+         App\Service\P  
+         dfExportServi  
+         ce::buildHtml  
+         () has         
+         parameter      
+         $analysis      
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\QwenS  
+         ervice.php     
+ ------ --------------- 
+  :23    Parameter #1   
+         $string of     
+         function       
+         base64_encode  
+         expects        
+         string,        
+         string|false   
+         given.         
+         ­ƒ¬¬             
+         argument.type  
+  :82    Method         
+         App\Service\Q  
+         wenService::a  
+         nalyzeMeal()   
+         should return  
+         string but     
+         returns        
+         string|false.  
+         ­ƒ¬¬             
+         return.type    
+  :84    Method         
+         App\Service\Q  
+         wenService::a  
+         nalyzeMeal()   
+         should return  
+         string but     
+         returns        
+         string|false.  
+         ­ƒ¬¬             
+         return.type    
+  :86    Method         
+         App\Service\Q  
+         wenService::a  
+         nalyzeMeal()   
+         should return  
+         string but     
+         returns        
+         string|false.  
+         ­ƒ¬¬             
+         return.type    
+  :124   Method         
+         App\Service\Q  
+         wenService::g  
+         etChatComplet  
+         ion() has      
+         parameter      
+         $messages      
+         with no value  
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\SmsSe  
+         rvice.php      
+ ------ --------------- 
+  :18    Method         
+         App\Service\S  
+         msService::se  
+         ndSms() has    
+         no return      
+         type           
+         specified.     
+         ­ƒ¬¬             
+         missingType.r  
+         eturn          
+  :41    Method         
+         App\Service\S  
+         msService::se  
+         nd() has no    
+         return type    
+         specified.     
+         ­ƒ¬¬             
+         missingType.r  
+         eturn          
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Stres  
+         sPredictionSe  
+         rvice.php      
+ ------ --------------- 
+  :124   Ternary        
+         operator       
+         condition is   
+         always true.   
+         ­ƒ¬¬             
+         ternary.alway  
+         sTrue          
+ ------ --------------- 
+
+ ------ --------------- 
+  Line   Service\Voice  
+         AssistantServ  
+         ice.php        
+ ------ --------------- 
+  :86    Method         
+         App\Service\V  
+         oiceAssistant  
+         Service::proc  
+         essCommand()   
+         return type    
+         has no value   
+         type           
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+  :146   Method         
+         App\Service\V  
+         oiceAssistant  
+         Service::getA  
+         vailableComma  
+         nds() return   
+         type has no    
+         value type     
+         specified in   
+         iterable type  
+         array.         
+         ­ƒ¬¬             
+         missingType.i  
+         terableValue   
+         ­ƒÆí  See:       
+         https://phpst  
+         an.org/blog/s  
+         olving-phpsta  
+         n-no-value-ty  
+         pe-specified-  
+         in-iterable-t  
+         ype            
+ ------ --------------- 
+
+ [ERROR] Found 239     
+         errors        
+

@@ -31,10 +31,13 @@ class EmotionAnalysisService
         'angry' => ['angry', 'mad', 'furious', 'frustrated', 'annoyed', 'irritated']
     ];
 
+    /**
+     * @return array<string, mixed>
+     */
     public function analyze(string $text): array
     {
         $lowercaseText = strtolower($text);
-        $words = preg_split('/\s+/', $lowercaseText);
+        $words = preg_split('/\s+/', $lowercaseText) ?: [];
 
         $positiveCount = 0;
         $negativeCount = 0;
@@ -97,6 +100,9 @@ class EmotionAnalysisService
         return ($positive - $negative) / $total;
     }
 
+    /**
+     * @param string[] $detectedMoods
+     */
     private function determineMood(array $detectedMoods, float $sentiment): string
     {
         if (empty($detectedMoods)) {
@@ -108,7 +114,7 @@ class EmotionAnalysisService
         $moodCounts = array_count_values($detectedMoods);
         arsort($moodCounts);
         
-        return array_key_first($moodCounts);
+        return (string) array_key_first($moodCounts);
     }
 
     private function calculateStressScore(int $stressCount, int $negativeCount, float $sentiment): int

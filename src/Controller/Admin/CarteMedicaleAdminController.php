@@ -28,19 +28,19 @@ class CarteMedicaleAdminController extends AbstractController
             $lieu = new LieuMedical();
 
             $lieu->setNom(
-                $request->request->get('nom')
+                (string)$request->request->get('nom')
             );
 
             $lieu->setCategorie(
-                $request->request->get('categorie')
+                (string)$request->request->get('categorie')
             );
 
             $lieu->setAdresse(
-                $request->request->get('adresse')
+                (string)$request->request->get('adresse')
             );
 
             $lieu->setTelephone(
-                $request->request->get('telephone')
+                $request->request->get('telephone') ? (string)$request->request->get('telephone') : null
             );
 
             $lieu->setLatitude(

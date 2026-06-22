@@ -16,7 +16,9 @@ class CyclePredictionService
     ) {}
 
     /**
-     * Analyse des cycles via OpenRouter AI ou calcul local si indisponible
+     * @param int[] $cycleLengths
+     * @param string[] $cycleDates
+     * @return array<string, mixed>
      */
     public function analyzeCycles(array $cycleLengths, array $cycleDates = []): array
     {
@@ -95,6 +97,10 @@ PROMPT;
     /**
      * Algorithme de secours pour analyser les cycles sans IA
      */
+    /**
+     * @param int[] $lengths
+     * @return array<string, mixed>
+     */
     private function calculateLocally(array $lengths, string $message = ''): array
     {
         if (empty($lengths)) {
@@ -164,6 +170,9 @@ PROMPT;
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function parseJsonResponse(string $content): array
     {
         $content = trim($content);

@@ -1,57 +1,58 @@
 {% extends 'layout/front-layout.html.twig' %}
 
-{% block title %}Nouveau Ticket - Support{% endblock %}
+{% block title %}Nouveau Ticket - Support — Sosi{% endblock %}
 
 {% block stylesheets %}
 {{ parent() }}
-<link rel="stylesheet" href="/css/modern-styles.css">
 {% endblock %}
 
 {% block content %}
 <div class="max-w-2xl mx-auto space-y-6 animate-fadeIn">
-    <div class="flex items-center gap-4">
-        <a href="{{ path('aide') }}" class="text-gray-500 hover:text-gray-700 transition">
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <h1 class="page-title"><i class="fas fa-ticket-alt text-primary me-2"></i> Nouveau Ticket</h1>
+        </div>
+        <a href="{{ path('aide') }}" class="btn-secondary" style="font-size:.85rem;">
             ← Retour
         </a>
-        <h1 class="text-2xl font-bold text-gray-800">🎫 Nouveau Ticket de Support</h1>
     </div>
 
     {% for message in app.flashes('error') %}
-    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg">
-        ❌ {{ message }}
+    <div class="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg flex items-center gap-3">
+        <i class="fas fa-exclamation-circle"></i> {{ message }}
     </div>
     {% endfor %}
 
-    <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+    <div class="card" style="padding:2rem;">
         <form method="post" enctype="multipart/form-data" class="space-y-6">
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Nom complet *</label>
+                    <label class="block text-sm font-semibold mb-2" style="color:var(--foreground);">Nom complet *</label>
                     <input type="text" name="user_name" required
                            value="{{ userEmail ? '' : '' }}"
-                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                           class="input-field"
                            placeholder="Votre nom">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                    <label class="block text-sm font-semibold mb-2" style="color:var(--foreground);">Email *</label>
                     <input type="email" name="user_email" required
                            value="{{ userEmail }}"
-                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                           class="input-field"
                            placeholder="votre@email.com">
                 </div>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Sujet *</label>
+                <label class="block text-sm font-semibold mb-2" style="color:var(--foreground);">Sujet *</label>
                 <input type="text" name="subject" required
-                       class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                       class="input-field"
                        placeholder="Résumez votre problème en quelques mots">
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Catégorie</label>
-                    <select name="category" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition">
+                    <label class="block text-sm font-semibold mb-2" style="color:var(--foreground);">Catégorie</label>
+                    <select name="category" class="input-field">
                         <option value="general">Général</option>
                         <option value="don">Don</option>
                         <option value="aide">Aide</option>
@@ -61,8 +62,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Priorité</label>
-                    <select name="priority" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition">
+                    <label class="block text-sm font-semibold mb-2" style="color:var(--foreground);">Priorité</label>
+                    <select name="priority" class="input-field">
                         <option value="low">Basse</option>
                         <option value="medium" selected>Moyenne</option>
                         <option value="high">Haute</option>
@@ -72,55 +73,55 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Description *</label>
-                <textarea name="description" rows="6" required
-                          class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-none"
+                <label class="block text-sm font-semibold mb-2" style="color:var(--foreground);">Description *</label>
+                <textarea name="description" rows="5" required
+                          class="input-field resize-none"
                           placeholder="Décrivez votre problème en détail..."></textarea>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">📎 Pièce jointe (optionnel)</label>
-                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-xl hover:border-blue-400 transition">
+                <label class="block text-sm font-semibold mb-2" style="color:var(--foreground);">📎 Pièce jointe (optionnel)</label>
+                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-xl transition-colors hover:bg-muted border-border hover:border-primary">
                     <div class="space-y-1 text-center">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        <div class="flex text-sm text-gray-600">
-                            <label class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500">
+                        <i class="fas fa-cloud-upload-alt text-3xl mb-3" style="color:var(--muted-fg);"></i>
+                        <div class="flex text-sm" style="color:var(--muted-fg);">
+                            <label class="relative cursor-pointer rounded-md font-bold text-primary hover:underline">
                                 <span>Télécharger un fichier</span>
                                 <input type="file" name="attachment" accept="image/jpeg,image/png,image/gif,application/pdf" class="sr-only">
                             </label>
                             <p class="pl-1">ou glisser-déposer</p>
                         </div>
-                        <p class="text-xs text-gray-500">Images (JPG, PNG, GIF) ou PDF jusqu'à 5MB</p>
+                        <p class="text-xs" style="color:var(--muted-fg);">Images (JPG, PNG, GIF) ou PDF jusqu'à 5MB</p>
                     </div>
                 </div>
             </div>
 
-            <div class="flex justify-end gap-4 pt-4 border-t">
-                <a href="{{ path('aide') }}" class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition">
+            <div class="flex justify-end gap-3 pt-4 border-t border-border">
+                <a href="{{ path('aide') }}" class="btn-secondary">
                     Annuler
                 </a>
-                <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition shadow-lg">
-                    🎫 Créer le ticket
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-paper-plane me-1"></i> Créer le ticket
                 </button>
             </div>
         </form>
     </div>
 
-    <div class="bg-blue-50 rounded-2xl p-6 border border-blue-100">
-        <h3 class="font-bold text-blue-800 mb-2">💡 Conseils pour une réponse rapide</h3>
-        <ul class="text-sm text-blue-700 space-y-2">
+    <div class="rounded-2xl p-6 border border-red-100 shadow-sm" style="background:rgba(239,68,68,.04);">
+        <h3 class="font-bold mb-3" style="color:var(--primary);">
+            <i class="fas fa-lightbulb me-1"></i> Conseils pour une réponse rapide
+        </h3>
+        <ul class="text-sm space-y-2" style="color:var(--muted-fg);">
             <li class="flex items-start gap-2">
-                <span>•</span>
+                <span class="text-primary mt-1">•</span>
                 <span>Décrivez votre problème de manière claire et précise</span>
             </li>
             <li class="flex items-start gap-2">
-                <span>•</span>
+                <span class="text-primary mt-1">•</span>
                 <span>Incluez les messages d'erreur si applicable</span>
             </li>
             <li class="flex items-start gap-2">
-                <span>•</span>
+                <span class="text-primary mt-1">•</span>
                 <span>Indiquez les étapes pour reproduire le problème</span>
             </li>
         </ul>

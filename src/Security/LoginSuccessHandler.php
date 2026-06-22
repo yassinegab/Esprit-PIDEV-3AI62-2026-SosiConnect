@@ -18,6 +18,9 @@ class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
     public function onAuthenticationSuccess(Request $request, TokenInterface $token): RedirectResponse
     {
         $user = $token->getUser();
+        if (!$user instanceof \Symfony\Component\Security\Core\User\UserInterface) {
+             return new RedirectResponse($this->urlGenerator->generate('app_login'));
+        }
         $roles = $user->getRoles();
 
         if (in_array('ROLE_ADMIN', $roles, true)) {

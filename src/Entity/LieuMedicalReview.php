@@ -135,6 +135,9 @@ class LieuMedicalReview
         return $this->createdAt;
     }
 
+    /**
+     * @return bool[]
+     */
     public function getStars(): array
     {
         return array_fill(0, 5, false);

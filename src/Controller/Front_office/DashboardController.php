@@ -102,7 +102,7 @@ class DashboardController extends AbstractController
                     : 'Anon';
 
                 $scatterData[] = [
-                    'x'        => $p->getCreatedAt()->format('Y-m-d H:i'),
+                    'x'        => $p->getCreatedAt() ? $p->getCreatedAt()->format('Y-m-d H:i') : '',
                     'y'        => $p->getConfidenceScore(),
                     'user'     => $userName,
                     'category' => $label,

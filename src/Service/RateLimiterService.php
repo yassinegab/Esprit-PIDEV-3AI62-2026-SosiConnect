@@ -25,7 +25,7 @@ class RateLimiterService
         $key = 'rate_limit_' . $identifier;
         
         try {
-            $currentCount = $this->cache->get($key, function () use ($key) {
+            $currentCount = $this->cache->get($key, function () {
                 return ['count' => 0, 'resetAt' => time() + $this->timeWindow];
             });
 

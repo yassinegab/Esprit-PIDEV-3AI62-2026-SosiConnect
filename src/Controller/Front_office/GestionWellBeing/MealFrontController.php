@@ -3,6 +3,7 @@
 namespace App\Controller\Front_office\GestionWellBeing;
 
 use App\Entity\Meal;
+use App\Entity\User;
 use App\Form\MealType;
 use App\Service\QwenService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,13 +17,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/user/meal')]
 class MealFrontController extends AbstractController
 {
-    private $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct()
     {
-        $this->entityManager = $entityManager;
     }
 
+    /** @return \App\Entity\User|\Symfony\Component\Security\Core\User\UserInterface|null */
     private function getActualUser()
     {
         return $this->getUser();
@@ -37,7 +36,9 @@ class MealFrontController extends AbstractController
         }
 
         $meal = new Meal();
-        $meal->setUser($user); // Assign current user
+        if ($user instanceof User) {
+            $meal->setUser($user); // Assign current user
+        }
 
         $form = $this->createForm(MealType::class, $meal);
         $form->handleRequest($request);
@@ -49,6 +50,9 @@ class MealFrontController extends AbstractController
             if ($imageFile) {
                 $newFilename = uniqid() . '.' . $imageFile->guessExtension();
                 $targetDir = $this->getParameter('meal_images_directory');
+                if (!is_string($targetDir)) {
+                    throw new \RuntimeException('meal_images_directory parameter must be a string.');
+                }
 
                 try {
                     $imageFile->move($targetDir, $newFilename);
@@ -56,11 +60,11 @@ class MealFrontController extends AbstractController
 
                     // AI Analysis
                     $fullPath = $targetDir . '/' . $newFilename;
-                    $analysis = $qwenService->analyzeMeal($fullPath, $meal->getDescription());
+                    $analysis = $qwenService->analyzeMeal($fullPath, (string)$meal->getDescription());
 
                     // Parse JSON response
-                    $cleanJson = preg_replace('/^```json\s*|\s*```$/', '', trim($analysis));
-                    $data = json_decode($cleanJson, true);
+                    $cleanJson = preg_replace('/^```json\s*|\s*```$/', '', trim((string)$analysis));
+                    $data = json_decode((string)$cleanJson, true);
 
                     if (json_last_error() === JSON_ERROR_NONE && is_array($data)) {
                         $meal->setCalories($data['calories'] ?? null);
@@ -109,17 +113,20 @@ class MealFrontController extends AbstractController
             if ($imageFile) {
                 $newFilename = uniqid() . '.' . $imageFile->guessExtension();
                 $targetDir = $this->getParameter('meal_images_directory');
+                if (!is_string($targetDir)) {
+                    throw new \RuntimeException('meal_images_directory parameter must be a string.');
+                }
 
                 $imageFile->move($targetDir, $newFilename);
                 $meal->setImageName($newFilename);
 
                 // Re-analyze if image changes
                 $fullPath = $targetDir . '/' . $newFilename;
-                $analysis = $qwenService->analyzeMeal($fullPath, $meal->getDescription());
+                $analysis = $qwenService->analyzeMeal($fullPath, (string)$meal->getDescription());
 
                 // Parse JSON response
-                $cleanJson = preg_replace('/^```json\s*|\s*```$/', '', trim($analysis));
-                $data = json_decode($cleanJson, true);
+                $cleanJson = preg_replace('/^```json\s*|\s*```$/', '', trim((string)$analysis));
+                $data = json_decode((string)$cleanJson, true);
 
                 if (json_last_error() === JSON_ERROR_NONE && is_array($data)) {
                     $meal->setCalories($data['calories'] ?? null);
@@ -154,7 +161,7 @@ class MealFrontController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        if ($this->isCsrfTokenValid('delete' . $meal->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $meal->getId(), (string)$request->request->get('_token', ''))) {
             $entityManager->remove($meal);
             $entityManager->flush();
         }

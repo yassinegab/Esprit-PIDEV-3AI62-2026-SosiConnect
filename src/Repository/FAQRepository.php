@@ -6,6 +6,9 @@ use App\Entity\FAQ;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<FAQ>
+ */
 class FAQRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -13,6 +16,9 @@ class FAQRepository extends ServiceEntityRepository
         parent::__construct($registry, FAQ::class);
     }
 
+    /**
+     * @return FAQ[]
+     */
     public function findPublished(): array
     {
         return $this->createQueryBuilder('f')
@@ -23,6 +29,9 @@ class FAQRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return FAQ[]
+     */
     public function findByCategory(string $category): array
     {
         return $this->createQueryBuilder('f')
@@ -34,6 +43,9 @@ class FAQRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return FAQ[]
+     */
     public function search(string $query): array
     {
         return $this->createQueryBuilder('f')
@@ -45,6 +57,9 @@ class FAQRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return string[]
+     */
     public function getCategories(): array
     {
         return $this->createQueryBuilder('f')
@@ -54,6 +69,9 @@ class FAQRepository extends ServiceEntityRepository
             ->getSingleColumnResult();
     }
 
+    /**
+     * @return FAQ[]
+     */
     public function getPopular(int $limit = 5): array
     {
         return $this->createQueryBuilder('f')

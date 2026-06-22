@@ -23,6 +23,9 @@ class DeepgramService
         $this->apiKey = $deepgramApiKey;
     }
 
+    /**
+     * @return array{success: bool, transcript: string, confidence?: float|int, error?: string}
+     */
     public function transcribe(string $audioData): array
     {
         try {
@@ -48,17 +51,22 @@ class DeepgramService
             return [
                 'success' => false,
                 'transcript' => '',
+                'confidence' => 0,
                 'error' => $e->getMessage()
             ];
         }
     }
 
+    /**
+     * @return array{success: bool, transcript: string, confidence?: float|int, error?: string}
+     */
     public function transcribeFromFile(string $filePath): array
     {
         if (!file_exists($filePath)) {
             return [
                 'success' => false,
                 'transcript' => '',
+                'confidence' => 0,
                 'error' => 'Audio file not found'
             ];
         }
@@ -88,6 +96,7 @@ class DeepgramService
             return [
                 'success' => false,
                 'transcript' => '',
+                'confidence' => 0,
                 'error' => $e->getMessage()
             ];
         }

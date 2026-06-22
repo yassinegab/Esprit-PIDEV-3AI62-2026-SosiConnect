@@ -20,8 +20,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class AideController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly ValidatorInterface $validator
+        private EntityManagerInterface $entityManager,
+        private ValidatorInterface $validator
     ) {}
 
     #[Route('', name: 'aide')]
@@ -39,12 +39,12 @@ class AideController extends AbstractController
     #[Route('/faq', name: 'aide_faq')]
     public function faq(Request $request, FAQRepository $repository): Response
     {
-        $search = $request->query->get('search');
-        $category = $request->query->get('category');
+        $search = (string)$request->query->get('search', '');
+        $category = (string)$request->query->get('category', '');
 
-        if ($search) {
+        if ($search !== '') {
             $faqs = $repository->search($search);
-        } elseif ($category) {
+        } elseif ($category !== '') {
             $faqs = $repository->findByCategory($category);
         } else {
             $faqs = $repository->findPublished();
@@ -99,12 +99,12 @@ class AideController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $ticket = new SupportTicket();
-            $ticket->setSubject($request->request->get('subject'));
-            $ticket->setDescription($request->request->get('description'));
-            $ticket->setCategory($request->request->get('category', 'general'));
-            $ticket->setPriority($request->request->get('priority', SupportTicket::PRIORITY_MEDIUM));
-            $ticket->setUserEmail($request->request->get('user_email'));
-            $ticket->setUserName($request->request->get('user_name'));
+            $ticket->setSubject((string)$request->request->get('subject', ''));
+            $ticket->setDescription((string)$request->request->get('description', ''));
+            $ticket->setCategory((string)$request->request->get('category', 'general'));
+            $ticket->setPriority((string)$request->request->get('priority', SupportTicket::PRIORITY_MEDIUM));
+            $ticket->setUserEmail((string)$request->request->get('user_email', ''));
+            $ticket->setUserName((string)$request->request->get('user_name', ''));
 
             // Handle attachment upload
             $attachment = $request->files->get('attachment');
@@ -146,7 +146,7 @@ class AideController extends AbstractController
     {
         if ($request->isMethod('POST') && $ticket->getStatus() !== 'closed') {
             $message = new ChatMessage();
-            $message->setContent($request->request->get('message'));
+            $message->setContent((string)$request->request->get('message', ''));
             $message->setSenderName($ticket->getUserName());
             $message->setSenderType('user');
             $message->setTicket($ticket);
@@ -178,8 +178,8 @@ class AideController extends AbstractController
         $feedback = new SupportFeedback();
         $feedback->setTicket($ticket);
         $feedback->setRating((int) $request->request->get('rating', 5));
-        $feedback->setComment($request->request->get('comment'));
-        $feedback->setFeedbackType($request->request->get('feedback_type', 'general'));
+        $feedback->setComment((string)$request->request->get('comment', ''));
+        $feedback->setFeedbackType((string) $request->request->get('feedback_type', 'general'));
         $feedback->setWouldRecommend($request->request->getBoolean('would_recommend', true));
 
         $this->entityManager->persist($feedback);

@@ -1,172 +1,197 @@
 {% extends 'layout/front-layout.html.twig' %}
 
-{% block title %}Urgences{% endblock %}
+{% block title %}Numéros d'Urgence — Sosi{% endblock %}
 
 {% block stylesheets %}
 {{ parent() }}
-<link rel="stylesheet" href="/css/modern-styles.css">
+<style>
+.emergency-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    display: block;
+    border-width: 2px;
+}
+.emergency-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0,0,0,.12);
+}
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="space-y-6 animate-fadeIn">
-    <div class="flex items-center gap-4">
-        <a href="{{ path('aide') }}" class="text-gray-500 hover:text-gray-700 transition">
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <h1 class="page-title"><i class="fas fa-phone-square-alt text-primary me-2"></i> Numéros d'Urgence</h1>
+        </div>
+        <a href="{{ path('aide') }}" class="btn-secondary" style="font-size:.85rem;">
             ← Retour
         </a>
-        <h1 class="text-2xl font-bold text-gray-800">🚨 Numéros d'Urgence</h1>
     </div>
 
-    <div class="bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl p-8 text-white">
-        <div class="flex items-center gap-4">
-            <div class="text-5xl">🆘</div>
+    {# ── Top Banner ──────────────────────────────────────────── #}
+    <div class="rounded-2xl p-8 text-white shadow-lg" 
+         style="background: linear-gradient(to right, #ef4444, #f97316);">
+        <div class="flex items-center gap-5">
+            <div class="empty-state-icon" style="background:rgba(255,255,255,.2); width:4.5rem; height:4.5rem; font-size:2rem; border:none;">
+                <i class="fas fa-ambulance"></i>
+            </div>
             <div>
                 <h2 class="text-2xl font-bold mb-1">En cas d'urgence</h2>
-                <p class="text-red-100">Composez immédiatement l'un des numéros ci-dessous</p>
+                <p style="color:rgba(255,255,255,.85);">Composez immédiatement l'un des numéros ci-dessous</p>
             </div>
         </div>
     </div>
 
+    {# ── Numbers Grid ────────────────────────────────────────── #}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <a href="tel:190" class="bg-white rounded-2xl p-6 shadow-lg border-2 border-red-200 hover:border-red-400 hover:shadow-xl transition group">
+        <a href="tel:190" class="card emergency-card border-red-100 hover:border-red-400 group">
             <div class="flex items-center gap-4">
-                <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition">
-                    🚑
+                <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition text-red-600">
+                    <i class="fas fa-heartbeat"></i>
                 </div>
                 <div>
                     <p class="text-3xl font-bold text-red-600">190</p>
-                    <p class="text-gray-500">SAMU - Urgences médicales</p>
+                    <p class="text-sm font-bold uppercase tracking-wide" style="color:var(--muted-fg);">SAMU - Médical</p>
                 </div>
             </div>
         </a>
 
-        <a href="tel:193" class="bg-white rounded-2xl p-6 shadow-lg border-2 border-orange-200 hover:border-orange-400 hover:shadow-xl transition group">
+        <a href="tel:193" class="card emergency-card border-orange-100 hover:border-orange-400 group">
             <div class="flex items-center gap-4">
-                <div class="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition">
-                    🚒
+                <div class="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition text-orange-600">
+                    <i class="fas fa-fire-extinguisher"></i>
                 </div>
                 <div>
                     <p class="text-3xl font-bold text-orange-600">193</p>
-                    <p class="text-gray-500">Pompiers</p>
+                    <p class="text-sm font-bold uppercase tracking-wide" style="color:var(--muted-fg);">Pompiers</p>
                 </div>
             </div>
         </a>
 
-        <a href="tel:197" class="bg-white rounded-2xl p-6 shadow-lg border-2 border-blue-200 hover:border-blue-400 hover:shadow-xl transition group">
+        <a href="tel:197" class="card emergency-card border-blue-100 hover:border-blue-400 group">
             <div class="flex items-center gap-4">
-                <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition">
-                    👮
+                <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition text-blue-600">
+                    <i class="fas fa-user-shield"></i>
                 </div>
                 <div>
                     <p class="text-3xl font-bold text-blue-600">197</p>
-                    <p class="text-gray-500">Police - Secours</p>
+                    <p class="text-sm font-bold uppercase tracking-wide" style="color:var(--muted-fg);">Police - Secours</p>
                 </div>
             </div>
         </a>
 
-        <a href="tel:198" class="bg-white rounded-2xl p-6 shadow-lg border-2 border-cyan-200 hover:border-cyan-400 hover:shadow-xl transition group">
+        <a href="tel:198" class="card emergency-card border-cyan-100 hover:border-cyan-400 group">
             <div class="flex items-center gap-4">
-                <div class="w-16 h-16 bg-cyan-100 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition">
-                    🚁
+                <div class="w-16 h-16 bg-cyan-100 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition text-cyan-600">
+                    <i class="fas fa-shield-alt"></i>
                 </div>
                 <div>
                     <p class="text-3xl font-bold text-cyan-600">198</p>
-                    <p class="text-gray-500">Garde nationale</p>
+                    <p class="text-sm font-bold uppercase tracking-wide" style="color:var(--muted-fg);">Garde nationale</p>
                 </div>
             </div>
         </a>
 
-        <a href="tel:80102010" class="bg-white rounded-2xl p-6 shadow-lg border-2 border-green-200 hover:border-green-400 hover:shadow-xl transition group">
+        <a href="tel:80102010" class="card emergency-card border-green-100 hover:border-green-400 group">
             <div class="flex items-center gap-4">
-                <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition">
-                    🩸
+                <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition text-green-600">
+                    <i class="fas fa-tint"></i>
                 </div>
                 <div>
                     <p class="text-2xl font-bold text-green-600">80102010</p>
-                    <p class="text-gray-500">Centre national de transfusion</p>
+                    <p class="text-sm font-bold uppercase tracking-wide" style="color:var(--muted-fg);">Centre Transfusion</p>
                 </div>
             </div>
         </a>
 
-        <a href="tel:71 784 555" class="bg-white rounded-2xl p-6 shadow-lg border-2 border-purple-200 hover:border-purple-400 hover:shadow-xl transition group">
+        <a href="tel:71784555" class="card emergency-card border-purple-100 hover:border-purple-400 group">
             <div class="flex items-center gap-4">
-                <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition">
-                    ☎️
+                <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition text-purple-600">
+                    <i class="fas fa-brain"></i>
                 </div>
                 <div>
                     <p class="text-2xl font-bold text-purple-600">71 784 555</p>
-                    <p class="text-gray-500">Urgences psychologiques</p>
+                    <p class="text-sm font-bold uppercase tracking-wide" style="color:var(--muted-fg);">Urgences Psychologiques</p>
                 </div>
             </div>
         </a>
     </div>
 
+    {# ── Steps Section ───────────────────────────────────────── #}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-            <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                <span class="text-xl">📋</span> Que faire en cas d'urgence ?
+        <div class="card">
+            <h3 class="section-title mb-5 flex items-center gap-2">
+                <i class="fas fa-list-ol text-primary"></i> Que faire en cas d'urgence ?
             </h3>
-            <div class="space-y-4">
-                <div class="flex items-start gap-3">
-                    <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center text-red-600 font-bold text-sm flex-shrink-0">1</div>
+            <div class="space-y-5">
+                <div class="flex items-start gap-4">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0" 
+                         style="background:var(--primary); color:white;">1</div>
                     <div>
-                        <p class="font-medium text-gray-800">Restez calme</p>
-                        <p class="text-sm text-gray-500">Prenez une grande respiration et évaluez la situation</p>
+                        <p class="font-bold" style="color:var(--foreground);">Restez calme</p>
+                        <p style="font-size:.85rem; color:var(--muted-fg);">Prenez une grande respiration et évaluez la situation</p>
                     </div>
                 </div>
-                <div class="flex items-start gap-3">
-                    <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600 font-bold text-sm flex-shrink-0">2</div>
+                <div class="flex items-start gap-4">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0" 
+                         style="background:var(--primary); color:white;">2</div>
                     <div>
-                        <p class="font-medium text-gray-800">Appelez les secours</p>
-                        <p class="text-sm text-gray-500">Composez le numéro approprié et donnez votre position</p>
+                        <p class="font-bold" style="color:var(--foreground);">Appelez les secours</p>
+                        <p style="font-size:.85rem; color:var(--muted-fg);">Composez le numéro approprié et donnez votre position</p>
                     </div>
                 </div>
-                <div class="flex items-start gap-3">
-                    <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center text-yellow-600 font-bold text-sm flex-shrink-0">3</div>
+                <div class="flex items-start gap-4">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0" 
+                         style="background:var(--primary); color:white;">3</div>
                     <div>
-                        <p class="font-medium text-gray-800">Décrivez la situation</p>
-                        <p class="text-sm text-gray-500">Soyez précis sur la nature de l'urgence et le nombre de personnes</p>
+                        <p class="font-bold" style="color:var(--foreground);">Décrivez la situation</p>
+                        <p style="font-size:.85rem; color:var(--muted-fg);">Soyez précis sur la nature de l'urgence et le nombre de personnes</p>
                     </div>
                 </div>
-                <div class="flex items-start gap-3">
-                    <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center text-green-600 font-bold text-sm flex-shrink-0">4</div>
+                <div class="flex items-start gap-4">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0" 
+                         style="background:var(--primary); color:white;">4</div>
                     <div>
-                        <p class="font-medium text-gray-800">Suivez les instructions</p>
-                        <p class="text-sm text-gray-500">Les secouristes vous guideront jusqu'à l'arrivée des secours</p>
+                        <p class="font-bold" style="color:var(--foreground);">Suivez les instructions</p>
+                        <p style="font-size:.85rem; color:var(--muted-fg);">Les secouristes vous guideront jusqu'à l'arrivée des secours</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="bg-gradient-to-br from-red-50 to-orange-50 rounded-2xl p-6 border border-red-100">
-            <h3 class="font-semibold text-red-800 mb-4 flex items-center gap-2">
-                <span class="text-xl">⚠️</span> Informations importantes
+        {# ── Info Column ─────────────────────────────────────── #}
+        <div class="card border-red-100" style="background:rgba(239,68,68,.02);">
+            <h3 class="section-title mb-4 flex items-center gap-2" style="color:var(--primary);">
+                <i class="fas fa-exclamation-circle"></i> Informations importantes
             </h3>
-            <ul class="space-y-3 text-sm text-red-700">
-                <li class="flex items-start gap-2">
-                    <span>•</span>
+            <ul class="space-y-4 text-sm" style="color:var(--muted-fg);">
+                <li class="flex items-start gap-3">
+                    <i class="fas fa-check text-primary mt-1"></i>
                     <span>Ne raccrochez pas le premier, laissez l'opérateur terminer l'appel</span>
                 </li>
-                <li class="flex items-start gap-2">
-                    <span>•</span>
+                <li class="flex items-start gap-3">
+                    <i class="fas fa-check text-primary mt-1"></i>
                     <span>Ayez votre localisation exacte prête (adresse, points de repère)</span>
                 </li>
-                <li class="flex items-start gap-2">
-                    <span>•</span>
+                <li class="flex items-start gap-3">
+                    <i class="fas fa-check text-primary mt-1"></i>
                     <span>Si possible, envoyez quelqu'un attendre les secours</span>
                 </li>
-                <li class="flex items-start gap-2">
-                    <span>•</span>
+                <li class="flex items-start gap-3">
+                    <i class="fas fa-check text-primary mt-1"></i>
                     <span>Ne déplacez pas une personne blessée sauf danger immédiat</span>
                 </li>
-                <li class="flex items-start gap-2">
-                    <span>•</span>
+                <li class="flex items-start gap-3">
+                    <i class="fas fa-check text-primary mt-1"></i>
                     <span>Gardez les voies d'accès libres pour les secours</span>
                 </li>
             </ul>
 
-            <div class="mt-6 p-4 bg-white rounded-xl">
-                <p class="text-sm text-gray-600">
-                    <strong>💡 Astuce :</strong> Ajoutez ces numéros à vos contacts pour un accès rapide en cas d'urgence.
+            <div class="mt-8 p-4 bg-white rounded-xl border border-border shadow-sm">
+                <p style="font-size:.85rem; color:var(--muted-fg);">
+                    <i class="fas fa-lightbulb text-amber-500 me-1"></i>
+                    <strong>Astuce :</strong> Ajoutez ces numéros à vos contacts pour un accès rapide en cas d'urgence.
                 </p>
             </div>
         </div>

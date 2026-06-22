@@ -11,14 +11,20 @@ class CycleAnalyzerService
      */
     public function calculateMenstruationLength(Cycle $cycle): int
     {
-        return $cycle->getDateDebutM()
-            ->diff($cycle->getDateFinM())
-            ->days + 1;
+        $debut = $cycle->getDateDebutM();
+        $fin = $cycle->getDateFinM();
+        if (!$debut || !$fin) {
+            return 0;
+        }
+        return $debut->diff($fin)->days + 1;
     }
 
     /**
      * Calcul des durées réelles des cycles
      * (date début N → date début N+1)
+     *
+     * @param Cycle[] $cycles
+     * @return int[]
      */
     public function calculateCycleLengths(array $cycles): array
     {
@@ -28,8 +34,10 @@ class CycleAnalyzerService
             $currentStart = $cycles[$i]->getDateDebutM();
             $nextStart = $cycles[$i + 1]->getDateDebutM();
 
-            $length = $currentStart->diff($nextStart)->days;
-            $lengths[] = $length;
+            if ($currentStart && $nextStart) {
+                $length = (int) $currentStart->diff($nextStart)->days;
+                $lengths[] = $length;
+            }
         }
 
         return $lengths;
@@ -37,6 +45,8 @@ class CycleAnalyzerService
 
     /**
      * Moyenne des cycles réels
+     *
+     * @param Cycle[] $cycles
      */
     public function calculateAverage(array $cycles): float
     {
@@ -51,18 +61,26 @@ class CycleAnalyzerService
 
     /**
      * Génère les labels pour les cycles (format "d M")
+     *
+     * @param Cycle[] $cycles
+     * @return string[]
      */
     public function buildLabels(array $cycles): array
     {
         $labels = [];
         for ($i = 0; $i < count($cycles) - 1; $i++) {
-            $labels[] = $cycles[$i]->getDateDebutM()->format('d M');
+            $debut = $cycles[$i]->getDateDebutM();
+            if ($debut) {
+                $labels[] = $debut->format('d M');
+            }
         }
         return $labels;
     }
 
     /**
      * Prédiction prochain cycle
+     *
+     * @param Cycle[] $cycles
      */
     public function predictNextCycle(array $cycles): ?\DateTime
     {
@@ -72,8 +90,12 @@ class CycleAnalyzerService
 
         $average = round($this->calculateAverage($cycles));
         $lastCycle = end($cycles);
+        $lastStart = $lastCycle->getDateDebutM();
+        if (!$lastStart) {
+            return null;
+        }
 
-        $nextDate = clone $lastCycle->getDateDebutM();
+        $nextDate = clone $lastStart;
         $nextDate->modify("+$average days");
 
         return $nextDate;

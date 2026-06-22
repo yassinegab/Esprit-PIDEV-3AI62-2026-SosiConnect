@@ -9,6 +9,9 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<ContactUrgence>
  */
+/**
+ * @extends ServiceEntityRepository<ContactUrgence>
+ */
 class ContactUrgenceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

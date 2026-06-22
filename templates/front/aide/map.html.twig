@@ -1,40 +1,45 @@
 {% extends 'layout/front-layout.html.twig' %}
 
-{% block title %}Carte Médicale{% endblock %}
+{% block title %}Carte Médicale — Sosi{% endblock %}
 
 {% block stylesheets %}
 {{ parent() }}
-<link rel="stylesheet" href="/css/modern-styles.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
 #map {
-    height: calc(100vh - 200px);
-    min-height: 500px;
-    border-radius: 1rem;
+    height: calc(100vh - 220px);
+    min-height: 520px;
+    border-radius: 1.25rem;
     z-index: 1;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
 }
 .leaflet-popup-content-wrapper {
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    border: 1px solid var(--border);
 }
 .leaflet-popup-content {
-    margin: 12px 16px;
+    margin: 15px;
 }
 .category-btn {
     transition: all 0.2s ease;
 }
 .category-btn.active {
+    background: var(--primary) !important;
+    color: white !important;
     transform: scale(1.05);
 }
 .lieu-card {
     transition: all 0.2s ease;
+    border-left: 4px solid transparent;
 }
 .lieu-card:hover {
-    background: #f8fafc;
+    background: var(--muted);
 }
 .lieu-card.active {
-    background: #eff6ff;
-    border-left: 3px solid #3b82f6;
+    background: rgba(239,68,68,0.05);
+    border-left-color: var(--primary);
 }
 .star-rating {
     display: flex;
@@ -47,63 +52,74 @@
 .star-rating label {
     cursor: pointer;
     font-size: 1.5rem;
-    color: #d1d5db;
-    transition: color 0.2s;
+    color: var(--muted-fg);
+    opacity: 0.3;
+    transition: all 0.2s;
 }
 .star-rating label:hover,
 .star-rating label:hover ~ label,
 .star-rating input:checked ~ label {
     color: #fbbf24;
+    opacity: 1;
 }
 .review-modal {
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(8px);
+    background: rgba(0,0,0,0.4);
 }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="space-y-6 animate-fadeIn" x-data="mapApp()">
-    <div class="flex justify-between items-center">
+    {# ── Header ────────────────────────────────────────────── #}
+    <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>
-            <h1 class="text-3xl font-bold text-gray-800" style="font-family: 'Poppins', sans-serif;">
-                🗺️ Carte Médicale
+            <h1 class="page-title">
+                <i class="fas fa-map-marked-alt text-primary me-2"></i> Carte Médicale
             </h1>
-            <p class="text-gray-500 mt-1">Trouvez les médecins, pharmacies et hôpitaux près de vous</p>
+            <p class="page-subtitle">Trouvez les médecins, pharmacies et hôpitaux près de vous</p>
         </div>
-        <div class="flex items-center gap-2 text-sm">
-            <span class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
-            <span class="text-gray-600" x-text="userLocation ? 'Position détectée' : 'Tunis (défaut)'"></span>
-            <button @click="getUserLocation()" class="ml-2 text-blue-600 hover:text-blue-700 underline">
-                📍 Me localiser
+        <div class="flex items-center gap-4 text-sm bg-white p-3 rounded-xl border border-border shadow-sm">
+            <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></span>
+                <span style="color:var(--muted-fg);" x-text="userLocation ? 'Position détectée' : 'Tunis (défaut)'"></span>
+            </div>
+            <button @click="getUserLocation()" class="font-bold text-primary hover:underline flex items-center gap-1" style="background:none; border:none; cursor:pointer;">
+                <i class="fas fa-location-arrow"></i> Me localiser
             </button>
         </div>
     </div>
 
-    <div class="flex gap-4">
-        <div class="w-80 flex-shrink-0 space-y-4">
-            <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-100">
+    <div class="flex flex-col lg:flex-row gap-6">
+        {# ── Sidebar ─────────────────────────────────────────── #}
+        <div class="w-full lg:w-80 flex-shrink-0 space-y-4">
+            {# Search #}
+            <div class="card" style="padding:1rem;">
                 <div class="relative">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2" style="color:var(--muted-fg);">
+                        <i class="fas fa-search"></i>
+                    </span>
                     <input type="text" 
                            x-model="searchQuery"
                            @input="filterLieux()"
                            placeholder="Rechercher..."
-                           class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                           class="input-field" style="padding-left:2.5rem;">
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-100">
-                <h3 class="font-semibold text-gray-800 mb-3">📁 Catégories</h3>
+            {# Categories #}
+            <div class="card" style="padding:1.25rem;">
+                <h3 class="section-title mb-3">📁 Catégories</h3>
                 <div class="flex flex-wrap gap-2">
                     <button @click="toggleCategory('')" 
-                            :class="activeCategory === '' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
-                            class="category-btn px-3 py-2 rounded-lg text-sm font-medium transition">
+                            :class="activeCategory === '' ? 'active' : ''"
+                            class="category-btn btn-secondary py-1.5 px-3 text-xs">
                         Tous
                     </button>
                     <template x-for="cat in categories" :key="cat">
                         <button @click="toggleCategory(cat)"
-                                :class="activeCategory === cat ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
-                                class="category-btn px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1">
+                                :class="activeCategory === cat ? 'active' : ''"
+                                class="category-btn btn-secondary py-1.5 px-3 text-xs flex items-center gap-1.5">
                             <span x-text="getCategoryIcon(cat)"></span>
                             <span x-text="cat"></span>
                         </button>
@@ -111,192 +127,214 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-                <div class="p-4 border-b border-gray-100 flex justify-between items-center">
-                    <h3 class="font-semibold text-gray-800">📍 Lieux trouvés</h3>
-                    <span class="text-sm text-gray-500" x-text="filteredLieux.length + ' résultat(s)'"></span>
+            {# List of Places #}
+            <div class="card" style="padding:0; overflow:hidden;">
+                <div class="p-4 border-b border-border flex justify-between items-center bg-muted/30">
+                    <h3 class="font-bold text-sm" style="color:var(--foreground);">📍 Lieux trouvés</h3>
+                    <span style="font-size:.7rem; color:var(--muted-fg);" x-text="filteredLieux.length + ' résultat(s)'"></span>
                 </div>
-                <div class="max-h-96 overflow-y-auto">
+                <div class="max-h-[400px] overflow-y-auto">
                     <template x-for="lieu in filteredLieux" :key="lieu.id">
-                        <div class="lieu-card p-4 border-b border-gray-100 cursor-pointer"
+                        <div class="lieu-card p-4 border-b border-border cursor-pointer transition-colors"
                              :class="{'active': selectedLieu && selectedLieu.id === lieu.id}"
                              @click="selectLieu(lieu)">
                             <div class="flex items-start gap-3">
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
-                                     :class="getCategoryBgClass(lieu.categorie)">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0 border border-border bg-white"
+                                     style="box-shadow:var(--shadow-sm);">
                                     <span x-text="getCategoryIcon(lieu.categorie)"></span>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <h4 class="font-medium text-gray-800 truncate" x-text="lieu.nom"></h4>
-                                    <p class="text-xs text-gray-500 truncate" x-text="lieu.adresse"></p>
-                                    <div class="flex items-center gap-3 mt-1">
-                                        <span class="text-xs px-2 py-0.5 rounded-full"
-                                              :class="getCategoryBadgeClass(lieu.categorie)"
+                                    <h4 class="font-bold truncate" style="color:var(--foreground); font-size:.9rem;" x-text="lieu.nom"></h4>
+                                    <p class="truncate" style="font-size:.75rem; color:var(--muted-fg);" x-text="lieu.adresse"></p>
+                                    <div class="flex items-center gap-3 mt-1.5">
+                                        <span class="px-2 py-0.5 rounded-full font-bold"
+                                              style="font-size:.65rem;"
+                                              :style="getCategoryBadgeStyle(lieu.categorie)"
                                               x-text="lieu.categorie"></span>
-                                        <span class="text-xs text-gray-400" x-show="lieu.distance" x-text="lieu.distance + ' km'"></span>
+                                        <span style="font-size:.7rem; color:var(--muted-fg);" x-show="lieu.distance">
+                                            <i class="fas fa-route me-1"></i><span x-text="lieu.distance + ' km'"></span>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </template>
-                    <div x-show="filteredLieux.length === 0" class="p-8 text-center text-gray-400">
-                        <div class="text-3xl mb-2">🔍</div>
-                        <p>Aucun lieu trouvé</p>
+                    <div x-show="filteredLieux.length === 0" class="p-10 text-center">
+                        <div class="empty-state-icon mx-auto mb-3" style="width:3rem; height:3rem; font-size:1.2rem;">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <p style="font-size:.85rem; color:var(--muted-fg);">Aucun lieu trouvé</p>
                     </div>
                 </div>
             </div>
 
-            <a href="{{ path('aide') }}" class="block bg-white rounded-2xl p-4 shadow-lg border border-gray-100 hover:shadow-xl transition">
-                <div class="flex items-center gap-3 text-gray-600">
-                    <span>←</span>
-                    <span>Retour au centre d'aide</span>
-                </div>
+            <a href="{{ path('aide') }}" class="btn-secondary w-full flex items-center justify-center gap-2" style="font-size:.85rem;">
+                <i class="fas fa-arrow-left"></i> Retour au centre d'aide
             </a>
         </div>
 
-        <div class="flex-1 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+        {# ── Map Area ────────────────────────────────────────── #}
+        <div class="flex-1 bg-white rounded-2xl shadow-lg border border-border overflow-hidden relative">
             <div id="map"></div>
-        </div>
-    </div>
-
-    <div x-show="selectedLieu" 
-         x-transition
-         class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white rounded-2xl shadow-2xl border border-gray-200 p-4 w-full max-w-lg z-50">
-        <div class="flex items-center gap-4" x-show="selectedLieu">
-            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
-                 :class="getCategoryBgClass(selectedLieu?.categorie)">
-                <span x-text="getCategoryIcon(selectedLieu?.categorie)"></span>
-            </div>
-            <div class="flex-1">
-                <h4 class="font-bold text-gray-800" x-text="selectedLieu?.nom"></h4>
-                <p class="text-sm text-gray-500" x-text="selectedLieu?.adresse"></p>
-            </div>
-            <div class="flex gap-2">
-                <button @click="showQrCode(selectedLieu)" 
-                        class="w-10 h-10 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center hover:bg-purple-200 transition"
-                        title="QR Code">
-                    📱
-                </button>
-                <a :href="'tel:' + selectedLieu?.telephone" 
-                   x-show="selectedLieu?.telephone"
-                   class="w-10 h-10 bg-green-100 text-green-600 rounded-xl flex items-center justify-center hover:bg-green-200 transition">
-                    📞
-                </a>
-                <a :href="'https://www.google.com/maps/dir/?api=1&destination=' + selectedLieu?.latitude + ',' + selectedLieu?.longitude"
-                   target="_blank"
-                   class="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition flex items-center gap-2">
-                    🧭 Itinéraire
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <div x-show="showQrModal" 
-         x-transition
-         class="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4"
-         @click.self="showQrModal = false">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden text-center" @click.stop>
-            <div class="p-6">
-                <h3 class="text-xl font-bold text-gray-800 mb-2" x-text="qrLieu?.nom"></h3>
-                <p class="text-sm text-gray-500 mb-6" x-text="qrLieu?.adresse"></p>
-                <div class="bg-white p-4 rounded-xl border border-gray-200 inline-block mb-4">
-                    <img :src="qrCodeImage" alt="QR Code" class="w-48 h-48 mx-auto">
-                </div>
-                <p class="text-sm text-gray-600 mb-4">Scannez ce QR code pour obtenir l'itinéraire vers ce lieu</p>
-                <a :href="qrGoogleMapsUrl" 
-                   target="_blank"
-                   class="inline-block px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition">
-                    Ouvrir dans Google Maps
-                </a>
-            </div>
-            <button @click="showQrModal = false" 
-                    class="w-full py-3 bg-gray-100 text-gray-600 font-medium hover:bg-gray-200 transition">
-                Fermer
-            </button>
-        </div>
-    </div>
-
-    <div x-show="showReviewModal" 
-         x-transition
-         class="review-modal fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4"
-         @click.self="showReviewModal = false">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden" @click.stop>
-            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-                <div>
-                    <h3 class="text-xl font-bold text-gray-800" x-text="selectedLieu?.nom"></h3>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span class="text-yellow-400" x-text="'★'.repeat(Math.round(selectedLieu?.avgRating || 0)) + '☆'.repeat(5 - Math.round(selectedLieu?.avgRating || 0))"></span>
-                        <span class="text-sm text-gray-500" x-text="(selectedLieu?.avgRating || 0).toFixed(1) + ' (' + (selectedLieu?.reviewCount || 0) + ' avis)'"></span>
+            
+            {# Floating Selection Detail #}
+            <div x-show="selectedLieu" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-4"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 class="absolute bottom-6 left-6 right-6 md:left-1/2 md:-translate-x-1/2 bg-white rounded-2xl shadow-2xl border border-border p-5 max-w-lg z-[1000]">
+                <div class="flex flex-col md:flex-row items-center gap-4">
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl border border-border bg-muted/50 shadow-inner">
+                        <span x-text="getCategoryIcon(selectedLieu?.categorie)"></span>
+                    </div>
+                    <div class="flex-1 text-center md:text-left">
+                        <h4 class="font-bold text-lg" style="color:var(--foreground);" x-text="selectedLieu?.nom"></h4>
+                        <p style="font-size:.85rem; color:var(--muted-fg);" x-text="selectedLieu?.adresse"></p>
+                    </div>
+                    <div class="flex gap-2 w-full md:w-auto justify-center">
+                        <button @click="showQrCode(selectedLieu)" 
+                                class="btn-secondary w-10 h-10 p-0 flex items-center justify-center"
+                                title="QR Code">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        <a :href="'tel:' + selectedLieu?.telephone" 
+                           x-show="selectedLieu?.telephone"
+                           class="btn-secondary w-10 h-10 p-0 flex items-center justify-center"
+                           style="color:#16a34a; border-color:#dcfce7; background:#f0fdf4;">
+                            <i class="fas fa-phone"></i>
+                        </a>
+                        <a :href="'https://www.google.com/maps/dir/?api=1&destination=' + selectedLieu?.latitude + ',' + selectedLieu?.longitude"
+                           target="_blank"
+                           class="btn-primary flex items-center gap-2 shadow-md">
+                            <i class="fas fa-directions"></i> Itinéraire
+                        </a>
                     </div>
                 </div>
-                <button @click="showReviewModal = false" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            </div>
+        </div>
+    </div>
+
+    {# ── Modals ────────────────────────────────────────────── #}
+    {# QR Code Modal #}
+    <div x-show="showQrModal" 
+         x-transition
+         class="review-modal fixed inset-0 flex items-center justify-center z-[9999] p-4"
+         @click.self="showQrModal = false">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden" @click.stop>
+            <div class="p-8 text-center">
+                <h3 class="text-xl font-bold mb-1" style="color:var(--foreground);" x-text="qrLieu?.nom"></h3>
+                <p style="font-size:.85rem; color:var(--muted-fg); margin-bottom:1.5rem;" x-text="qrLieu?.adresse"></p>
+                
+                <div class="bg-white p-4 rounded-2xl border border-border inline-block mb-6 shadow-inner">
+                    <img :src="qrCodeImage" alt="QR Code" class="w-48 h-48 mx-auto">
+                </div>
+                
+                <p style="font-size:.85rem; color:var(--muted-fg); margin-bottom:1.5rem;">Scannez ce QR code pour obtenir l'itinéraire sur votre mobile</p>
+                
+                <a :href="qrGoogleMapsUrl" 
+                   target="_blank"
+                   class="btn-primary w-full py-3 mb-3 inline-block">
+                    <i class="fas fa-external-link-alt me-1"></i> Google Maps
+                </a>
+                <button @click="showQrModal = false" class="btn-secondary w-full py-3">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {# Reviews Modal #}
+    <div x-show="showReviewModal" 
+         x-transition
+         class="review-modal fixed inset-0 flex items-center justify-center z-[9999] p-4"
+         @click.self="showReviewModal = false">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col" @click.stop>
+            <div class="p-6 border-b border-border flex justify-between items-center bg-muted/10">
+                <div>
+                    <h3 class="text-xl font-bold" style="color:var(--foreground);" x-text="selectedLieu?.nom"></h3>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="text-amber-400" x-text="'★'.repeat(Math.round(selectedLieu?.avgRating || 0)) + '☆'.repeat(5 - Math.round(selectedLieu?.avgRating || 0))"></span>
+                        <span style="font-size:.85rem; color:var(--muted-fg);" x-text="(selectedLieu?.avgRating || 0).toFixed(1) + ' (' + (selectedLieu?.reviewCount || 0) + ' avis)'"></span>
+                    </div>
+                </div>
+                <button @click="showReviewModal = false" class="text-muted-fg hover:text-foreground transition-colors" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             
-            <div class="p-6 overflow-y-auto" style="max-height: calc(90vh - 200px);">
-                <div class="mb-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100">
-                    <h4 class="font-semibold text-green-800 mb-3">✍️ Laisser un avis</h4>
-                    <form @submit.prevent="submitReview()">
-                        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div class="p-6 overflow-y-auto space-y-8">
+                {# Post a Review #}
+                <div class="rounded-2xl border border-green-100 p-5" style="background:rgba(34,197,94,0.03);">
+                    <h4 class="font-bold text-green-700 mb-4 flex items-center gap-2">
+                        <i class="fas fa-pen-nib"></i> Laisser un avis
+                    </h4>
+                    <form @submit.prevent="submitReview()" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <input type="text" x-model="reviewForm.author_name" required
-                                   placeholder="Votre nom"
-                                   class="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500">
+                                   placeholder="Votre nom" class="input-field">
                             <input type="email" x-model="reviewForm.author_email" required
-                                   placeholder="Votre email"
-                                   class="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500">
+                                   placeholder="Votre email" class="input-field">
                         </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Note</label>
+                        <div>
+                            <label class="block text-sm font-bold mb-2" style="color:var(--foreground);">Note</label>
                             <div class="star-rating">
-                                <input type="radio" id="star5" x-model="reviewForm.rating" value="5">
-                                <label for="star5">★</label>
-                                <input type="radio" id="star4" x-model="reviewForm.rating" value="4">
-                                <label for="star4">★</label>
-                                <input type="radio" id="star3" x-model="reviewForm.rating" value="3">
-                                <label for="star3">★</label>
-                                <input type="radio" id="star2" x-model="reviewForm.rating" value="2">
-                                <label for="star2">★</label>
-                                <input type="radio" id="star1" x-model="reviewForm.rating" value="1">
-                                <label for="star1">★</label>
+                                <input type="radio" id="mstar5" x-model="reviewForm.rating" value="5">
+                                <label for="mstar5">★</label>
+                                <input type="radio" id="mstar4" x-model="reviewForm.rating" value="4">
+                                <label for="mstar4">★</label>
+                                <input type="radio" id="mstar3" x-model="reviewForm.rating" value="3">
+                                <label for="mstar3">★</label>
+                                <input type="radio" id="mstar2" x-model="reviewForm.rating" value="2">
+                                <label for="mstar2">★</label>
+                                <input type="radio" id="mstar1" x-model="reviewForm.rating" value="1">
+                                <label for="mstar1">★</label>
                             </div>
                         </div>
                         <textarea x-model="reviewForm.comment" required rows="3"
                                   placeholder="Partagez votre expérience..."
-                                  class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 mb-4"></textarea>
+                                  class="input-field resize-none"></textarea>
                         <button type="submit" 
                                 :disabled="reviewFormLoading"
-                                class="w-full py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition disabled:opacity-50">
-                            <span x-show="!reviewFormLoading">Envoyer mon avis</span>
-                            <span x-show="reviewFormLoading">Envoi en cours...</span>
+                                class="btn-primary w-full shadow-md" style="background:#16a34a; border-color:#16a34a;">
+                            <span x-show="!reviewFormLoading"><i class="fas fa-paper-plane me-1"></i> Envoyer mon avis</span>
+                            <span x-show="reviewFormLoading"><i class="fas fa-spinner fa-spin me-1"></i> Envoi en cours...</span>
                         </button>
                     </form>
                 </div>
 
-                <h4 class="font-semibold text-gray-800 mb-4">💬 Avis (<span x-text="selectedLieuReviews.length"></span>)</h4>
-                
-                <div class="space-y-4">
-                    <template x-for="review in selectedLieuReviews" :key="review.id">
-                        <div class="p-4 bg-gray-50 rounded-xl">
-                            <div class="flex items-start justify-between mb-2">
-                                <div>
-                                    <span class="font-medium text-gray-800" x-text="review.authorName"></span>
-                                    <span x-show="review.isVerified" class="ml-2 text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded-full">✓ Vérifié</span>
-                                </div>
-                                <span class="text-yellow-400" x-text="review.ratingStars"></span>
-                            </div>
-                            <p class="text-gray-600 text-sm mb-2" x-text="review.comment"></p>
-                            <div class="flex items-center justify-between text-xs text-gray-400">
-                                <span x-text="review.createdAt"></span>
-                                <button @click="markHelpful(review.id)" class="text-blue-600 hover:text-blue-700">
-                                    👍 Utile (<span x-text="review.helpfulCount"></span>)
-                                </button>
-                            </div>
-                        </div>
-                    </template>
+                {# Review List #}
+                <div>
+                    <h4 class="font-bold mb-4 flex items-center gap-2" style="color:var(--foreground);">
+                        <i class="fas fa-comments text-primary"></i> Avis récents (<span x-text="selectedLieuReviews.length"></span>)
+                    </h4>
                     
-                    <div x-show="selectedLieuReviews.length === 0" class="text-center py-8 text-gray-400">
-                        <div class="text-4xl mb-2">📝</div>
-                        <p>Aucun avis pour le moment</p>
-                        <p class="text-sm">Soyez le premier à donner votre avis !</p>
+                    <div class="space-y-4">
+                        <template x-for="review in selectedLieuReviews" :key="review.id">
+                            <div class="p-4 bg-muted/40 rounded-2xl border border-border">
+                                <div class="flex items-start justify-between mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold" style="color:var(--foreground);" x-text="review.authorName"></span>
+                                        <span x-show="review.isVerified" class="text-[10px] uppercase tracking-wider font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Vérifié</span>
+                                    </div>
+                                    <span class="text-amber-400 text-sm" x-text="review.ratingStars"></span>
+                                </div>
+                                <p style="color:var(--muted-fg); font-size:.9rem;" x-text="review.comment"></p>
+                                <div class="flex items-center justify-between mt-3">
+                                    <span style="font-size:.75rem; color:var(--muted-fg);" x-text="review.createdAt"></span>
+                                    <button @click="markHelpful(review.id)" class="text-primary font-bold hover:underline" style="background:none; border:none; font-size:.75rem; cursor:pointer;">
+                                        <i class="fas fa-thumbs-up me-1"></i> Utile (<span x-text="review.helpfulCount"></span>)
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                        
+                        <div x-show="selectedLieuReviews.length === 0" class="text-center py-10">
+                            <div class="empty-state-icon mx-auto mb-3" style="width:3.5rem; height:3.5rem;">
+                                <i class="fas fa-comment-slash"></i>
+                            </div>
+                            <p style="color:var(--muted-fg); font-size:.9rem;">Aucun avis pour le moment</p>
+                            <p class="text-primary font-bold mt-1" style="font-size:.85rem;">Soyez le premier à donner votre avis !</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -306,7 +344,6 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// Global map app instance
 var mapAppData = null;
 
 function mapApp() {
@@ -331,22 +368,17 @@ function mapApp() {
         qrGoogleMapsUrl: '',
 
         init() {
-            console.log('Lieux loaded:', this.lieux);
             mapAppData = this;
             this.filteredLieux = [...this.lieux];
             this.initMap();
-            this.addUserMarker();
-            this.addMarkers();
-            this.calculateDistances();
+            this.getUserLocation();
         },
 
         initMap() {
             this.map = L.map('map').setView([36.8065, 10.1815], 13);
-
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
+                attribution: '© OpenStreetMap'
             }).addTo(this.map);
-
             this.addMarkers();
         },
 
@@ -362,309 +394,137 @@ function mapApp() {
                         this.addUserMarker();
                         this.calculateDistances();
                     },
-                    (error) => {
-                        console.log('Geolocation Error:', error.message);
-                        this.userLocation = {
-                            lat: 36.8065,
-                            lng: 10.1815
-                        };
+                    () => {
                         this.addUserMarker();
                         this.calculateDistances();
-                    },
-                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                    }
                 );
             } else {
-                this.userLocation = {
-                    lat: 36.8065,
-                    lng: 10.1815
-                };
                 this.addUserMarker();
                 this.calculateDistances();
             }
         },
 
         addUserMarker() {
-            if (this.userMarker) {
-                this.map.removeLayer(this.userMarker);
-            }
-
+            if (this.userMarker) this.map.removeLayer(this.userMarker);
             const userIcon = L.divIcon({
-                html: '<div style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5); border: 3px solid white;">📍</div>',
+                html: '<div style="background: linear-gradient(135deg, var(--primary), #b91c1c); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4); border: 2px solid white;">📍</div>',
                 className: 'user-marker',
-                iconSize: [40, 40],
-                iconAnchor: [20, 20]
+                iconSize: [32, 32],
+                iconAnchor: [16, 16]
             });
-
             this.userMarker = L.marker([this.userLocation.lat, this.userLocation.lng], { icon: userIcon })
                 .addTo(this.map)
-                .bindPopup('<strong>📍 Votre position</strong><br><small>Cliquez sur les marqueurs pour voir les détails</small>');
+                .bindPopup('<strong>📍 Votre position</strong>');
         },
 
         addMarkers() {
             this.markers.forEach(m => this.map.removeLayer(m));
             this.markers = [];
-
-            if (!this.filteredLieux || this.filteredLieux.length === 0) {
-                console.log('No lieux to display');
-                return;
-            }
-
-            const self = this;
-            this.filteredLieux.forEach((lieu, index) => {
-                const lat = parseFloat(lieu.latitude);
-                const lng = parseFloat(lieu.longitude);
-                
-                if (isNaN(lat) || isNaN(lng)) {
-                    console.log('Invalid coordinates for:', lieu.nom);
-                    return;
-                }
-
+            this.filteredLieux.forEach(lieu => {
                 const icon = L.divIcon({
-                    html: `<div style="background: ${this.getCategoryColor(lieu.categorie)}; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 3px 10px rgba(0,0,0,0.2); border: 2px solid white;">${this.getCategoryIcon(lieu.categorie)}</div>`,
+                    html: `<div style="background: ${this.getCategoryColor(lieu.categorie)}; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 3px 8px rgba(0,0,0,0.2); border: 2px solid white;">${this.getCategoryIcon(lieu.categorie)}</div>`,
                     className: 'lieu-marker',
-                    iconSize: [36, 36],
-                    iconAnchor: [18, 18]
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16]
                 });
-
-                const ratingStars = lieu.avgRating ? '★'.repeat(Math.round(lieu.avgRating)) + '☆'.repeat(5 - Math.round(lieu.avgRating)) : '☆☆☆☆☆';
-                const ratingText = lieu.avgRating ? `${lieu.avgRating.toFixed(1)} (${lieu.reviewCount} avis)` : 'Pas encore d\'avis';
-
-                const marker = L.marker([lat, lng], { icon })
-                    .addTo(this.map)
-                    .bindPopup(`
-                        <div style="min-width: 250px;">
-                            <h3 style="font-weight: bold; margin-bottom: 5px;">${lieu.nom}</h3>
-                            <p style="color: #666; font-size: 12px; margin-bottom: 8px;">${lieu.adresse}</p>
-                            <p style="font-size: 12px; margin-bottom: 4px;">📞 ${lieu.telephone || 'Non renseigné'}</p>
-                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                                <span style="color: #fbbf24;">${ratingStars}</span>
-                                <span style="font-size: 12px; color: #666;">${ratingText}</span>
-                            </div>
-                            <div style="display: flex; gap: 8px;">
-                                <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" 
-                                   target="_blank"
-                                   style="flex: 1; display: inline-block; background: #3b82f6; color: white; padding: 8px 12px; border-radius: 8px; text-decoration: none; font-size: 12px; text-align: center;">
-                                    🧭 Itinéraire
-                                </a>
-                                <button onclick="openReviewsModal(${lieu.id})"
-                                        style="flex: 1; background: #10b981; color: white; padding: 8px 12px; border-radius: 8px; font-size: 12px; border: none; cursor: pointer;">
-                                    ⭐ Avis
-                                </button>
-                            </div>
-                        </div>
-                    `);
-
-                marker.on('click', () => {
-                    this.selectLieu(lieu);
-                });
-
+                const marker = L.marker([parseFloat(lieu.latitude), parseFloat(lieu.longitude)], { icon })
+                    .addTo(this.map);
+                marker.on('click', () => this.selectLieu(lieu));
                 this.markers.push(marker);
             });
-
-            console.log('Added', this.markers.length, 'markers');
-        },
-
-        openReviews(lieuId) {
-            this.selectedLieu = this.lieux.find(l => l.id === lieuId);
-            if (!this.selectedLieu) return;
-
-            fetch(`/aide/map/lieu/${lieuId}/reviews`)
-                .then(response => response.json())
-                .then(data => {
-                    this.selectedLieuReviews = data.reviews;
-                    this.selectedLieu.avgRating = data.lieu.avgRating;
-                    this.selectedLieu.reviewCount = data.lieu.reviewCount;
-                    this.showReviewModal = true;
-                })
-                .catch(error => {
-                    console.error('Error loading reviews:', error);
-                    this.selectedLieuReviews = [];
-                    this.showReviewModal = true;
-                });
-        },
-
-        submitReview() {
-            if (!this.selectedLieu) return;
-            
-            this.reviewFormLoading = true;
-            const formData = new FormData();
-            formData.append('author_name', this.reviewForm.author_name);
-            formData.append('author_email', this.reviewForm.author_email);
-            formData.append('rating', this.reviewForm.rating);
-            formData.append('comment', this.reviewForm.comment);
-
-            fetch(`/aide/map/lieu/${this.selectedLieu.id}/review`, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    this.selectedLieuReviews.unshift(data.review);
-                    this.selectedLieu.reviewCount++;
-                    this.reviewForm = { author_name: '', author_email: '', rating: 5, comment: '' };
-                    alert('✅ Merci pour votre avis !');
-                } else {
-                    alert('❌ Erreur: ' + data.errors.join(', '));
-                }
-            })
-            .catch(error => {
-                console.error('Error submitting review:', error);
-                alert('❌ Erreur lors de l\'envoi de l\'avis');
-            })
-            .finally(() => {
-                this.reviewFormLoading = false;
-            });
-        },
-
-        markHelpful(reviewId) {
-            fetch(`/aide/map/review/${reviewId}/helpful`, { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const review = this.selectedLieuReviews.find(r => r.id === reviewId);
-                        if (review) review.helpfulCount = data.helpfulCount;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error marking helpful:', error);
-                });
         },
 
         calculateDistances() {
-            if (!this.userLocation) return;
-
             this.lieux.forEach(lieu => {
-                const distance = this.getDistance(
-                    this.userLocation.lat, this.userLocation.lng,
-                    parseFloat(lieu.latitude), parseFloat(lieu.longitude)
-                );
-                lieu.distance = distance.toFixed(1);
+                const d = this.getDistance(this.userLocation.lat, this.userLocation.lng, parseFloat(lieu.latitude), parseFloat(lieu.longitude));
+                lieu.distance = d.toFixed(1);
             });
-
-            this.lieux.sort((a, b) => parseFloat(a.distance || 999) - parseFloat(b.distance || 999));
-            this.filteredLieux = [...this.lieux];
+            this.lieux.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+            this.filterLieux();
         },
 
         getDistance(lat1, lon1, lat2, lon2) {
             const R = 6371;
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                      Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
+            const dLat = (lat2-lat1)*Math.PI/180;
+            const dLon = (lon2-lon1)*Math.PI/180;
+            const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         },
 
         filterLieux() {
-            let filtered = this.lieux;
-
-            if (this.activeCategory) {
-                filtered = filtered.filter(l => l.categorie === this.activeCategory);
-            }
-
+            let f = this.lieux;
+            if (this.activeCategory) f = f.filter(l => l.categorie === this.activeCategory);
             if (this.searchQuery) {
-                const query = this.searchQuery.toLowerCase();
-                filtered = filtered.filter(l => 
-                    l.nom.toLowerCase().includes(query) || 
-                    l.adresse.toLowerCase().includes(query)
-                );
+                const q = this.searchQuery.toLowerCase();
+                f = f.filter(l => l.nom.toLowerCase().includes(q) || l.adresse.toLowerCase().includes(q));
             }
-
-            this.filteredLieux = filtered;
+            this.filteredLieux = f;
             this.addMarkers();
         },
 
-        toggleCategory(category) {
-            this.activeCategory = category;
-            this.filterLieux();
+        toggleCategory(c) { this.activeCategory = c; this.filterLieux(); },
+
+        selectLieu(l) {
+            this.selectedLieu = l;
+            this.map.setView([parseFloat(l.latitude), parseFloat(l.longitude)], 16);
         },
 
-        selectLieu(lieu) {
-            this.selectedLieu = lieu;
-            this.map.setView([parseFloat(lieu.latitude), parseFloat(lieu.longitude)], 16);
-            
-            const marker = this.markers.find(m => {
-                const pos = m.getLatLng();
-                return Math.abs(pos.lat - parseFloat(lieu.latitude)) < 0.0001 && 
-                       Math.abs(pos.lng - parseFloat(lieu.longitude)) < 0.0001;
+        getCategoryIcon(c) {
+            const i = {'Médecin':'👨‍⚕️','Pharmacie':'💊','Hôpital':'🏥','Clinique':'🏨','Laboratoire':'🧪','Urgence':'🚨'};
+            return i[c] || '📍';
+        },
+
+        getCategoryColor(c) {
+            const col = {'Médecin':'#10b981','Pharmacie':'#8b5cf6','Hôpital':'#ef4444','Clinique':'#f59e0b','Laboratoire':'#06b6d4','Urgence':'#dc2626'};
+            return col[c] || '#ef4444';
+        },
+
+        getCategoryBadgeStyle(c) {
+            const col = this.getCategoryColor(c);
+            return `background: ${col}15; color: ${col}; border: 1px solid ${col}25;`;
+        },
+
+        openReviews(id) {
+            this.selectedLieu = this.lieux.find(l => l.id === id);
+            fetch(`/aide/map/lieu/${id}/reviews`).then(r => r.json()).then(d => {
+                this.selectedLieuReviews = d.reviews;
+                this.showReviewModal = true;
             });
-            if (marker) marker.openPopup();
         },
 
-        getCategoryIcon(category) {
-            const icons = {
-                'Médecin': '👨‍⚕️',
-                'Pharmacie': '💊',
-                'Hôpital': '🏥',
-                'Clinique': '🏨',
-                'Laboratoire': '🧪',
-                'Urgence': '🚨'
-            };
-            return icons[category] || '📍';
-        },
-
-        getCategoryColor(category) {
-            const colors = {
-                'Médecin': '#10b981',
-                'Pharmacie': '#8b5cf6',
-                'Hôpital': '#ef4444',
-                'Clinique': '#f59e0b',
-                'Laboratoire': '#06b6d4',
-                'Urgence': '#dc2626'
-            };
-            return colors[category] || '#6b7280';
-        },
-
-        getCategoryBgClass(category) {
-            const classes = {
-                'Médecin': 'bg-green-100',
-                'Pharmacie': 'bg-purple-100',
-                'Hôpital': 'bg-red-100',
-                'Clinique': 'bg-yellow-100',
-                'Laboratoire': 'bg-cyan-100',
-                'Urgence': 'bg-red-100'
-            };
-            return classes[category] || 'bg-gray-100';
-        },
-
-        getCategoryBadgeClass(category) {
-            const classes = {
-                'Médecin': 'bg-green-100 text-green-700',
-                'Pharmacie': 'bg-purple-100 text-purple-700',
-                'Hôpital': 'bg-red-100 text-red-700',
-                'Clinique': 'bg-yellow-100 text-yellow-700',
-                'Laboratoire': 'bg-cyan-100 text-cyan-700',
-                'Urgence': 'bg-red-100 text-red-700'
-            };
-            return classes[category] || 'bg-gray-100 text-gray-700';
-        },
-
-        showQrCode(lieu) {
-            this.qrLieu = lieu;
-            this.qrGoogleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lieu.latitude},${lieu.longitude}`;
-            
-            fetch(`/aide/map/lieu/${lieu.id}/qr`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        this.qrCodeImage = data.qrCode;
-                        this.showQrModal = true;
+        submitReview() {
+            this.reviewFormLoading = true;
+            const fd = new FormData();
+            Object.keys(this.reviewForm).forEach(k => fd.append(k, this.reviewForm[k]));
+            fetch(`/aide/map/lieu/${this.selectedLieu.id}/review`, { method: 'POST', body: fd })
+                .then(r => r.json()).then(d => {
+                    if (d.success) {
+                        this.selectedLieuReviews.unshift(d.review);
+                        this.reviewForm = { author_name: '', author_email: '', rating: 5, comment: '' };
                     }
-                })
-                .catch(error => {
-                    console.error('Error loading QR code:', error);
-                });
+                }).finally(() => this.reviewFormLoading = false);
+        },
+
+        markHelpful(id) {
+            fetch(`/aide/map/review/${id}/helpful`, { method: 'POST' }).then(r => r.json()).then(d => {
+                if (d.success) {
+                    const r = this.selectedLieuReviews.find(x => x.id === id);
+                    if (r) r.helpfulCount = d.helpfulCount;
+                }
+            });
+        },
+
+        showQrCode(l) {
+            this.qrLieu = l;
+            this.qrGoogleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${l.latitude},${l.longitude}`;
+            fetch(`/aide/map/lieu/${l.id}/qr`).then(r => r.json()).then(d => {
+                if (d.success) { this.qrCodeImage = d.qrCode; this.showQrModal = true; }
+            });
         }
     };
 }
 
-// Global function to open reviews from popup
-function openReviewsModal(lieuId) {
-    if (mapAppData) {
-        mapAppData.openReviews(lieuId);
-    }
-}
+function openReviewsModal(id) { if (mapAppData) mapAppData.openReviews(id); }
 </script>
 {% endblock %}

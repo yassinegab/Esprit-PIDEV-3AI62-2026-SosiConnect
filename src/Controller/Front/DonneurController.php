@@ -18,11 +18,11 @@ class DonneurController extends AbstractController
     {
         if ($request->isMethod('POST')) {
 
-            $nom = trim($request->request->get('nom'));
-            $prenom = trim($request->request->get('prenom'));
-            $age = (int) $request->request->get('age');
-            $telephone = trim($request->request->get('telephone'));
-            $groupe = $request->request->get('groupe_sanguin');
+            $nom = trim((string)$request->request->get('nom', ''));
+            $prenom = trim((string)$request->request->get('prenom', ''));
+            $age = (int) $request->request->get('age', 0);
+            $telephone = trim((string)$request->request->get('telephone', ''));
+            $groupe = (string)$request->request->get('groupe_sanguin', '');
 
             $groupesAutorises = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
@@ -88,7 +88,10 @@ class DonneurController extends AbstractController
     #[Route('/donneur/{id}', name: 'donneur_public')]
     public function publicProfile(Donneur $donneur, QrCodeService $qrCodeService): Response
     {
-        $qrCode = $qrCodeService->generateDonorCardQr($donneur->getId());
+        $qrCode = $qrCodeService->generateDonorCardQr(
+            $donneur->getNom() . ' ' . $donneur->getPrenom(),
+            (string)$donneur->getGroupeSanguin()
+        );
 
         return $this->render('front/don/donneur_public.html.twig', [
             'donneur' => $donneur,

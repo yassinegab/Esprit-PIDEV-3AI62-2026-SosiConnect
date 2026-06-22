@@ -21,7 +21,7 @@ class RegistrationController extends AbstractController
     ): Response {
         if ($request->isMethod('POST')) {
             // ================= CSRF =================
-            if (!$this->isCsrfTokenValid('register', $request->request->get('_csrf_token'))) {
+            if (!$this->isCsrfTokenValid('register', (string)$request->request->get('_csrf_token', ''))) {
                 $this->addFlash('error', 'Token CSRF invalide.');
                 return $this->redirectToRoute('app_register');
             }
@@ -41,7 +41,7 @@ class RegistrationController extends AbstractController
             }
 
             // ================= EMAIL =================
-            $email = trim($request->request->get('email', ''));
+            $email = trim((string)$request->request->get('email', ''));
             if (empty($email)) {
                 $this->addFlash('error', 'Email obligatoire.');
                 return $this->redirectToRoute('app_register');
@@ -55,13 +55,13 @@ class RegistrationController extends AbstractController
 
             // ================= CREATION USER =================
             $user = new User();
-            $user->setNom(trim($request->request->get('nom', '')));
-            $user->setPrenom(trim($request->request->get('prenom', '')));
+            $user->setNom(trim((string)$request->request->get('nom', '')));
+            $user->setPrenom(trim((string)$request->request->get('prenom', '')));
             $user->setEmail($email);
-            $user->setTelephone(trim($request->request->get('telephone', '')));
+            $user->setTelephone(trim((string)$request->request->get('telephone', '')));
 
             // ================= ROLE =================
-            $roleValue = $request->request->get('role');
+            $roleValue = (string)$request->request->get('role', '');
             try {
                 $user->setUserRole(UserRole::from($roleValue));
             } catch (\ValueError $e) {
@@ -94,7 +94,7 @@ class RegistrationController extends AbstractController
                 $user->setAge($age);
                 $user->setPoids($poids);
                 $user->setTaille($taille);
-                $user->setSexe($sexe);
+                $user->setSexe((string)$sexe);
             }
 
             // ================= HANDICAP =================
@@ -102,7 +102,7 @@ class RegistrationController extends AbstractController
             $user->setHandicap($isHandicapped);
 
             // ================= PASSWORD HASH =================
-            $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
+            $hashedPassword = $passwordHasher->hashPassword($user, (string)$plainPassword);
             $user->setPassword($hashedPassword);
 
             // ================= ENREGISTREMENT =================

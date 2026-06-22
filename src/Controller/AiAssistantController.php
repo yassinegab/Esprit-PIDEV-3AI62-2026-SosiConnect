@@ -85,7 +85,7 @@ class AiAssistantController extends AbstractController
 
         return $this->json([
             'transcript' => $result['transcript'],
-            'confidence' => $result['confidence']
+            'confidence' => $result['confidence'] ?? null
         ]);
     }
 
@@ -211,7 +211,7 @@ class AiAssistantController extends AbstractController
                 'id' => $message->getId(),
                 'role' => $message->getRole(),
                 'content' => $message->getContent(),
-                'createdAt' => $message->getCreatedAt()->format('c'),
+                'createdAt' => $message->getCreatedAt() instanceof \DateTimeInterface ? $message->getCreatedAt()->format('c') : '',
                 'emotionAnalysis' => $message->getEmotionAnalysis() ? [
                     'mood' => $message->getEmotionAnalysis()->getMood(),
                     'stressScore' => $message->getEmotionAnalysis()->getStressScore(),
@@ -224,8 +224,8 @@ class AiAssistantController extends AbstractController
         return $this->json([
             'id' => $conversation->getId(),
             'title' => $conversation->getTitle(),
-            'createdAt' => $conversation->getCreatedAt()->format('c'),
-            'updatedAt' => $conversation->getUpdatedAt()->format('c'),
+            'createdAt' => $conversation->getCreatedAt() ? $conversation->getCreatedAt()->format('c') : null,
+            'updatedAt' => $conversation->getUpdatedAt() ? $conversation->getUpdatedAt()->format('c') : null,
             'messages' => $messages
         ]);
     }
@@ -263,6 +263,9 @@ class AiAssistantController extends AbstractController
         return $conversation;
     }
 
+    /**
+     * @return array<int, array{role: string|null, content: string|null}>
+     */
     private function getConversationHistory(Conversation $conversation): array
     {
         $history = [];

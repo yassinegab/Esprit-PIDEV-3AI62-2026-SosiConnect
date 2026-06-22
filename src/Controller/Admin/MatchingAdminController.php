@@ -15,9 +15,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class MatchingAdminController extends AbstractController
 {
     public function __construct(
-        private readonly DonorMatchingService $matchingService,
-        private readonly NotificationService $notificationService,
-        private readonly EntityManagerInterface $entityManager
+        private DonorMatchingService $matchingService,
+        private NotificationService $notificationService,
+        private EntityManagerInterface $entityManager
     ) {}
 
     #[Route('', name: 'admin_matching')]

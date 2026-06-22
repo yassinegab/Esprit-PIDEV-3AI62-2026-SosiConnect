@@ -2,101 +2,104 @@
 
 {% block stylesheets %}
 <style>
-/* reuse existing styles for calendar and theme */
+/* SOSI Red Theme for FullCalendar */
 .fc {
-  --fc-border-color: #fbcfe8;
-  --fc-today-bg-color: #fce7f3;
-  --fc-page-bg-color: #fff1f2;
+  --fc-border-color: #e2e8f0;
+  --fc-today-bg-color: #fef2f2;
+  --fc-page-bg-color: #ffffff;
+  --fc-neutral-bg-color: #f8fafc;
+  --fc-list-event-hover-bg-color: #f1f5f9;
   font-family: 'Inter', sans-serif;
 }
 
-.fc-toolbar-title { color: #be185d; font-weight: 600; }
+.fc-toolbar-title { 
+    color: #0f172a; 
+    font-weight: 800; 
+    font-size: 1.5rem !important;
+    letter-spacing: -0.025em;
+}
 
 .fc-button {
-  background-color: #f9a8d4 !important;
-  border: none !important;
-  color: white !important;
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #475569 !important;
+  font-weight: 600 !important;
+  text-transform: capitalize !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+  padding: 8px 16px !important;
 }
-.fc-button:hover { background-color: #f472b6 !important; }
+.fc-button:hover { 
+    background-color: #f8fafc !important; 
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+}
+.fc-button-active {
+    background-color: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
+}
 
-.fc-daygrid-day-number { color: #9d174d; font-weight: 500; }
-.fc-day-today { background-color: #fce7f3 !important; }
+.fc-daygrid-day-number { 
+    color: #64748b; 
+    font-weight: 600; 
+    padding: 8px !important;
+}
+.fc-day-today { background-color: #fef2f2 !important; }
+.fc-day-today .fc-daygrid-day-number { color: #ef4444; }
 
-/* Custom Event Styles */
-.menstruation-event { background-color: #ef4444 !important; border-color: #ef4444 !important; opacity: 0.8; }
-.follicular-event { background-color: #3b82f6 !important; border-color: #3b82f6 !important; opacity: 0.4; }
+/* Custom Event Styles - Red Palette */
+.menstruation-event { 
+    background-color: #ef4444 !important; 
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 2px 4px !important;
+}
+.follicular-event { background-color: #3b82f666 !important; border: none !important; }
 .fertile-event { 
-    background: linear-gradient(135deg, #10b981 0%, #34d399 100%) !important; 
-    border-color: #10b981 !important; 
-    opacity: 0.6; 
+    background-color: #10b98199 !important; 
+    border: none !important;
 }
 .ovulation-event { 
     background-color: #8b5cf6 !important; 
-    border-color: #8b5cf6 !important; 
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.luteal-event { background-color: #eab308 !important; border-color: #eab308 !important; opacity: 0.4; }
-.predicted-period { 
-    background-color: #fca5a5 !important; 
-    border: 2px dashed #ef4444 !important; 
-    color: #ef4444 !important;
-}
-
-/* Tooltip */
-.fc-event-tooltip {
-    position: absolute;
-    z-index: 9999;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    pointer-events: none;
-    transform: translate(-50%, -100%);
-    margin-top: -10px;
-}
-
-/* Dashboard Summary Cards */
-.summary-card {
-    background: white;
-    border-radius: 1rem;
-    padding: 1.5rem;
+    border: 2px solid #ffffff !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    border-left: 5px solid;
-    transition: transform 0.2s;
+    border-radius: 9999px;
+    width: 12px !important;
+    height: 12px !important;
+    margin: 4px auto !important;
 }
-.summary-card:hover { transform: translateY(-2px); }
+.luteal-event { background-color: #eab30866 !important; border: none !important; }
+.predicted-period { 
+    background-color: #fef2f2 !important; 
+    border: 2px dashed #fca5a5 !important; 
+    color: #ef4444 !important;
+    font-weight: bold;
+}
 </style>
 {% endblock %}
 
 {% block body %}
-<div class="flex min-h-screen bg-pink-50">
+<div class="flex min-h-screen bg-slate-50/50">
   <div class="flex flex-1 flex-col">
     {% include 'components/top-nav.html.twig' %}
     <main class="flex-1 overflow-auto">
       <div class="mx-auto max-w-7xl space-y-6 p-4 lg:p-6">
         
         <!-- Header & Actions -->
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-white p-4 rounded-xl shadow-sm">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
           <div>
-            <h1 class="text-2xl font-bold text-pink-700">🌸 Mon Calendrier Menstruel</h1>
-            <p class="text-sm text-gray-500">Suivez et prévoyez votre cycle avec précision</p>
+            <h1 class="text-2xl font-bold text-slate-900">Suivi du Cycle Menstruel</h1>
+            <p class="text-sm text-slate-500">Prévoyez vos phases avec une précision médicale</p>
           </div>
-          <div class="flex gap-2">
-            <a href="{{ path('cycle_new') }}" class="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 shadow transition flex items-center gap-2">
-                <i class="fas fa-plus"></i> Ajouter règles
+          <div class="flex flex-wrap gap-2">
+            <a href="{{ path('cycle_new') }}" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 shadow-sm transition-all flex items-center gap-2 font-medium">
+                <i class="fas fa-plus"></i> Ajouter un cycle
             </a>
-            <a href="{{ path('cycle_analyse') }}" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 shadow transition flex items-center gap-2">
-                <i class="fas fa-chart-line"></i> Analyser
+            <a href="{{ path('cycle_analyse') }}" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 shadow-sm transition-all flex items-center gap-2 font-medium">
+                <i class="fas fa-microscope"></i> Analyse IA
             </a>
-            <a href="{{ path('export_cycle_pdf') }}" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 shadow transition flex items-center gap-2">
-                <i class="fas fa-file-pdf"></i> PDF
+            <a href="{{ path('cycle_export_pdf') }}" class="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 shadow-sm transition-all flex items-center gap-2 font-medium">
+                <i class="fas fa-file-pdf text-primary"></i> Rapport PDF
             </a>
           </div>
         </div>
@@ -105,13 +108,13 @@
         {% if stats.notifications is defined and stats.notifications|length > 0 %}
         <div class="space-y-2">
             {% for notif in stats.notifications %}
-            <div class="flex items-center gap-3 p-4 rounded-lg border-l-4 shadow-sm animate-pulse
-                {% if notif.type == 'warning' %} bg-orange-50 border-orange-500 text-orange-700
-                {% elseif notif.type == 'info' %} bg-blue-50 border-blue-500 text-blue-700
-                {% elseif notif.type == 'danger' %} bg-red-50 border-red-500 text-red-700
-                {% else %} bg-gray-50 border-gray-500 text-gray-700 {% endif %}">
+            <div class="flex items-center gap-3 p-4 rounded-xl border-l-4 shadow-sm transition-all
+                {% if notif.type == 'warning' %} bg-red-50 border-primary text-primary
+                {% elseif notif.type == 'info' %} bg-slate-50 border-slate-500 text-slate-700
+                {% elseif notif.type == 'danger' %} bg-red-100 border-primary text-primary font-bold
+                {% else %} bg-slate-50 border-slate-200 text-slate-600 {% endif %}">
                 <i class="fas fa-bell"></i>
-                <span class="font-medium">{{ notif.message }}</span>
+                <span class="text-sm">{{ notif.message }}</span>
             </div>
             {% endfor %}
         </div>
@@ -119,39 +122,55 @@
 
         <!-- Summary Dashboard -->
         {% if stats %}
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="summary-card border-pink-500">
-                <h3 class="text-gray-500 text-sm font-medium uppercase">Phase Actuelle</h3>
-                <p class="text-2xl font-bold text-pink-600 mt-1">{{ stats.current_phase }}</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md border-l-4 border-l-primary">
+                <h3 class="text-slate-500 text-xs font-bold uppercase tracking-wider">Phase Actuelle</h3>
+                <p class="text-2xl font-black text-slate-900 mt-2">{{ stats.current_phase }}</p>
+                <div class="mt-2 h-1 w-12 rounded-full bg-primary/20"></div>
             </div>
-            <div class="summary-card border-purple-500">
-                <h3 class="text-gray-500 text-sm font-medium uppercase">Prochaines Règles</h3>
-                <p class="text-xl font-bold text-purple-600 mt-1">{{ stats.next_period }}</p>
-                <p class="text-xs text-gray-400">Estimé</p>
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md border-l-4 border-l-slate-400">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-slate-500 text-xs font-bold uppercase tracking-wider">Prochaines Règles</h3>
+                    {% if stats.google_period_url != '#' %}
+                    <a href="{{ stats.google_period_url }}" target="_blank" class="text-slate-400 hover:text-primary transition-colors" title="Synchroniser avec Google Calendar">
+                        <i class="fab fa-google"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                <p class="text-xl font-bold text-slate-900 mt-2">{{ stats.next_period }}</p>
+                <p class="text-[10px] text-slate-400 font-medium uppercase mt-1">Estimation basée sur l'historique</p>
             </div>
-            <div class="summary-card border-green-500">
-                <h3 class="text-gray-500 text-sm font-medium uppercase">Ovulation</h3>
-                <p class="text-xl font-bold text-green-600 mt-1">{{ stats.ovulation }}</p>
-                <p class="text-xs text-gray-400">Fertilité max</p>
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md border-l-4 border-l-primary/60">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-slate-500 text-xs font-bold uppercase tracking-wider">Ovulation</h3>
+                    {% if stats.google_ovulation_url != '#' %}
+                    <a href="{{ stats.google_ovulation_url }}" target="_blank" class="text-slate-400 hover:text-violet-500 transition-colors" title="Synchroniser avec Google Calendar">
+                        <i class="fab fa-google"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                <p class="text-xl font-bold text-slate-900 mt-2">{{ stats.ovulation }}</p>
+                <p class="text-[10px] text-primary font-bold uppercase mt-1">Pic de fertilité</p>
             </div>
-            <div class="summary-card border-blue-500">
-                <h3 class="text-gray-500 text-sm font-medium uppercase">Durée Moyenne</h3>
-                <p class="text-2xl font-bold text-blue-600 mt-1">{{ stats.avg_length }} jours</p>
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md border-l-4 border-l-slate-800">
+                <h3 class="text-slate-500 text-xs font-bold uppercase tracking-wider">Durée Moyenne</h3>
+                <p class="text-2xl font-black text-slate-900 mt-2">{{ stats.avg_length }} <span class="text-sm font-normal text-slate-400">jours</span></p>
+                <a href="{{ path('cycle_stats') }}" class="mt-2 inline-block text-[10px] font-bold text-primary uppercase hover:underline">Voir les stats détaillées →</a>
             </div>
         </div>
         {% endif %}
 
         <!-- Legend -->
-        <div class="flex flex-wrap gap-4 text-sm bg-white p-3 rounded-lg shadow-sm justify-center">
-            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-500"></span> Règles</div>
-            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-blue-500 opacity-50"></span> Folliculaire</div>
-            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-green-500 opacity-60"></span> Fertile</div>
-            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-purple-500"></span> Ovulation</div>
-            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-yellow-500 opacity-50"></span> Lutéale</div>
-            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full border-2 border-dashed border-red-400"></span> Prévision</div>
+        <div class="flex flex-wrap gap-6 text-xs bg-white p-4 rounded-xl border border-slate-200 shadow-sm justify-center">
+            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-primary shadow-sm"></span> <span class="font-medium text-slate-600 uppercase tracking-tighter">Menstruation</span></div>
+            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-blue-500/40"></span> <span class="font-medium text-slate-600 uppercase tracking-tighter">Folliculaire</span></div>
+            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-emerald-500/60"></span> <span class="font-medium text-slate-600 uppercase tracking-tighter">Fertile</span></div>
+            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-violet-500 shadow-sm"></span> <span class="font-medium text-slate-600 uppercase tracking-tighter">Ovulation</span></div>
+            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-amber-500/40"></span> <span class="font-medium text-slate-600 uppercase tracking-tighter">Lutéale</span></div>
+            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full border-2 border-dashed border-primary/40"></span> <span class="font-medium text-slate-600 uppercase tracking-tighter">Prévision</span></div>
         </div>
 
-        <div id="calendar-wrapper" class="bg-white p-6 rounded-2xl shadow-lg">
+        <div id="calendar-wrapper" class="bg-white p-6 rounded-3xl border border-slate-200 shadow-xl overflow-hidden">
             <div id="calendar"></div>
         </div>
 

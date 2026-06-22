@@ -1,27 +1,28 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Inscription - Sosi+{% endblock %}
+{% block title %}Créer un compte - Sosi{% endblock %}
 
 {% block body %}
 <div class="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
     
     {# Background Elements #}
     <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
-        <div class="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-400/20 blur-[100px] animate-pulse"></div>
-        <div class="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-teal-400/20 blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
-        <div class="absolute top-[40%] left-[40%] w-[20%] h-[20%] rounded-full bg-blue-400/20 blur-[80px] animate-pulse" style="animation-delay: 4s;"></div>
+        <div class="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-primary/5 blur-[100px] animate-pulse"></div>
+        <div class="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
     </div>
 
     {# Main Card #}
-    <div class="relative z-10 w-full max-w-2xl transform transition-all duration-500">
-        <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 p-8 sm:p-10">
+    <div class="relative z-10 w-full max-w-2xl transform transition-all duration-500 animate-page-enter">
+        <div class="card p-8 sm:p-12 shadow-2xl shadow-primary/5">
             
             {# Header #}
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-bold tracking-tight text-slate-800 mb-2">Créer un compte</h2>
-                <p class="text-slate-500">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-black tracking-tighter text-foreground mb-3">
+                    Rejoindre <span class="text-primary">Sosi</span>
+                </h1>
+                <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
                     Déjà membre ?
-                    <a href="{{ path('app_login') }}" class="font-bold text-emerald-600 hover:text-emerald-500 transition-colors ml-1">
+                    <a href="{{ path('app_login') }}" class="text-primary hover:underline ml-1">
                         Connectez-vous
                     </a>
                 </p>
@@ -29,40 +30,40 @@
 
             {# Flash Messages #}
             {% for flash_error in app.flashes('error') %}
-                <div class="mb-6 rounded-xl bg-red-50/80 backdrop-blur-sm p-4 border border-red-100 flex items-start gap-3 animate-fadeIn">
-                    <i class="fas fa-exclamation-circle text-red-500 mt-0.5"></i>
-                    <p class="text-sm font-medium text-red-800">{{ flash_error }}</p>
+                <div class="mb-8 rounded-2xl bg-primary/10 p-4 border border-primary/20 flex items-start gap-3 animate-shake">
+                    <i class="fas fa-exclamation-circle text-primary mt-0.5"></i>
+                    <p class="text-xs font-black uppercase tracking-tight text-primary">{{ flash_error }}</p>
                 </div>
             {% endfor %}
 
             {# Steps Indicator #}
-            <div class="mb-12 relative">
-                <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-200 rounded-full -z-10"></div>
-                <div class="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-emerald-500 rounded-full -z-10 transition-all duration-500" id="progress-bar" style="width: 0%"></div>
+            <div class="mb-16 relative px-4">
+                <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-0.5 bg-muted rounded-full -z-10"></div>
+                <div class="absolute left-0 top-1/2 -translate-y-1/2 h-0.5 bg-primary rounded-full -z-10 transition-all duration-700 ease-out" id="progress-bar" style="width: 0%"></div>
                 
                 <div class="flex justify-between items-center w-full">
                     <!-- Step 1 Indicator -->
-                    <div class="flex flex-col items-center gap-2 group cursor-pointer">
-                        <div id="dot-1" class="h-10 w-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-sm font-bold transition-all duration-300 shadow-lg shadow-emerald-500/30 ring-4 ring-white">
+                    <div class="flex flex-col items-center gap-3 group cursor-pointer" onclick="showStep(1)">
+                        <div id="dot-1" class="h-12 w-12 rounded-2xl bg-primary text-white flex items-center justify-center text-sm font-black transition-all duration-500 shadow-xl shadow-primary/30 ring-4 ring-white">
                             1
                         </div>
-                        <span class="text-xs font-bold text-slate-700 tracking-wide uppercase">Compte</span>
+                        <span class="text-[9px] font-black text-foreground tracking-widest uppercase">Compte</span>
                     </div>
 
                     <!-- Step 2 Indicator -->
-                    <div class="flex flex-col items-center gap-2 group cursor-pointer">
-                        <div id="dot-2" class="h-10 w-10 rounded-xl bg-white text-slate-400 flex items-center justify-center text-sm font-bold transition-all duration-300 border-2 border-slate-200 ring-4 ring-white">
+                    <div class="flex flex-col items-center gap-3 group cursor-pointer" onclick="showStep(2)">
+                        <div id="dot-2" class="h-12 w-12 rounded-2xl bg-white text-muted-foreground flex items-center justify-center text-sm font-black transition-all duration-500 border border-border ring-4 ring-white">
                             2
                         </div>
-                        <span class="text-xs font-bold text-slate-400 tracking-wide uppercase">Profil</span>
+                        <span class="text-[9px] font-black text-muted-foreground tracking-widest uppercase">Profil</span>
                     </div>
 
                     <!-- Step 3 Indicator -->
-                    <div class="flex flex-col items-center gap-2 group cursor-pointer">
-                        <div id="dot-3" class="h-10 w-10 rounded-xl bg-white text-slate-400 flex items-center justify-center text-sm font-bold transition-all duration-300 border-2 border-slate-200 ring-4 ring-white">
+                    <div class="flex flex-col items-center gap-3 group cursor-pointer" onclick="showStep(3)">
+                        <div id="dot-3" class="h-12 w-12 rounded-2xl bg-white text-muted-foreground flex items-center justify-center text-sm font-black transition-all duration-500 border border-border ring-4 ring-white">
                             3
                         </div>
-                        <span class="text-xs font-bold text-slate-400 tracking-wide uppercase">Validation</span>
+                        <span class="text-[9px] font-black text-muted-foreground tracking-widest uppercase">Validation</span>
                     </div>
                 </div>
             </div>
@@ -71,92 +72,67 @@
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('register') }}">
 
                 {# ETAPE 1 : Informations personnelles #}
-                <div class="form-step space-y-6 animate-fadeIn" id="step-1">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="form-step space-y-6" id="step-1">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="nom" class="block text-sm font-semibold text-slate-700 mb-2">Nom</label>
-                            <input id="nom" name="nom" type="text" required 
-                                   class="block w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-sm"
-                                   placeholder="Doe">
+                            <label class="form-label uppercase tracking-widest text-[10px]">Nom</label>
+                            <input id="nom" name="nom" type="text" required class="input-field" placeholder="Doe">
                         </div>
                         <div>
-                            <label for="prenom" class="block text-sm font-semibold text-slate-700 mb-2">Prénom</label>
-                            <input id="prenom" name="prenom" type="text" required 
-                                   class="block w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-sm"
-                                   placeholder="John">
+                            <label class="form-label uppercase tracking-widest text-[10px]">Prénom</label>
+                            <input id="prenom" name="prenom" type="text" required class="input-field" placeholder="John">
                         </div>
                     </div>
 
                     <div>
-                        <label for="email" class="block text-sm font-semibold text-slate-700 mb-2">Email</label>
+                        <label class="form-label uppercase tracking-widest text-[10px]">Email Professionnel</label>
                         <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-emerald-600 text-slate-400">
-                                <i class="fas fa-envelope"></i>
-                            </div>
-                            <input id="email" name="email" type="email" autocomplete="email" required 
-                                   class="block w-full pl-11 pr-4 py-3 bg-white/50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-sm"
-                                   placeholder="john@example.com">
+                            <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40 group-focus-within:text-primary transition-colors"></i>
+                            <input id="email" name="email" type="email" autocomplete="email" required class="input-field pl-12" placeholder="john@example.com">
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="password" class="block text-sm font-semibold text-slate-700 mb-2">Mot de passe</label>
+                            <label class="form-label uppercase tracking-widest text-[10px]">Mot de passe</label>
                             <div class="relative group">
-                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-emerald-600 text-slate-400">
-                                    <i class="fas fa-lock"></i>
-                                </div>
-                                <input id="password" name="plainPassword" type="password" required 
-                                       class="block w-full pl-11 pr-4 py-3 bg-white/50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-sm"
-                                       placeholder="••••••••">
+                                <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40 group-focus-within:text-primary transition-colors"></i>
+                                <input id="password" name="plainPassword" type="password" required class="input-field pl-12" placeholder="••••••••">
                             </div>
                         </div>
                         <div>
-                            <label for="confirm_password" class="block text-sm font-semibold text-slate-700 mb-2">Confirmation</label>
+                            <label class="form-label uppercase tracking-widest text-[10px]">Confirmation</label>
                             <div class="relative group">
-                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-emerald-600 text-slate-400">
-                                    <i class="fas fa-check-double"></i>
-                                </div>
-                                <input id="confirm_password" name="confirm_password" type="password" required 
-                                       class="block w-full pl-11 pr-4 py-3 bg-white/50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-sm"
-                                       placeholder="••••••••">
+                                <i class="fas fa-check-double absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40 group-focus-within:text-primary transition-colors"></i>
+                                <input id="confirm_password" name="confirm_password" type="password" required class="input-field pl-12" placeholder="••••••••">
                             </div>
                         </div>
                     </div>
 
                     <div>
-                        <label for="telephone" class="block text-sm font-semibold text-slate-700 mb-2">Téléphone</label>
+                        <label class="form-label uppercase tracking-widest text-[10px]">Téléphone</label>
                         <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-emerald-600 text-slate-400">
-                                <i class="fas fa-phone"></i>
-                            </div>
-                            <input id="telephone" name="telephone" type="tel" 
-                                   class="block w-full pl-11 pr-4 py-3 bg-white/50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-sm"
-                                   placeholder="+216 XX XXX XXX">
+                            <i class="fas fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40 group-focus-within:text-primary transition-colors"></i>
+                            <input id="telephone" name="telephone" type="tel" class="input-field pl-12" placeholder="+216 XX XXX XXX">
                         </div>
                     </div>
 
                     <div>
-                        <label for="role" class="block text-sm font-semibold text-slate-700 mb-2">Rôle</label>
-                        <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-emerald-600 text-slate-400">
-                                <i class="fas fa-user-tag"></i>
-                            </div>
-                            <select id="role" name="role" required 
-                                    class="block w-full pl-11 pr-4 py-3 bg-white/50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-sm appearance-none cursor-pointer">
+                        <label class="form-label uppercase tracking-widest text-[10px]">Rôle Utilisateur</label>
+                        <div class="relative">
+                            <i class="fas fa-user-tag absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40 pointer-events-none"></i>
+                            <select id="role" name="role" required class="input-field pl-12 appearance-none cursor-pointer">
                                 <option value="">Sélectionnez votre rôle</option>
                                 <option value="ROLE_PATIENT">Patient (Standard)</option>
                                 <option value="ROLE_MEDECIN">Médecin / Praticien</option>
                                 <option value="ROLE_ADMIN">Administrateur</option>
                             </select>
-                            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-slate-400">
-                                <i class="fas fa-chevron-down text-xs"></i>
-                            </div>
+                            <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground/50 pointer-events-none"></i>
                         </div>
                     </div>
 
-                    <div class="pt-4">
-                        <button type="button" onclick="validateAndNext(1)" class="group relative w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl text-sm font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 shadow-lg shadow-emerald-500/30 transition-all hover:shadow-emerald-500/40 hover:-translate-y-0.5">
+                    <div class="pt-6">
+                        <button type="button" onclick="validateAndNext(1)" class="btn-primary w-full py-4 text-sm font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20">
                             Suivant
                             <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                         </button>
@@ -164,104 +140,95 @@
                 </div>
 
                 {# ETAPE 2 : Informations physiques #}
-                <div class="form-step hidden space-y-6 animate-fadeIn" id="step-2">
-                    <div class="bg-blue-50/80 backdrop-blur-sm p-4 rounded-xl border border-blue-100 mb-6 flex items-start gap-3">
-                        <i class="fas fa-info-circle text-blue-500 mt-0.5"></i>
-                        <p class="text-sm text-blue-800">
-                            Ces informations nous aident à personnaliser votre expérience de santé.
+                <div class="form-step hidden space-y-6" id="step-2">
+                    <div class="bg-muted/30 p-4 rounded-2xl border border-border mb-6 flex items-start gap-4">
+                        <div class="stat-icon w-8 h-8 bg-primary/10 text-primary text-xs shrink-0">
+                            <i class="fas fa-info"></i>
+                        </div>
+                        <p class="text-[10px] font-bold text-foreground leading-relaxed uppercase tracking-tight">
+                            Ces informations nous aident à personnaliser vos analyses de santé et vos recommandations médicales.
                         </p>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-5">
+                    <div class="grid grid-cols-2 gap-6">
                         <div>
-                            <label for="age" class="block text-sm font-semibold text-slate-700 mb-2">Âge</label>
-                            <input id="age" name="age" type="number" 
-                                   class="block w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-sm"
-                                   placeholder="25">
+                            <label class="form-label uppercase tracking-widest text-[10px]">Âge</label>
+                            <input id="age" name="age" type="number" class="input-field" placeholder="25">
                         </div>
                         <div>
-                            <label for="sexe" class="block text-sm font-semibold text-slate-700 mb-2">Sexe</label>
+                            <label class="form-label uppercase tracking-widest text-[10px]">Sexe</label>
                             <div class="relative">
-                                <select id="sexe" name="sexe" 
-                                        class="block w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-sm appearance-none cursor-pointer">
+                                <select id="sexe" name="sexe" class="input-field appearance-none cursor-pointer">
                                     <option value="">Choisir...</option>
                                     <option value="Homme">Homme</option>
                                     <option value="Femme">Femme</option>
                                 </select>
-                                <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-slate-400">
-                                    <i class="fas fa-chevron-down text-xs"></i>
-                                </div>
+                                <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground/50 pointer-events-none"></i>
                             </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-5">
+                    <div class="grid grid-cols-2 gap-6">
                         <div>
-                            <label for="poids" class="block text-sm font-semibold text-slate-700 mb-2">Poids (kg)</label>
-                            <input id="poids" name="poids" type="number" step="0.1" 
-                                   class="block w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-sm"
-                                   placeholder="70.5">
+                            <label class="form-label uppercase tracking-widest text-[10px]">Poids (kg)</label>
+                            <input id="poids" name="poids" type="number" step="0.1" class="input-field" placeholder="70.5">
                         </div>
                         <div>
-                            <label for="taille" class="block text-sm font-semibold text-slate-700 mb-2">Taille (cm)</label>
-                            <input id="taille" name="taille" type="number" step="0.1" 
-                                   class="block w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-sm"
-                                   placeholder="175">
+                            <label class="form-label uppercase tracking-widest text-[10px]">Taille (cm)</label>
+                            <input id="taille" name="taille" type="number" step="0.1" class="input-field" placeholder="175">
                         </div>
                     </div>
 
-                    <div class="relative flex items-center p-4 border border-slate-200 rounded-xl bg-white/30 hover:bg-white/50 transition-colors cursor-pointer" onclick="document.getElementById('is_handicapped').click()">
-                        <div class="flex h-5 items-center">
-                            <input id="is_handicapped" name="is_handicapped" type="checkbox" class="h-5 w-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500/50">
+                    <div class="relative flex items-center p-5 border border-border rounded-2xl bg-muted/10 hover:bg-muted/20 transition-colors cursor-pointer group" onclick="document.getElementById('is_handicapped').click()">
+                        <div class="flex h-6 items-center">
+                            <input id="is_handicapped" name="is_handicapped" type="checkbox" class="h-5 w-5 rounded-lg border-muted text-primary focus:ring-primary/20">
                         </div>
-                        <div class="ml-3 text-sm">
-                            <label for="is_handicapped" class="font-bold text-slate-700 select-none cursor-pointer">Je suis en situation de handicap</label>
-                            <p class="text-slate-500 text-xs mt-0.5">Cochez cette case si vous avez besoin d'une assistance particulière.</p>
+                        <div class="ml-4">
+                            <label class="text-xs font-black text-foreground uppercase tracking-tight select-none cursor-pointer group-hover:text-primary transition-colors">Situation de handicap</label>
+                            <p class="text-[9px] text-muted-foreground font-bold uppercase tracking-widest mt-0.5">Cochez si vous avez besoin d'assistance particulière.</p>
                         </div>
                     </div>
 
-                    <div class="flex gap-4 pt-4">
-                        <button type="button" onclick="showStep(1)" class="flex-1 justify-center rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition-all">
+                    <div class="flex gap-4 pt-6">
+                        <button type="button" onclick="showStep(1)" class="btn-secondary flex-1 py-4 text-xs font-black uppercase tracking-widest">
                             Retour
                         </button>
-                        <button type="button" onclick="validateAndNext(2)" class="flex-1 justify-center rounded-xl border border-transparent bg-gradient-to-r from-emerald-600 to-teal-600 py-3.5 px-4 text-sm font-bold text-white shadow-lg shadow-emerald-500/30 hover:from-emerald-700 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all hover:shadow-emerald-500/40 hover:-translate-y-0.5">
+                        <button type="button" onclick="validateAndNext(2)" class="btn-primary flex-1 py-4 text-xs font-black uppercase tracking-widest shadow-xl shadow-primary/20">
                             Suivant
                         </button>
                     </div>
                 </div>
 
                 {# ETAPE 3 : Confirmation #}
-                <div class="form-step hidden space-y-6 animate-fadeIn" id="step-3">
-                    <div class="rounded-xl bg-slate-50/80 backdrop-blur-sm p-6 border border-slate-200">
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0">
-                                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-                                    <i class="fas fa-shield-alt text-lg"></i>
-                                </div>
+                <div class="form-step hidden space-y-8" id="step-3">
+                    <div class="rounded-2xl bg-foreground text-background p-8 shadow-2xl">
+                        <div class="flex items-start gap-5">
+                            <div class="stat-icon w-12 h-12 bg-primary text-white text-xl shadow-lg shadow-primary/30">
+                                <i class="fas fa-shield-alt"></i>
                             </div>
-                            <div class="ml-4">
-                                <h3 class="text-base font-bold text-slate-900">Confidentialité & Sécurité</h3>
-                                <div class="mt-2 text-sm text-slate-500 leading-relaxed">
-                                    <p>Vos données de santé sont cryptées et protégées conformément aux normes en vigueur. Sosi+ s'engage à ne jamais partager vos informations personnelles sans votre consentement explicite.</p>
-                                </div>
+                            <div>
+                                <h3 class="text-sm font-black uppercase tracking-widest mb-3">Confidentialité & Sécurité</h3>
+                                <p class="text-[11px] text-background/60 leading-relaxed font-medium">
+                                    Vos données de santé sont cryptées et protégées conformément aux normes RGPD. Sosi s'engage à ne jamais partager vos informations personnelles sans votre consentement explicite.
+                                </p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="relative flex items-center p-4 border border-slate-200 rounded-xl bg-white/30 hover:bg-white/50 transition-colors">
-                        <div class="flex h-5 items-center">
-                            <input id="terms" name="terms" type="checkbox" required class="h-5 w-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500/50">
+                    <div class="relative flex items-center p-5 border border-border rounded-2xl bg-muted/10">
+                        <div class="flex h-6 items-center">
+                            <input id="terms" name="terms" type="checkbox" required class="h-5 w-5 rounded-lg border-muted text-primary focus:ring-primary/20">
                         </div>
-                        <div class="ml-3 text-sm">
-                            <label for="terms" class="font-medium text-slate-700 select-none">J’accepte les <a href="#" class="text-emerald-600 hover:text-emerald-500 font-bold hover:underline">conditions d’utilisation</a> et la <a href="#" class="text-emerald-600 hover:text-emerald-500 font-bold hover:underline">politique de confidentialité</a>.</label>
+                        <div class="ml-4 text-[11px] font-bold text-muted-foreground leading-snug">
+                            <label for="terms" class="select-none">J’accepte les <a href="#" class="text-primary hover:underline">conditions d’utilisation</a> et la <a href="#" class="text-primary hover:underline">politique de confidentialité</a>.</label>
                         </div>
                     </div>
 
-                    <div class="flex gap-4 pt-4">
-                        <button type="button" onclick="showStep(2)" class="flex-1 justify-center rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition-all">
+                    <div class="flex gap-4 pt-6">
+                        <button type="button" onclick="showStep(2)" class="btn-secondary flex-1 py-4 text-xs font-black uppercase tracking-widest">
                             Retour
                         </button>
-                        <button type="submit" class="flex-1 justify-center rounded-xl border border-transparent bg-gradient-to-r from-emerald-600 to-teal-600 py-3.5 px-4 text-sm font-bold text-white shadow-lg shadow-emerald-500/30 hover:from-emerald-700 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all hover:shadow-emerald-500/40 hover:-translate-y-0.5">
+                        <button type="submit" class="btn-primary flex-1 py-4 text-xs font-black uppercase tracking-widest shadow-xl shadow-primary/20">
                             Créer mon compte
                         </button>
                     </div>
@@ -270,8 +237,8 @@
         </div>
         
         {# Copyright #}
-        <div class="mt-8 text-center text-xs text-slate-400">
-            &copy; {{ "now"|date("Y") }} Sosi+ HealthCare. Tous droits réservés.
+        <div class="mt-8 text-center text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/50">
+            &copy; {{ "now"|date("Y") }} SOSI HEALTHCARE. TOUS DROITS RÉSERVÉS.
         </div>
     </div>
 </div>
@@ -281,7 +248,6 @@
         const currentStepDiv = document.getElementById('step-' + currentStep);
         const inputs = Array.from(currentStepDiv.querySelectorAll('input, select'));
         
-        // Check standard validation first
         for (const input of inputs) {
             if (!input.checkValidity()) {
                 input.reportValidity();
@@ -289,7 +255,6 @@
             }
         }
         
-        // Custom validation for Step 1
         if (currentStep === 1) {
             const pwd = document.getElementById('password');
             const confirm = document.getElementById('confirm_password');
@@ -303,7 +268,6 @@
                 return;
             }
             
-            // Configure requirements for Step 2 based on Role
             const role = document.getElementById('role').value;
             const isHealthRequired = (role !== 'ROLE_ADMIN');
             
@@ -313,23 +277,21 @@
             });
         }
         
-        // If all good, proceed
         showStep(currentStep + 1);
     }
 
     function showStep(stepNumber) {
-        // Hide all steps
         document.querySelectorAll('.form-step').forEach(step => {
             step.classList.add('hidden');
         });
         
-        // Show current step
-        document.getElementById('step-' + stepNumber).classList.remove('hidden');
+        const targetStep = document.getElementById('step-' + stepNumber);
+        if (!targetStep) return;
         
-        // Update dots and progress
+        targetStep.classList.remove('hidden');
+        targetStep.classList.add('animate-page-enter');
+        
         const progressBar = document.getElementById('progress-bar');
-        
-        // Update Progress Bar
         if (stepNumber === 1) progressBar.style.width = '0%';
         if (stepNumber === 2) progressBar.style.width = '50%';
         if (stepNumber === 3) progressBar.style.width = '100%';
@@ -338,32 +300,27 @@
             const dot = document.getElementById('dot-' + i);
             const label = dot.nextElementSibling;
             
-            // Reset base classes
-            dot.className = 'h-10 w-10 rounded-xl flex items-center justify-center text-sm font-bold transition-all duration-300 ring-4 ring-white';
+            dot.className = 'h-12 w-12 rounded-2xl flex items-center justify-center text-sm font-black transition-all duration-500 ring-4 ring-white';
             
             if (i < stepNumber) {
-                // Completed steps
-                dot.classList.add('bg-emerald-600', 'text-white');
+                dot.classList.add('bg-primary', 'text-white');
                 dot.innerHTML = '<i class="fas fa-check"></i>';
-                label.classList.remove('text-slate-400');
-                label.classList.add('text-emerald-600');
+                label.classList.remove('text-muted-foreground');
+                label.classList.add('text-primary');
             } else if (i === stepNumber) {
-                // Current step
-                dot.classList.add('bg-emerald-600', 'text-white', 'shadow-lg', 'shadow-emerald-500/30');
+                dot.classList.add('bg-primary', 'text-white', 'shadow-xl', 'shadow-primary/30');
                 dot.innerHTML = i;
-                label.classList.remove('text-slate-400');
-                label.classList.add('text-slate-800');
+                label.classList.remove('text-muted-foreground');
+                label.classList.add('text-foreground');
             } else {
-                // Future steps
-                dot.classList.add('bg-white', 'text-slate-400', 'border-2', 'border-slate-200');
+                dot.classList.add('bg-white', 'text-muted-foreground', 'border', 'border-border');
                 dot.innerHTML = i;
-                label.classList.add('text-slate-400');
-                label.classList.remove('text-slate-800', 'text-emerald-600');
+                label.classList.add('text-muted-foreground');
+                label.classList.remove('text-foreground', 'text-primary');
             }
         }
     }
 
-    // Initialize
     document.addEventListener('DOMContentLoaded', () => {
         showStep(1);
     });

@@ -15,15 +15,15 @@ use Symfony\Component\Routing\Annotation\Route;
 class DemandeDonAdminController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager
     ) {}
 
     #[Route('/demandes', name: 'admin_demandes')]
     public function index(Request $request, DemandeDonRepository $repository): Response
     {
-        $page = max(1, (int) $request->query->get('page', 1));
-        $search = $request->query->get('search');
-        $type = $request->query->get('type');
+        $currentPage = max(1, (int)$request->query->get('page', 1));
+        $search = (string)$request->query->get('search', '');
+        $type = (string)$request->query->get('type', '');
 
         $qb = $repository->createQueryBuilder('d')
             ->orderBy('d.dateDemande', 'DESC');
@@ -38,22 +38,22 @@ class DemandeDonAdminController extends AbstractController
                ->setParameter('type', $type);
         }
 
-        $itemsPerPage = 10;
-        $qb->setFirstResult(($page - 1) * $itemsPerPage)
-           ->setMaxResults($itemsPerPage);
+        $pageSize = 10;
+        $qb->setFirstResult(($currentPage - 1) * $pageSize)
+           ->setMaxResults($pageSize);
 
         $demandes = $qb->getQuery()->getResult();
         
         $totalQb = clone $qb;
         $totalQb->select('COUNT(d.id)');
-        $total = $totalQb->getQuery()->getSingleScalarResult();
+        $total = (int) $totalQb->getQuery()->getSingleScalarResult();
 
         return $this->render('admin/don/demandes.html.twig', [
             'demandes' => $demandes,
             'pagination' => [
                 'total' => $total,
-                'pages' => (int) ceil($total / $itemsPerPage),
-                'current' => $page,
+                'pages' => (int) ceil($total / $pageSize),
+                'current' => $currentPage,
             ],
             'filters' => [
                 'search' => $search,
@@ -65,7 +65,7 @@ class DemandeDonAdminController extends AbstractController
     #[Route('/demandes/delete/{id}', name: 'admin_demande_delete', methods: ['POST'])]
     public function delete(DemandeDon $demande, Request $request): Response
     {
-        if (!$this->isCsrfTokenValid('delete' . $demande->getId(), $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('refuse' . $demande->getId(), (string)$request->request->get('_token'))) {
             $this->addFlash('error', 'Token de sécurité invalide');
             return $this->redirectToRoute('admin_demandes');
         }
@@ -81,7 +81,7 @@ class DemandeDonAdminController extends AbstractController
     #[Route('/demandes/approve/{id}', name: 'admin_demande_approve', methods: ['POST'])]
     public function approve(DemandeDon $demande, Request $request): Response
     {
-        if (!$this->isCsrfTokenValid('approve' . $demande->getId(), $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('approve' . $demande->getId(), (string)$request->request->get('_token'))) {
             $this->addFlash('error', 'Token de sécurité invalide');
             return $this->redirectToRoute('admin_demandes');
         }

@@ -22,12 +22,15 @@ public function getAverageCycleLength(): ?float
     $qb = $this->createQueryBuilder('c')
         ->select('AVG(DATE_DIFF(c.dateFinM, c.dateDebutM)) as avgCycle');
 
-    return $qb->getQuery()->getSingleScalarResult();
+    return (float)$qb->getQuery()->getSingleScalarResult();
 }
 // src/Repository/CycleRepository.php
 // src/Repository/CycleRepository.php
 
-public function findAllCyclesWithCycleLength()
+    /**
+     * @return array<int, array{cycle: Cycle, cycleLength: int|null}>
+     */
+    public function findAllCyclesWithCycleLength(): array
 {
     $cycles = $this->createQueryBuilder('c')
         ->orderBy('c.dateDebutM', 'ASC')

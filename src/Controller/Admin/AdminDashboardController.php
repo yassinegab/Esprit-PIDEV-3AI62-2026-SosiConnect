@@ -34,10 +34,12 @@ class AdminDashboardController extends AbstractController
         $totalAppointments = 0;
         $totalHospitals = 0;
 
+        /** @var \App\Entity\User|null $user */
+        $user = $this->getUser();
         // Données admin
         $admin = [
-            'prenom' => $this->getUser() ? $this->getUser()->getPrenom() : 'Admin',
-            'nom' => $this->getUser() ? $this->getUser()->getNom() : '',
+            'prenom' => $user ? $user->getPrenom() : 'Admin',
+            'nom' => $user ? $user->getNom() : '',
         ];
 
         // Actions rapides admin

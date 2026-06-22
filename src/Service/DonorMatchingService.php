@@ -14,9 +14,12 @@ class DonorMatchingService
     public const MATCH_LOW = 0;
 
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager
     ) {}
 
+    /**
+     * @return array<int, array{donor: Donneur, score: int, level: string, reasons: string[]}>
+     */
     public function findMatchingDonors(DemandeDon $demande): array
     {
         $donneurRepository = $this->entityManager->getRepository(Donneur::class);
@@ -45,6 +48,9 @@ class DonorMatchingService
         return $matches;
     }
 
+    /**
+     * @return array<int, array{demande: DemandeDon, score: int, level: string, reasons: string[]}>
+     */
     public function findMatchingRequests(Donneur $donor): array
     {
         $demandeRepository = $this->entityManager->getRepository(DemandeDon::class);
@@ -135,13 +141,18 @@ class DonorMatchingService
         return 'low';
     }
 
+    /**
+     * @return string[]
+     */
     private function getMatchReasons(Donneur $donor, DemandeDon $demande): array
     {
         $reasons = [];
 
-        if ($demande->getTypeDemande() === 'sang' && $donor->getGroupeSanguin() === $demande->getTypeSanguin()) {
+        $donorType = $donor->getGroupeSanguin();
+        $recipientType = $demande->getTypeSanguin();
+        if ($demande->getTypeDemande() === 'sang' && $donorType === $recipientType) {
             $reasons[] = 'Groupe sanguin identique';
-        } elseif ($this->isBloodTypeCompatible($donor->getGroupeSanguin(), $demande->getTypeSanguin())) {
+        } elseif ($donorType && $recipientType && $this->isBloodTypeCompatible($donorType, $recipientType)) {
             $reasons[] = 'Groupe sanguin compatible';
         }
 
@@ -161,6 +172,9 @@ class DonorMatchingService
         return $reasons;
     }
 
+    /**
+     * @return array<int, array{demande: DemandeDon, topDonors: array<int, array{donor: Donneur, score: int, level: string, reasons: string[]}>}>
+     */
     public function autoMatchDonations(): array
     {
         $demandes = $this->entityManager->getRepository(DemandeDon::class)

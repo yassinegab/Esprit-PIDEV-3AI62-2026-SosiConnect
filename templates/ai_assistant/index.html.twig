@@ -1,117 +1,159 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}ChatWell - AI Mental Health Assistant{% endblock %}
+{% block title %}Coach AI Bien-être — Sosi{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/ai-assistant.css') }}">
 {% endblock %}
 
 {% block body %}
-<div class="flex flex-1 flex-col h-screen">
+<div class="min-h-screen bg-background flex flex-col">
     {% include 'components/top-nav.html.twig' %}
-    
-    <div class="main-container ai-assistant-wrapper flex-1 overflow-hidden relative">
-    <div class="row g-0 h-100">
-        <div class="col-lg-5 col-md-6 p-3">
-            <div class="video-panel">
-                <div class="video-container" id="videoContainer">
-                    <video id="videoPreview" autoplay playsinline muted></video>
-                    <div class="avatar-placeholder" id="avatarPlaceholder">
-                        <div class="robot-avatar">
-                            <div class="robot-head">
-                                <div class="robot-eyes">
-                                    <div class="eye left"></div>
-                                    <div class="eye right"></div>
+
+    <main class="flex-1 animate-page-enter">
+        <div class="mx-auto max-w-7xl p-4 lg:p-8">
+
+            {# ── Page Header ─────────────────────────────────────── #}
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h1 class="page-title">Coach AI Bien-être</h1>
+                    <p class="page-subtitle">Parlez ou écrivez — votre coach est à l'écoute.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <select id="langSelect"
+                            class="input-field"
+                            style="width:auto;height:auto;padding:.4rem .75rem;font-size:.8rem;">
+                        <option value="fr-FR">🇫🇷 Français</option>
+                        <option value="ar-SA">🇸🇦 عربي</option>
+                        <option value="en-US">🇺🇸 English</option>
+                    </select>
+                    <a href="{{ path('user_wellbeing_index') }}" class="btn-secondary" style="font-size:.85rem;">
+                        <i class="fas fa-arrow-left"></i> Retour
+                    </a>
+                </div>
+            </div>
+
+            {# ── Main Layout — two columns via Tailwind grid ──────── #}
+            <div class="ai-assistant-wrapper grid grid-cols-1 md:grid-cols-2 gap-4" style="height:calc(100vh - 220px);min-height:520px;">
+
+                {# ── Left: Camera / Avatar Panel ──────────────────── #}
+                <div class="video-panel card">
+                    <div class="video-container" id="videoContainer">
+                        <video id="videoPreview" autoplay playsinline muted></video>
+                        <div class="avatar-placeholder" id="avatarPlaceholder">
+                            <div class="robot-avatar">
+                                <div class="robot-head">
+                                    <div class="robot-eyes">
+                                        <div class="eye left"></div>
+                                        <div class="eye right"></div>
+                                    </div>
+                                    <div class="robot-mouth"></div>
                                 </div>
-                                <div class="robot-mouth"></div>
+                                <div class="robot-body"></div>
                             </div>
-                            <div class="robot-body"></div>
+                        </div>
+                        <div class="status-indicator" id="statusIndicator">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Caméra désactivée</span>
                         </div>
                     </div>
-                    <div class="status-indicator" id="statusIndicator">
-                        <span class="status-dot"></span>
-                        <span class="status-text">Camera Off</span>
-                    </div>
-                </div>
-                
-                <div class="controls-container">
-                    <button class="btn btn-control" id="cameraBtn" title="Toggle Camera">
-                        <i class="fas fa-video"></i>
-                    </button>
-                    <button class="btn btn-control" id="micBtn" title="Toggle Microphone">
-                        <i class="fas fa-microphone"></i>
-                    </button>
-                    <button class="btn btn-record" id="recordBtn" title="Start Recording">
-                        <i class="fas fa-microphone"></i>
-                    </button>
-                </div>
 
-                <div class="recording-status" id="recordingStatus">
-                    <div class="waveform" id="waveform">
-                        <span></span><span></span><span></span><span></span><span></span>
+                    <div class="controls-container">
+                        <button class="btn-control" id="cameraBtn" title="Activer/désactiver la caméra">
+                            <i class="fas fa-video"></i>
+                        </button>
+                        <button class="btn-control" id="micBtn" title="Activer/désactiver le micro">
+                            <i class="fas fa-microphone-slash"></i>
+                        </button>
+                        <button class="btn-record" id="recordBtn" title="Appuyez pour parler">
+                            <i class="fas fa-microphone"></i>
+                        </button>
                     </div>
-                    <span class="recording-text">Listening...</span>
-                </div>
-            </div>
-        </div>
 
-        <div class="col-lg-7 col-md-6 p-3">
-            <div class="chat-panel">
-                <div class="chat-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-comments me-2"></i>
-                        Talk to your AI Coach
-                    </h5>
-                </div>
-                
-                <div class="chat-messages" id="chatMessages">
-                    <div class="message assistant">
-                        <div class="message-content">
-                            <p>Hello! I'm your AI Mental Wellness Coach. I'm here to listen and support you.</p>
-                            <p>You can:</p>
-                            <ul>
-                                <li>Click the microphone button and speak to me</li>
-                                <li>Type your message in the chat</li>
-                                <li>Share what's on your mind</li>
-                            </ul>
-                            <p>How are you feeling today?</p>
+                    <div class="recording-status" id="recordingStatus">
+                        <div class="waveform" id="waveform">
+                            <span></span><span></span><span></span><span></span><span></span>
                         </div>
-                        <div class="message-time">{{ 'now'|date('g:i A') }}</div>
+                        <span class="recording-text">Écoute en cours…</span>
+                    </div>
+
+                    <p class="speech-hint">
+                        <i class="fas fa-info-circle"></i>
+                        Reconnaissance vocale native — Chrome / Edge recommandé
+                    </p>
+                </div>
+
+                {# ── Right: Chat Panel ─────────────────────────────── #}
+                <div class="chat-panel card">
+                    <div class="chat-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-comments me-2"></i>
+                            Coach AI Bien-être
+                        </h5>
+                        <span class="badge-primary" style="margin-left:auto;font-size:.7rem;">En ligne</span>
+                    </div>
+
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message assistant">
+                            <div class="message-content">
+                                <p>Bonjour ! Je suis votre <strong>Coach IA Bien-être Mental</strong>. Je suis là pour vous écouter et vous soutenir.</p>
+                                <p>Vous pouvez :</p>
+                                <ul>
+                                    <li>Appuyer sur <i class="fas fa-microphone text-primary"></i> et me parler</li>
+                                    <li>Taper votre message dans le chat ci-dessous</li>
+                                    <li>Partager ce qui vous préoccupe</li>
+                                </ul>
+                                <p><strong>Comment vous sentez-vous aujourd'hui ?</strong></p>
+                            </div>
+                            <div class="message-time">{{ 'now'|date('H:i') }}</div>
+                        </div>
+                    </div>
+
+                    <div class="chat-input-container">
+                        <input type="text" class="form-control" id="chatInput"
+                               placeholder="Écrivez votre message…" autocomplete="off">
+                        <button class="btn-send" id="sendBtn" title="Envoyer">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+
+                    <div class="emotion-indicator" id="emotionIndicator">
+                        <span class="emotion-label">Humeur :</span>
+                        <span class="emotion-value" id="currentEmotion">—</span>
+                        <span class="stress-label" style="margin-left:.75rem;">Stress :</span>
+                        <span class="stress-value" id="currentStress">—</span>
                     </div>
                 </div>
 
-                <div class="chat-input-container">
-                    <input type="text" class="form-control" id="chatInput" placeholder="Type your message...">
-                    <button class="btn btn-primary" id="sendBtn">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
+            </div>{# /grid #}
 
-                <div class="emotion-indicator" id="emotionIndicator">
-                    <span class="emotion-label">Current mood:</span>
-                    <span class="emotion-value" id="currentEmotion">-</span>
-                    <span class="stress-label">Stress:</span>
-                    <span class="stress-value" id="currentStress">-</span>
-                </div>
-            </div>
         </div>
-    </div>
+    </main>
 </div>
 
+{# Loading overlay #}
 <div class="loading-overlay" id="loadingOverlay">
     <div class="spinner-container">
         <div class="spinner"></div>
-        <p class="mt-3">Processing...</p>
+        <p style="margin-top:.75rem;">Traitement en cours…</p>
     </div>
 </div>
-
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Expose selected language globally before the assistant script loads
+        window._speechLang = 'fr-FR';
+        document.addEventListener('DOMContentLoaded', function () {
+            var sel = document.getElementById('langSelect');
+            if (sel) {
+                sel.addEventListener('change', function () {
+                    window._speechLang = this.value;
+                });
+            }
+        });
+    </script>
     <script src="{{ asset('js/ai-assistant.js') }}"></script>
 {% endblock %}

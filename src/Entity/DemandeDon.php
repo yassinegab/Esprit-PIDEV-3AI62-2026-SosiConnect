@@ -55,6 +55,9 @@ class DemandeDon
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
+    /**
+     * @var Collection<int, ReponseDon>
+     */
     #[ORM\OneToMany(mappedBy: 'demande', targetEntity: ReponseDon::class, cascade: ['persist'])]
     private Collection $reponses;
 
@@ -203,6 +206,9 @@ public function setDateDemande(\DateTimeInterface $dateDemande): self
         return $this;
     }
 
+    /**
+     * @return Collection<int, ReponseDon>
+     */
     public function getReponses(): Collection
     {
         return $this->reponses;

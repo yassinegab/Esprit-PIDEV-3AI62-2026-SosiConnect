@@ -21,9 +21,9 @@ class UserWellBeingDataAdminController extends AbstractController
     #[Route('/', name: 'index', methods: ['GET'])]
     public function index(Request $request, UserWellBeingDataRepository $repository, PaginatorInterface $paginator): Response
     {
-        $searchTerm = $request->query->get('search');
-        $sortField = $request->query->get('sortField', 'createdAt');
-        $sortDirection = $request->query->get('sortDirection', 'desc');
+        $searchTerm = (string)$request->query->get('search', '');
+        $sortField = (string)$request->query->get('sortField', 'createdAt');
+        $sortDirection = (string)$request->query->get('sortDirection', 'desc');
 
         $sort = [$sortField => $sortDirection];
         // Use query builder for pagination instead of result array
@@ -76,6 +76,7 @@ class UserWellBeingDataAdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // Admin can assign user (default to admin or first user for now)
             if (!$userWellBeingDatum->getUser()) {
+                /** @var \App\Entity\User|null $user */
                 $user = $this->getUser() ?? $entityManager->getRepository(User::class)->find(1);
                 $userWellBeingDatum->setUser($user);
             }
@@ -130,7 +131,7 @@ class UserWellBeingDataAdminController extends AbstractController
     #[Route('/{id}', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, UserWellBeingData $userWellBeingDatum, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $userWellBeingDatum->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $userWellBeingDatum->getId(), (string)$request->request->get('_token'))) {
             $entityManager->remove($userWellBeingDatum);
             $entityManager->flush();
         }

@@ -19,8 +19,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class AideMapController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly ValidatorInterface $validator
+        private EntityManagerInterface $entityManager,
+        private ValidatorInterface $validator
     ) {}
 
     #[Route('/map', name: 'aide_map')]
@@ -146,10 +146,10 @@ class AideMapController extends AbstractController
     {
         $review = new LieuMedicalReview();
         $review->setLieu($lieu);
-        $review->setAuthorName($request->request->get('author_name'));
-        $review->setAuthorEmail($request->request->get('author_email'));
+        $review->setAuthorName((string)$request->request->get('author_name', ''));
+        $review->setAuthorEmail((string)$request->request->get('author_email', ''));
         $review->setRating((int) $request->request->get('rating', 5));
-        $review->setComment($request->request->get('comment'));
+        $review->setComment((string)$request->request->get('comment', ''));
 
         $errors = $this->validator->validate($review);
         
@@ -193,9 +193,8 @@ class AideMapController extends AbstractController
     public function getQrCode(LieuMedical $lieu, QrCodeService $qrCodeService): JsonResponse
     {
         $qrCode = $qrCodeService->generateMedicalLocationQr(
-            $lieu->getLatitude(),
-            $lieu->getLongitude(),
-            $lieu->getNom()
+            $lieu->getNom(),
+            $lieu->getAdresse()
         );
 
         return $this->json([

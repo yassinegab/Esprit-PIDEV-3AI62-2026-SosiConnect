@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class TutorialAdminController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager
     ) {}
 
     #[Route('', name: 'admin_tutorials')]
@@ -34,10 +34,10 @@ class TutorialAdminController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $tutorial = new VideoTutorial();
-            $tutorial->setTitle($request->request->get('title'));
-            $tutorial->setDescription($request->request->get('description'));
-            $tutorial->setVideoUrl($request->request->get('video_url'));
-            $tutorial->setCategory($request->request->get('category', 'general'));
+            $tutorial->setTitle((string)$request->request->get('title', ''));
+            $tutorial->setDescription((string)$request->request->get('description', ''));
+            $tutorial->setVideoUrl((string)$request->request->get('video_url', ''));
+            $tutorial->setCategory((string)$request->request->get('category', 'general'));
             $tutorial->setDuration((int) $request->request->get('duration', 0));
             $tutorial->setDisplayOrder((int) $request->request->get('display_order', 0));
             $tutorial->setIsPublished($request->request->getBoolean('is_published', true));
@@ -58,10 +58,10 @@ class TutorialAdminController extends AbstractController
     public function edit(VideoTutorial $tutorial, Request $request): Response
     {
         if ($request->isMethod('POST')) {
-            $tutorial->setTitle($request->request->get('title'));
-            $tutorial->setDescription($request->request->get('description'));
-            $tutorial->setVideoUrl($request->request->get('video_url'));
-            $tutorial->setCategory($request->request->get('category', 'general'));
+            $tutorial->setTitle((string)$request->request->get('title', ''));
+            $tutorial->setDescription((string)$request->request->get('description', ''));
+            $tutorial->setVideoUrl((string)$request->request->get('video_url', ''));
+            $tutorial->setCategory((string)$request->request->get('category', 'general'));
             $tutorial->setDuration((int) $request->request->get('duration', 0));
             $tutorial->setDisplayOrder((int) $request->request->get('display_order', 0));
             $tutorial->setIsPublished($request->request->getBoolean('is_published', true));

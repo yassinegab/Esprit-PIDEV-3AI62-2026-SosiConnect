@@ -5,43 +5,40 @@
 {% set routeName = route ?? app.request.attributes.get('_route') %}
 
 {% if total > 1 %}
-<div class="p-6 border-t border-gray-200 bg-gray-50">
-  <div class="flex items-center justify-between">
-    <div class="text-sm text-gray-600">
-      Page {{ current }} sur {{ total }}
+<div class="flex items-center justify-between border-t border-border bg-background px-6 py-4">
+    <div class="text-sm text-muted-foreground">
+        Page <span class="font-semibold text-foreground">{{ current }}</span> sur <span class="font-semibold text-foreground">{{ total }}</span>
     </div>
-    <div class="flex gap-2">
-      {% if current > 1 %}
-        <a href="{{ path(routeName, baseParams|merge({ (pageParam): current - 1 })) }}"
-           class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-          <i class="fas fa-chevron-left"></i> Précédent
-        </a>
-      {% endif %}
-
-      {% set start = current - 2 %}
-      {% set end = current + 2 %}
-      {% if start < 1 %}{% set start = 1 %}{% endif %}
-      {% if end > total %}{% set end = total %}{% endif %}
-
-      {% for i in start..end %}
-        {% if i == current %}
-          <span class="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold">{{ i }}</span>
-        {% else %}
-          <a href="{{ path(routeName, baseParams|merge({ (pageParam): i })) }}"
-             class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-            {{ i }}
-          </a>
+    <div class="flex items-center gap-1.5">
+        {% if current > 1 %}
+            <a href="{{ path(routeName, baseParams|merge({ (pageParam): current - 1 })) }}"
+               class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-muted hover:text-foreground">
+                <i class="fas fa-chevron-left text-xs"></i> Précédent
+            </a>
         {% endif %}
-      {% endfor %}
 
-      {% if current < total %}
-        <a href="{{ path(routeName, baseParams|merge({ (pageParam): current + 1 })) }}"
-           class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-          Suivant <i class="fas fa-chevron-right"></i>
-        </a>
-      {% endif %}
+        {% set start = current - 2 %}
+        {% set end = current + 2 %}
+        {% if start < 1 %}{% set start = 1 %}{% endif %}
+        {% if end > total %}{% set end = total %}{% endif %}
+
+        {% for i in start..end %}
+            {% if i == current %}
+                <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-sm font-bold text-white shadow-sm">{{ i }}</span>
+            {% else %}
+                <a href="{{ path(routeName, baseParams|merge({ (pageParam): i })) }}"
+                   class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-sm font-medium text-muted-foreground transition-all hover:bg-muted hover:text-foreground">
+                    {{ i }}
+                </a>
+            {% endif %}
+        {% endfor %}
+
+        {% if current < total %}
+            <a href="{{ path(routeName, baseParams|merge({ (pageParam): current + 1 })) }}"
+               class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-muted hover:text-foreground">
+                Suivant <i class="fas fa-chevron-right text-xs"></i>
+            </a>
+        {% endif %}
     </div>
-  </div>
 </div>
 {% endif %}
-

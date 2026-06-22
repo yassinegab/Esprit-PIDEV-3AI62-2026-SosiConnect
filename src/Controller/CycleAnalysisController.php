@@ -47,7 +47,12 @@ final class CycleAnalysisController extends AbstractController
                     if (isset($cycles[$idx], $cycles[$idx + 1])) {
                         $cycle = $cycles[$idx];
                         $nextCycle = $cycles[$idx + 1];
-                        $cycleEnd = (clone $nextCycle->getDateDebutM())->modify('-1 day');
+                        $nextDate = $nextCycle->getDateDebutM();
+                        if ($nextDate) {
+                            $cycleEnd = (clone $nextDate)->modify('-1 day');
+                        } else {
+                            $cycleEnd = null;
+                        }
                         $irregularFromAi[] = [
                             'cycle' => $cycle,
                             'cycleEnd' => $cycleEnd,

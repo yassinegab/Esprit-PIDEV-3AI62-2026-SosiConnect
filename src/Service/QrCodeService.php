@@ -33,21 +33,18 @@ class QrCodeService
             . "=========================" . "\n"
             . "SmartHealth AI";
 
-        // ✅ Version 6 — new Builder() avec arguments nommés
-        $builder = new Builder(
-            writer: new PngWriter(),
-            writerOptions: [],
-            validateResult: false,
-            data: $content,
-            encoding: new Encoding('UTF-8'),
-            errorCorrectionLevel: ErrorCorrectionLevel::High,
-            size: 280,
-            margin: 12,
-            foregroundColor: new Color(30, 58, 138),
-            backgroundColor: new Color(255, 255, 255),
-        );
-
-        $result = $builder->build();
+        $result = Builder::create()
+            ->writer(new PngWriter())
+            ->writerOptions([])
+            ->validateResult(false)
+            ->data($content)
+            ->encoding(new Encoding('UTF-8'))
+            ->errorCorrectionLevel(ErrorCorrectionLevel::High)
+            ->size(280)
+            ->margin(12)
+            ->foregroundColor(new Color(30, 58, 138))
+            ->backgroundColor(new Color(255, 255, 255))
+            ->build();
 
         return base64_encode($result->getString());
     }
@@ -57,19 +54,44 @@ class QrCodeService
      */
     public function generateSimple(string $content, int $size = 200): string
     {
-        $builder = new Builder(
-            writer: new PngWriter(),
-            writerOptions: [],
-            validateResult: false,
-            data: $content,
-            encoding: new Encoding('UTF-8'),
-            errorCorrectionLevel: ErrorCorrectionLevel::Medium,
-            size: $size,
-            margin: 10,
-        );
-
-        $result = $builder->build();
+        $result = Builder::create()
+            ->writer(new PngWriter())
+            ->writerOptions([])
+            ->validateResult(false)
+            ->data($content)
+            ->encoding(new Encoding('UTF-8'))
+            ->errorCorrectionLevel(ErrorCorrectionLevel::Medium)
+            ->size($size)
+            ->margin(10)
+            ->build();
 
         return base64_encode($result->getString());
+    }
+
+    /**
+     * ✅ Génère un QR code pour une localisation médicale
+     */
+    public function generateMedicalLocationQr(string $lieuNom, string $adresse): string
+    {
+        $content = "Lieu: {$lieuNom}\nAdresse: {$adresse}";
+        return $this->generateSimple($content);
+    }
+
+    /**
+     * ✅ Génère un QR code pour une carte de donneur
+     */
+    public function generateDonorCardQr(string $donneurNom, string $groupeSanguin): string
+    {
+        $content = "Donneur: {$donneurNom}\nGroupe: {$groupeSanguin}";
+        return $this->generateSimple($content);
+    }
+
+    /**
+     * ✅ Génère un QR code pour un certificat de don
+     */
+    public function generateDonationCertificateQr(string $certificatId, string $donneurNom = 'Donneur'): string
+    {
+        $content = "Certificat: {$certificatId}\nDonneur: {$donneurNom}";
+        return $this->generateSimple($content);
     }
 }

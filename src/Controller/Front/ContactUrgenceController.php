@@ -20,19 +20,25 @@ class ContactUrgenceController extends AbstractController
         EntityManagerInterface $em,
         ContactUrgenceRepository $repo
     ): Response {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
         $contact = new ContactUrgence();
 
         $form = $this->createForm(ContactUrgenceType::class, $contact);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $contact->setUser($user);
             $em->persist($contact);
             $em->flush();
 
             return $this->redirectToRoute('contact_urgence_index');
         }
 
-        $contacts = $repo->findAll();
+        $contacts = $repo->findBy(['user' => $user]);
 
         return $this->render('front/contact_urgence/index.html.twig', [
             'form' => $form->createView(),
@@ -45,28 +51,36 @@ class ContactUrgenceController extends AbstractController
         ContactUrgence $contact,
         EntityManagerInterface $em
     ): Response {
+        if ($contact->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à supprimer ce contact.');
+        }
+
         $em->remove($contact);
         $em->flush();
 
         return $this->redirectToRoute('contact_urgence_index');
     }
+
     #[Route('/edit/{id}', name: 'contact_urgence_edit')]
-public function edit(
-    Request $request,
-    ContactUrgence $contact,
-    EntityManagerInterface $em
-): Response {
-    $form = $this->createForm(ContactUrgenceType::class, $contact);
-    $form->handleRequest($request);
+    public function edit(
+        Request $request,
+        ContactUrgence $contact,
+        EntityManagerInterface $em
+    ): Response {
+        if ($contact->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à modifier ce contact.');
+        }
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        $em->flush(); // pas besoin de persist (déjà existant)
-        return $this->redirectToRoute('contact_urgence_index');
+        $form = $this->createForm(ContactUrgenceType::class, $contact);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            return $this->redirectToRoute('contact_urgence_index');
+        }
+
+        return $this->render('front/contact_urgence/edit.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
-
-    return $this->render('front/contact_urgence/edit.html.twig', [
-        'form' => $form->createView(),
-    ]);
-}
-
 }

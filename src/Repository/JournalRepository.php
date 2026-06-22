@@ -9,6 +9,9 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<Journal>
  */
+/**
+ * @extends ServiceEntityRepository<Journal>
+ */
 class JournalRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

@@ -17,7 +17,10 @@ class MealRepository extends ServiceEntityRepository
     }
     // src/Repository/MealRepository.php
 
-    public function findBySearchAndSort(?string $search, string $sortField, string $sortDirection)
+    /**
+     * @return array<int, Meal>
+     */
+    public function findBySearchAndSort(?string $search, string $sortField, string $sortDirection): array
     {
         $qb = $this->createQueryBuilder('m');
 
@@ -39,6 +42,9 @@ class MealRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getStatistics(): array
     {
         $qb = $this->createQueryBuilder('m');

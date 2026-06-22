@@ -4,13 +4,14 @@ namespace App\Controller;
 use App\Repository\CycleRepository;
 use App\Service\HormonalPhaseService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CyclePhasePageController extends AbstractController
 {
     #[Route('/phases', name: 'cycle_phases')]
-    public function index()
+    public function index(): Response
     {
         return $this->render('cycle/phases.html.twig');
     }
@@ -30,12 +31,16 @@ class CyclePhasePageController extends AbstractController
             $cycleLength = 28; // par défaut
             $periods = $phaseService->generateCyclePhases($cycle); // toutes les phases
             
-            // On récupère le jour de l'ovulation
+            $ovulationDate = null;
             foreach ($periods as $phase) {
                 if ($phase['title'] === 'Ovulation') {
                     $ovulationDate = $phase['start'];
                     break;
                 }
+            }
+
+            if (!$ovulationDate) {
+                continue;
             }
 
             // Créer période fertile : 5 jours avant et 5 jours après ovulation
@@ -46,7 +51,7 @@ class CyclePhasePageController extends AbstractController
             $current = clone $startFertile;
             while ($current <= $endFertile) {
                 $events[] = [
-                    'start' => $current->format('Y-m-d'),
+                    'date' => $current->format('Y-m-d'),
                     'title' => '', // pas de titre
                     'allDay' => true,
                     'color' => ($current->format('Y-m-d') === $ovulationDay->format('Y-m-d')) ? '#90ee90' : '#b3f0b3',

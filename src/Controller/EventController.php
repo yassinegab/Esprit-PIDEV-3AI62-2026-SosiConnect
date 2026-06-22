@@ -38,7 +38,7 @@ class EventController extends AbstractController
             $em->flush();
 
             // log creation
-            $eventLogger->logEvent('create', $event->getId(), 'Nouvel événement créé');
+            $eventLogger->logEvent('create', (int)$event->getId(), 'Nouvel événement créé');
 
             $this->addFlash('success', 'Événement ajouté avec succès !');
 
@@ -63,7 +63,7 @@ public function edit(Event $event, Request $request, EntityManagerInterface $em,
         $em->flush(); // l'entité est déjà en base, pas besoin de persist()
 
         // log update
-        $eventLogger->logEvent('update', $event->getId(), 'modification');
+        $eventLogger->logEvent('update', (int)$event->getId(), 'modification');
 
     }
 
@@ -83,7 +83,7 @@ public function edit(Event $event, Request $request, EntityManagerInterface $em,
         $em->flush();
 
         // log deletion using captured id
-        $eventLogger->logEvent('delete', $id, 'suppression');
+        $eventLogger->logEvent('delete', (int)$id, 'suppression');
 
         $this->addFlash('success', 'Événement supprimé !');
         return $this->redirectToRoute('admin_events_index');

@@ -19,6 +19,7 @@ class PatientController extends AbstractController
     #[Route('', name: 'patient_dashboard')]
     public function index(DossierMedicalRepository $repo, EntityManagerInterface $em): Response
     {
+        /** @var \App\Entity\User|null $user */
         $user = $this->getUser();
         
         // Cherche le dossier du patient
@@ -50,9 +51,9 @@ class PatientController extends AbstractController
         }
 
         // ✅ Mise à jour des champs depuis le formulaire
-        $dossier->setAllergies($request->request->get('allergies'));
-        $dossier->setTraitementsEnCours($request->request->get('traitements'));
-        $dossier->setDiagnostics($request->request->get('diagnostics'));
+        $dossier->setAllergies((string)$request->request->get('allergies'));
+        $dossier->setTraitementsEnCours((string)$request->request->get('traitements'));
+        $dossier->setDiagnostics((string)$request->request->get('diagnostics'));
         $dossier->setDerniereMiseAJour(new \DateTime());
 
         $em->flush();

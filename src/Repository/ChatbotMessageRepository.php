@@ -17,6 +17,7 @@ class ChatbotMessageRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param mixed $user
      * @return ChatbotMessage[] Returns an array of ChatbotMessage objects
      */
     public function findByUser($user): array

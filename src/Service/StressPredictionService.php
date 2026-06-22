@@ -9,15 +9,13 @@ use Doctrine\ORM\EntityManagerInterface;
 class StressPredictionService
 {
     private QwenService $qwenService;
-    private EntityManagerInterface $entityManager;
+    private \App\Repository\UserWellBeingDataRepository $wellBeingRepository;
 
     public function __construct(
         QwenService $qwenService, 
-        EntityManagerInterface $entityManager,
         \App\Repository\UserWellBeingDataRepository $wellBeingRepository
     ) {
         $this->qwenService = $qwenService;
-        $this->entityManager = $entityManager;
         $this->wellBeingRepository = $wellBeingRepository;
     }
 
@@ -123,7 +121,7 @@ class StressPredictionService
         foreach ($records as $r) {
             $dataSummary .= sprintf(
                 "Date: %s, Stress: %d, Sleep: %d, Confidence: %d, Anxiety: %d\n",
-                $r->getCreatedAt()->format('Y-m-d'),
+                $r->getCreatedAt() ? $r->getCreatedAt()->format('Y-m-d') : 'Date inconnue',
                 $this->calculateSimpleScore($r),
                 $r->getSleepProblems(),
                 $r->getSubjectConfidence(),

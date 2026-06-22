@@ -7,6 +7,9 @@ use App\Entity\LieuMedical;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<LieuMedicalReview>
+ */
 class LieuMedicalReviewRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -14,6 +17,9 @@ class LieuMedicalReviewRepository extends ServiceEntityRepository
         parent::__construct($registry, LieuMedicalReview::class);
     }
 
+    /**
+     * @return LieuMedicalReview[]
+     */
     public function findByLieu(LieuMedical $lieu): array
     {
         return $this->createQueryBuilder('r')
@@ -41,6 +47,9 @@ class LieuMedicalReviewRepository extends ServiceEntityRepository
         return $this->count(['lieu' => $lieu]);
     }
 
+    /**
+     * @return LieuMedicalReview[]
+     */
     public function getRecentReviews(int $limit = 5): array
     {
         return $this->createQueryBuilder('r')

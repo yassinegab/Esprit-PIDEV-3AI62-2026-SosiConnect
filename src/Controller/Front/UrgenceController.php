@@ -34,11 +34,13 @@ class UrgenceController extends AbstractController
     ): Response {
         $latitude = (float) $request->request->get('latitude', 0);
         $longitude = (float) $request->request->get('longitude', 0);
+        $type = $request->request->get('type', 'Assistance');
+        $includeLocation = $request->request->get('includeLocation') === 'on';
 
         $urgence = new Urgence();
-        $urgence->setMessage('Urgence declenchee');
-        $urgence->setLatitude($latitude);
-        $urgence->setLongitude($longitude);
+        $urgence->setMessage("Demande d'aide : " . $type);
+        $urgence->setLatitude($includeLocation ? $latitude : 0);
+        $urgence->setLongitude($includeLocation ? $longitude : 0);
         $urgence->setStatut('EN_ATTENTE');
         $urgence->setDateUrgence(new \DateTime());
 
@@ -49,46 +51,52 @@ class UrgenceController extends AbstractController
         $smsCount = 0;
         $emailCount = 0;
         $errors = [];
-        $debugInfo = [];
+        
+        $smsConfigured = $smsService->isConfigured();
 
         foreach ($contacts as $contact) {
-            $debugInfo[] = 'Contact: ' . $contact->getNom() . ' - Email: ' . ($contact->getEmail() ?: 'none');
-            
-            // Send Email first (more reliable)
+            // Send Email
             if ($contact->getEmail()) {
                 try {
                     $emailService->sendUrgencyNotification(
                         $contact->getEmail(),
-                        $contact->getNom() ?? 'Contact',
-                        $urgence
+                        $urgence->getMessage(),
+                        $this->getUser() ? $this->getUser()->getFullName() : 'Patient Sosi',
+                        $urgence->getLatitude(),
+                        $urgence->getLongitude()
                     );
                     $emailCount++;
-                    $debugInfo[] = 'Email sent to: ' . $contact->getEmail();
                 } catch (\Exception $e) {
-                    $errors[] = 'Email error for ' . $contact->getEmail() . ': ' . $e->getMessage();
-                    $debugInfo[] = 'Email FAILED: ' . $e->getMessage();
+                    $errors[] = 'Erreur Email (' . $contact->getEmail() . ')';
                 }
             }
 
             // Send SMS
-            if ($contact->getTelephone()) {
+            if ($smsConfigured && $contact->getTelephone()) {
                 try {
+                    $locMsg = $includeLocation ? "\nLocalisation: https://maps.google.com/?q={$latitude},{$longitude}" : "";
                     $smsService->send(
                         $contact->getTelephone(),
-                        "URGENCE !\nLocalisation: https://maps.google.com/?q={$latitude},{$longitude}\nDate: " . date('d/m/Y H:i')
+                        "SOS SI - ALERTE [{$type}]" . $locMsg
                     );
                     $smsCount++;
                 } catch (\Exception $e) {
-                    $errors[] = 'SMS error: ' . $e->getMessage();
+                    $errors[] = 'Erreur SMS (' . $contact->getTelephone() . ')';
                 }
             }
         }
 
-        $this->addFlash('success', "URGENCE ENVOYEE ! SMS: {$smsCount}, Emails: {$emailCount}");
-        $this->addFlash('info', implode(' | ', $debugInfo));
+        $msg = "Alerte diffusée ! Emails: {$emailCount}";
+        if ($smsConfigured) {
+            $msg .= ", SMS: {$smsCount}";
+        } else {
+            $msg .= " (SMS non configuré)";
+        }
+        
+        $this->addFlash('success', $msg);
 
         if (count($errors) > 0) {
-            $this->addFlash('error', implode(', ', $errors));
+            $this->addFlash('warning', implode(', ', $errors));
         }
 
         return $this->redirectToRoute('urgence_index');
@@ -127,8 +135,8 @@ class UrgenceController extends AbstractController
 
                     $emailService->sendUrgencyNotification(
                         $contact->getEmail(),
-                        $contact->getNom() ?? 'Contact',
-                        $urgence
+                        'Ceci est un test système',
+                        'Patient TEST'
                     );
                     $results[] = 'OK: ' . $contact->getEmail();
                 } catch (\Exception $e) {

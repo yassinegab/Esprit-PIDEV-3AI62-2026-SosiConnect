@@ -1,124 +1,133 @@
 {% extends 'layout/front-layout.html.twig' %}
 
-{% block title %}Demande #{{ demande.id }} - Répondre{% endblock %}
-
-{% block stylesheets %}
-{{ parent() }}
-<link rel="stylesheet" href="/css/modern-styles.css">
-{% endblock %}
+{% block title %}Demande #{{ demande.id }} - Répondre - Sosi{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto space-y-6 animate-fadeIn">
+<div class="max-w-5xl mx-auto space-y-8 animate-page-enter">
+    {# ── Navigation ── #}
     <div class="flex items-center gap-4">
-        <a href="{{ path('demande_don') }}" class="text-gray-500 hover:text-gray-700 transition">
-            ← Retour aux demandes
+        <a href="{{ path('demande_don') }}" class="btn-ghost text-muted-foreground hover:text-foreground">
+            <i class="fas fa-arrow-left mr-2 text-[10px]"></i> Retour aux demandes
         </a>
     </div>
 
+    {# ── Messages ── #}
     {% for message in app.flashes('success') %}
-    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded-lg">
-        ✅ {{ message }}
+    <div class="animate-fade-in bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl shadow-sm flex items-center gap-3">
+        <i class="fas fa-check-circle text-lg"></i>
+        <span class="font-medium">{{ message }}</span>
     </div>
     {% endfor %}
 
     {% for message in app.flashes('error') %}
-    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg">
-        ❌ {{ message }}
+    <div class="animate-fade-in bg-red-50 border border-primary/20 text-primary px-4 py-3 rounded-xl shadow-sm flex items-center gap-3">
+        <i class="fas fa-exclamation-circle text-lg"></i>
+        <span class="font-medium">{{ message }}</span>
     </div>
     {% endfor %}
 
-    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-        <div class="bg-gradient-to-r {{ demande.typeDemande == 'sang' ? 'from-red-500 to-red-600' : 'from-purple-500 to-purple-600' }} text-white p-6">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-4xl">
-                        {{ demande.typeDemande == 'sang' ? '🩸' : '🫀' }}
+    {# ── Request Summary Card ── #}
+    <div class="card p-0 overflow-hidden border-primary/20">
+        <div class="bg-primary text-white p-8">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div class="flex items-center gap-6">
+                    <div class="w-20 h-20 bg-white/20 rounded-3xl flex items-center justify-center text-4xl shadow-inner backdrop-blur-md">
+                        <i class="fas {{ demande.typeDemande == 'sang' ? 'fa-tint' : 'fa-dna' }}"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold">Demande de {{ demande.typeDemande }}</h1>
-                        <p class="text-white/80">Publiée le {{ demande.dateDemande|date('d/m/Y à H:i') }}</p>
+                        <div class="flex items-center gap-3 mb-1">
+                            <h1 class="text-3xl font-black tracking-tight">Demande de {{ demande.typeDemande|title }}</h1>
+                            {% if demande.urgence %}
+                            <span class="bg-white text-primary px-3 py-1 rounded-full text-[10px] font-black tracking-widest flex items-center gap-1.5 shadow-sm">
+                                <i class="fas fa-bolt animate-pulse"></i> URGENT
+                            </span>
+                            {% endif %}
+                        </div>
+                        <p class="text-white/80 font-medium flex items-center gap-2">
+                            <i class="fas fa-calendar-alt opacity-50"></i> Publiée le {{ demande.dateDemande|date('d/m/Y à H:i') }}
+                        </p>
                     </div>
-                </div>
-                <div class="flex gap-2">
-                    {% if demande.urgence %}
-                    <span class="bg-white/20 px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2">
-                        🚨 URGENT
-                    </span>
-                    {% endif %}
                 </div>
             </div>
         </div>
 
-        <div class="p-6 space-y-6">
-            <div class="grid grid-cols-2 gap-6">
-                <div class="bg-gray-50 rounded-xl p-4">
-                    <p class="text-sm text-gray-500 mb-1">📍 Région</p>
-                    <p class="font-semibold text-gray-800">{{ demande.region }}</p>
+        <div class="p-8 bg-card">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="bg-muted/40 rounded-2xl p-5 border border-border">
+                    <p class="section-title mb-1">📍 Région</p>
+                    <p class="font-bold text-foreground">{{ demande.region }}</p>
                 </div>
-                <div class="bg-gray-50 rounded-xl p-4">
-                    <p class="text-sm text-gray-500 mb-1">📊 Rang d'attente</p>
-                    <p class="font-semibold text-gray-800">#{{ demande.rangAttente }}</p>
+                <div class="bg-muted/40 rounded-2xl p-5 border border-border">
+                    <p class="section-title mb-1">📊 Rang</p>
+                    <p class="font-bold text-foreground">#{{ demande.rangAttente }}</p>
                 </div>
                 {% if demande.typeSanguin %}
-                <div class="bg-gray-50 rounded-xl p-4">
-                    <p class="text-sm text-gray-500 mb-1">🩸 Groupe sanguin</p>
-                    <p class="font-semibold text-gray-800">{{ demande.typeSanguin }}</p>
+                <div class="bg-primary/5 rounded-2xl p-5 border border-primary/10">
+                    <p class="section-title text-primary mb-1">🩸 Groupe</p>
+                    <p class="font-black text-primary text-lg">{{ demande.typeSanguin }}</p>
                 </div>
                 {% endif %}
                 {% if demande.typeOrgane %}
-                <div class="bg-gray-50 rounded-xl p-4">
-                    <p class="text-sm text-gray-500 mb-1">🫀 Organe</p>
-                    <p class="font-semibold text-gray-800">{{ demande.typeOrgane }}</p>
+                <div class="bg-muted/40 rounded-2xl p-5 border border-border">
+                    <p class="section-title mb-1">🫀 Organe</p>
+                    <p class="font-bold text-foreground">{{ demande.typeOrgane|title }}</p>
                 </div>
                 {% endif %}
             </div>
 
             {% if demande.description %}
-            <div class="bg-blue-50 rounded-xl p-4">
-                <p class="text-sm text-blue-600 mb-2">📝 Description</p>
-                <p class="text-gray-700">{{ demande.description }}</p>
+            <div class="mt-8 p-6 bg-muted/20 rounded-2xl border border-border">
+                <p class="section-title mb-3 flex items-center gap-2">
+                    <i class="fas fa-align-left text-primary"></i> Description du besoin
+                </p>
+                <p class="text-foreground leading-relaxed italic">{{ demande.description }}</p>
             </div>
             {% endif %}
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center text-xl">
-                    🤝
+    {# ── Action & Responses ── #}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {# ── Aid Form ── #}
+        <div class="card p-8">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="stat-icon w-14 h-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center text-2xl">
+                    <i class="fas fa-handshake"></i>
                 </div>
-                <h2 class="text-xl font-bold text-gray-800">Proposer votre aide</h2>
+                <div>
+                    <h2 class="text-xl font-black text-foreground tracking-tight">Proposer votre aide</h2>
+                    <p class="section-title">Formulaire de réponse</p>
+                </div>
             </div>
 
-            <form method="post" class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
+            <form method="post" class="space-y-5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nom complet *</label>
+                        <label class="form-label">Nom complet *</label>
                         <input type="text" name="donneur_nom" required
-                               class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                               class="input-field"
                                placeholder="Votre nom">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Téléphone *</label>
+                        <label class="form-label">Téléphone *</label>
                         <input type="tel" name="donneur_telephone" required
-                               class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                               class="input-field"
                                placeholder="XX XXX XXX">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                    <label class="form-label">Email *</label>
                     <input type="email" name="donneur_email" required
-                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                           class="input-field"
                            placeholder="votre@email.com">
                 </div>
 
                 {% if demande.typeDemande == 'sang' %}
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Votre groupe sanguin</label>
+                    <label class="form-label">Votre groupe sanguin</label>
                     <select name="donneur_groupe_sanguin"
-                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition">
+                            class="input-field appearance-none cursor-pointer">
                         <option value="">Sélectionner (optionnel)</option>
                         <option value="A+">A+</option>
                         <option value="A-">A-</option>
@@ -133,57 +142,70 @@
                 {% endif %}
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                    <label class="form-label">Message</label>
                     <textarea name="message" rows="4"
-                              class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition resize-none"
+                              class="input-field h-auto py-3 resize-none"
                               placeholder="Précisez votre disponibilité, votre expérience..."></textarea>
                 </div>
 
-                <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-4 rounded-xl font-semibold transition shadow-lg">
-                    🤝 Envoyer ma proposition
+                <button type="submit" class="btn-primary w-full py-4 text-base shadow-xl shadow-primary/20 bg-green-600 hover:bg-green-700">
+                    <i class="fas fa-paper-plane mr-2"></i> Envoyer ma proposition
                 </button>
             </form>
         </div>
 
-        <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-xl">
-                    💬
+        {# ── Responses List ── #}
+        <div class="card p-0 overflow-hidden">
+            <div class="p-6 border-b border-border bg-muted/30 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="stat-icon w-10 h-10 bg-muted text-muted-foreground text-lg">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h2 class="text-xl font-black text-foreground tracking-tight">Réponses</h2>
                 </div>
-                <h2 class="text-xl font-bold text-gray-800">Réponses ({{ responses|length }})</h2>
+                <span class="badge-muted">{{ responses|length }} réponse(s)</span>
             </div>
 
             {% if responses|length > 0 %}
-                <div class="space-y-4 max-h-96 overflow-y-auto">
+                <div class="divide-y divide-border overflow-y-auto max-h-[600px]">
                     {% for reponse in responses %}
-                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                        <div class="flex items-start justify-between mb-2">
+                    <div class="p-6 hover:bg-muted/30 transition-colors">
+                        <div class="flex items-start justify-between gap-4 mb-4">
                             <div>
-                                <p class="font-semibold text-gray-800">{{ reponse.donneurNom }}</p>
-                                <p class="text-xs text-gray-500">{{ reponse.donneurEmail }}</p>
+                                <p class="font-black text-foreground">{{ reponse.donneurNom }}</p>
+                                <p class="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
+                                    <i class="fas fa-envelope opacity-50"></i> {{ reponse.donneurEmail }}
+                                </p>
                             </div>
-                            <span class="px-2 py-1 rounded-full text-xs font-medium {{ reponse.statusBadgeClass }}">
-                                {{ reponse.statusLabel }}
+                            <span class="badge-{{ reponse.statut == 'Acceptée' ? 'success' : (reponse.statut == 'Refusée' ? 'danger' : 'warning') }} py-1 px-3">
+                                {{ reponse.statut }}
                             </span>
                         </div>
+                        
                         {% if reponse.donneurGroupeSanguin %}
-                        <p class="text-sm text-gray-600 mb-2">🩸 Groupe: {{ reponse.donneurGroupeSanguin }}</p>
+                        <div class="mb-3">
+                            <span class="badge-primary px-2 py-0.5 text-[10px]">🩸 GROUPE: {{ reponse.donneurGroupeSanguin }}</span>
+                        </div>
                         {% endif %}
+                        
                         {% if reponse.message %}
-                        <p class="text-sm text-gray-700 bg-white rounded-lg p-3 mt-2">{{ reponse.message }}</p>
+                        <div class="p-3 bg-card border border-border rounded-xl text-sm text-muted-foreground leading-relaxed italic mb-4">
+                            "{{ reponse.message }}"
+                        </div>
                         {% endif %}
-                        <div class="flex items-center justify-between mt-3 text-xs text-gray-400">
-                            <span>📞 {{ reponse.donneurTelephone }}</span>
-                            <span>{{ reponse.createdAt|date('d/m/Y H:i') }}</span>
+                        
+                        <div class="flex items-center justify-between text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                            <span class="flex items-center gap-1.5"><i class="fas fa-phone-alt opacity-50"></i> {{ reponse.donneurTelephone }}</span>
+                            <span class="flex items-center gap-1.5"><i class="fas fa-clock opacity-50"></i> {{ reponse.createdAt|date('d/m/Y H:i') }}</span>
                         </div>
                     </div>
                     {% endfor %}
                 </div>
             {% else %}
-                <div class="text-center py-8 text-gray-400">
-                    <div class="text-4xl mb-2">📭</div>
-                    <p>Aucune réponse pour le moment</p>
-                    <p class="text-sm">Soyez le premier à proposer votre aide !</p>
+                <div class="empty-state py-20">
+                    <div class="empty-state-icon text-4xl mb-6 opacity-20"><i class="fas fa-comment-slash"></i></div>
+                    <p class="text-sm font-bold text-muted-foreground">Aucune réponse pour le moment</p>
+                    <p class="text-xs text-muted-foreground mt-1">Soyez le premier à proposer votre aide !</p>
                 </div>
             {% endif %}
         </div>

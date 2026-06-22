@@ -33,6 +33,7 @@ class UserWellBeingDataFrontController extends AbstractController
         PaginatorInterface $paginator
     ): Response {
         // Get the logged-in user
+        /** @var \App\Entity\User|null $user */
         $user = $this->getUser();
 
         if (!$user) {
@@ -77,6 +78,7 @@ class UserWellBeingDataFrontController extends AbstractController
         );
 
         // 2. AI Trend Interpretation
+        /** @var \App\Entity\User $user */
         $aiTrends = $predictionService->interpretTrends($user);
 
         return $this->render('user_wellbeing/index.html.twig', [
@@ -96,6 +98,7 @@ class UserWellBeingDataFrontController extends AbstractController
         EntityManagerInterface $em,
         ChartBuilderInterface $chartBuilder
     ): Response {
+        /** @var \App\Entity\User|null $user */
         $user = $this->getUser();
 
         if (!$user) {
@@ -129,7 +132,7 @@ class UserWellBeingDataFrontController extends AbstractController
         // 2. Calories Chart
         $calData = [];
         foreach ($meals as $meal) {
-            $date = $meal->getCreateAt()->format('Y-m-d');
+            $date = (string)($meal->getCreateAt() ? $meal->getCreateAt()->format('Y-m-d') : 'Non définie');
             $calData[$date] = ($calData[$date] ?? 0) + ($meal->getCalories() ?: 0);
         }
         $calChart = $chartBuilder->createChart(Chart::TYPE_BAR);
@@ -168,13 +171,13 @@ class UserWellBeingDataFrontController extends AbstractController
         // 4. Stress Trend Chart
         $stressChart = $chartBuilder->createChart(Chart::TYPE_LINE);
         $stressChart->setData([
-            'labels' => array_map(fn($p) => $p->getCreatedAt()->format('M d, H:i'), $predictions),
+            'labels' => array_map(fn(\App\Entity\StressPrediction $p) => $p->getCreatedAt() ? $p->getCreatedAt()->format('M d, H:i') : 'N/A', $predictions),
             'datasets' => [
                 [
                     'label' => 'Stress Score (%)',
                     'backgroundColor' => 'rgba(99, 102, 241, 0.1)',
                     'borderColor' => '#6366F1',
-                    'data' => array_map(fn($p) => $p->getConfidenceScore(), $predictions),
+                    'data' => array_map(fn(\App\Entity\StressPrediction $p) => $p->getConfidenceScore(), $predictions),
                     'tension' => 0.4,
                     'fill' => true,
                 ],
@@ -203,8 +206,9 @@ class UserWellBeingDataFrontController extends AbstractController
             // Assign user only if not already set (though handleRequest shouldn't set it)
             if (!$uwbData->getUser()) {
                 // Double check user fallback
+                /** @var \App\Entity\User|null $user */
                 $user = $this->getUser() ?? $em->getRepository(User::class)->find(1);
-                if ($user) {
+                if ($user instanceof \App\Entity\User) {
                     $uwbData->setUser($user);
                 }
             }
@@ -242,6 +246,7 @@ class UserWellBeingDataFrontController extends AbstractController
     public function edit(Request $request, UserWellBeingData $uwbData, EntityManagerInterface $em, UserRepository $userRepo, \App\Service\StressPredictionService $predictionService): Response
     {
         // Try to get the logged-in user, otherwise fallback to user 1 for testing
+        /** @var \App\Entity\User|null $user */
         $user = $this->getUser() ?? $userRepo->find(1);
 
         if (!$user) {
@@ -275,7 +280,7 @@ class UserWellBeingDataFrontController extends AbstractController
         EntityManagerInterface $entityManager
     ): RedirectResponse {
         // Check CSRF token
-        if ($this->isCsrfTokenValid('delete' . $data->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $data->getId(), (string)$request->request->get('_token', ''))) {
             $entityManager->remove($data);
             $entityManager->flush();
 

@@ -6,6 +6,9 @@ use App\Entity\VideoTutorial;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<VideoTutorial>
+ */
 class VideoTutorialRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -13,6 +16,9 @@ class VideoTutorialRepository extends ServiceEntityRepository
         parent::__construct($registry, VideoTutorial::class);
     }
 
+    /**
+     * @return VideoTutorial[]
+     */
     public function findPublished(): array
     {
         return $this->createQueryBuilder('v')
@@ -23,6 +29,9 @@ class VideoTutorialRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return VideoTutorial[]
+     */
     public function findByCategory(string $category): array
     {
         return $this->createQueryBuilder('v')
@@ -34,6 +43,9 @@ class VideoTutorialRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return VideoTutorial[]
+     */
     public function search(string $query): array
     {
         return $this->createQueryBuilder('v')
@@ -45,6 +57,9 @@ class VideoTutorialRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return string[]
+     */
     public function getCategories(): array
     {
         return $this->createQueryBuilder('v')
@@ -54,6 +69,9 @@ class VideoTutorialRepository extends ServiceEntityRepository
             ->getSingleColumnResult();
     }
 
+    /**
+     * @return VideoTutorial[]
+     */
     public function getPopular(int $limit = 5): array
     {
         return $this->createQueryBuilder('v')

@@ -20,8 +20,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class DonController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly ValidatorInterface $validator
+        private EntityManagerInterface $entityManager,
+        private ValidatorInterface $validator
     ) {}
 
     #[Route('', name: 'don')]
@@ -51,10 +51,10 @@ class DonController extends AbstractController
 
         if ($request->isMethod('POST')) {
             $don = new Don();
-            $don->setTypeDon($request->request->get('type_don'));
-            $don->setTypeSanguin($request->request->get('type_sanguin') ?: null);
-            $don->setTypeOrgane($request->request->get('type_organe') ?: null);
-            $don->setRegion($request->request->get('region'));
+            $don->setTypeDon((string)$request->request->get('type_don', ''));
+            $don->setTypeSanguin((string)$request->request->get('type_sanguin', '') ?: null);
+            $don->setTypeOrgane((string)$request->request->get('type_organe', '') ?: null);
+            $don->setRegion((string)$request->request->get('region', ''));
             $don->setUrgence($request->request->getBoolean('urgence'));
 
             // Handle document upload
@@ -129,7 +129,7 @@ class DonController extends AbstractController
     #[Route('/delete/{id}', name: 'don_delete', methods: ['POST'])]
     public function delete(Don $don, Request $request): Response
     {
-        if (!$this->isCsrfTokenValid('delete' . $don->getId(), $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete' . $don->getId(), (string)$request->request->get('_token', ''))) {
             $this->addFlash('error', 'Token de sécurité invalide');
             return $this->redirectToRoute('don_new');
         }

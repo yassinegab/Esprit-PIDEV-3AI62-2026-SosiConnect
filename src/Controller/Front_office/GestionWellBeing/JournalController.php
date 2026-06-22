@@ -15,6 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/user/journal')]
 class JournalController extends AbstractController
 {
+    /** @return \App\Entity\User|\Symfony\Component\Security\Core\User\UserInterface|null */
     private function getActualUser(EntityManagerInterface $em)
     {
         return $this->getUser() ?? $em->getRepository(User::class)->find(1);
@@ -26,10 +27,12 @@ class JournalController extends AbstractController
         $user = $this->getActualUser($em);
         
         if ($request->isMethod('POST')) {
-            $content = $request->request->get('content');
-            if ($content) {
+            $content = (string)$request->request->get('content', '');
+            if ($content !== '') {
                 $journal = new Journal();
-                $journal->setUser($user);
+                if ($user instanceof User) {
+                    $journal->setUser($user);
+                }
                 $journal->setContent($content);
                 
                 // AI Emotion Detection
@@ -63,7 +66,7 @@ class JournalController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        if ($this->isCsrfTokenValid('delete'.$journal->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$journal->getId(), (string)$request->request->get('_token', ''))) {
             $em->remove($journal);
             $em->flush();
         }

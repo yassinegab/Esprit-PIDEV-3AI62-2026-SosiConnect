@@ -6,6 +6,9 @@ use App\Entity\SupportFeedback;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<SupportFeedback>
+ */
 class SupportFeedbackRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -23,6 +26,9 @@ class SupportFeedbackRepository extends ServiceEntityRepository
         return $result ? round((float) $result, 1) : 0.0;
     }
 
+    /**
+     * @return SupportFeedback[]
+     */
     public function getRecentFeedback(int $limit = 10): array
     {
         return $this->createQueryBuilder('f')
@@ -32,6 +38,9 @@ class SupportFeedbackRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<int, int>
+     */
     public function getRatingDistribution(): array
     {
         $result = $this->createQueryBuilder('f')

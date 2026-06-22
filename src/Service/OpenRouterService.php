@@ -92,7 +92,7 @@ PROMPT;
             ];
         } catch (ClientExceptionInterface $e) {
             $response = $e->getResponse();
-            $statusCode = $response->getStatusCode(false);
+            $statusCode = $response->getStatusCode();
             
             if ($statusCode === 402) {
                 return [

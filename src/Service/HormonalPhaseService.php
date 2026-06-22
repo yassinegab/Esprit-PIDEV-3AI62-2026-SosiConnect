@@ -6,7 +6,7 @@ use App\Entity\Cycle;
 
 class HormonalPhaseService
 {
-    private $analyzer;
+    private CycleAnalyzerService $analyzer;
 
     public function __construct(\App\Service\CycleAnalyzerService $analyzer)
     {
@@ -16,10 +16,17 @@ class HormonalPhaseService
     /**
      * Génère les événements de phases hormonales pour un cycle
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function generateCyclePhases(Cycle $cycle): array
     {
         $events = [];
         $startDate = $cycle->getDateDebutM();
+
+        if (!$startDate) {
+            return [];
+        }
 
         // Récupère la durée de menstruation
         $periodLength = $this->analyzer->calculateMenstruationLength($cycle);

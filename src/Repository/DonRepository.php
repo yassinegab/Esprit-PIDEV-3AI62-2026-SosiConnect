@@ -7,6 +7,14 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<Don>
+ *
+ * @method Don|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Don|null findOneBy(array<string, mixed> $criteria, array<string, string> $orderBy = null)
+ * @method Don[]    findAll()
+ * @method Don[]    findBy(array<string, mixed> $criteria, array<string, string> $orderBy = null, $limit = null, $offset = null)
+ */
 class DonRepository extends ServiceEntityRepository
 {
     public const ITEMS_PER_PAGE = 10;
@@ -16,6 +24,10 @@ class DonRepository extends ServiceEntityRepository
         parent::__construct($registry, Don::class);
     }
 
+    /**
+     * @param array<string, mixed> $filters
+     * @return array{items: Don[], total: int, pages: int, currentPage: int}
+     */
     public function findPaginated(int $page = 1, array $filters = []): array
     {
         $qb = $this->createQueryBuilder('d');
@@ -67,6 +79,9 @@ class DonRepository extends ServiceEntityRepository
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getStats(): array
     {
         $qb = $this->createQueryBuilder('d');
@@ -82,6 +97,9 @@ class DonRepository extends ServiceEntityRepository
         ];
     }
 
+    /**
+     * @return Don[]
+     */
     public function findByType(string $type): array
     {
         return $this->createQueryBuilder('d')
@@ -92,6 +110,9 @@ class DonRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return Don[]
+     */
     public function findRecent(int $limit = 5): array
     {
         return $this->createQueryBuilder('d')

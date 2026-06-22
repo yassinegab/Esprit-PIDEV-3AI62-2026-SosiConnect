@@ -14,18 +14,18 @@ use Symfony\Component\Routing\Annotation\Route;
 class TutorialController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager
     ) {}
 
     #[Route('', name: 'aide_tutorials')]
     public function index(Request $request, VideoTutorialRepository $repository): Response
     {
-        $search = $request->query->get('search');
-        $category = $request->query->get('category');
+        $search = (string)$request->query->get('search', '');
+        $category = (string)$request->query->get('category', '');
 
-        if ($search) {
+        if ($search !== '') {
             $tutorials = $repository->search($search);
-        } elseif ($category) {
+        } elseif ($category !== '') {
             $tutorials = $repository->findByCategory($category);
         } else {
             $tutorials = $repository->findPublished();

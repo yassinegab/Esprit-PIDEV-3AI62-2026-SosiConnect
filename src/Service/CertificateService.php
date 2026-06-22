@@ -11,8 +11,8 @@ use Twig\Environment;
 class CertificateService
 {
     public function __construct(
-        private readonly Environment $twig,
-        private readonly QrCodeService $qrCodeService
+        private Environment $twig,
+        private QrCodeService $qrCodeService
     ) {}
 
     public function generateDonationCertificate(Don $don, Donneur $donneur): string
@@ -24,7 +24,7 @@ class CertificateService
 
         $dompdf = new Dompdf($options);
 
-        $qrCodeDataUri = $this->qrCodeService->generateDonationCertificateQr($don->getId());
+        $qrCodeDataUri = $this->qrCodeService->generateDonationCertificateQr((string)$don->getId());
 
         $html = $this->twig->render('certificates/donation_certificate.html.twig', [
             'don' => $don,

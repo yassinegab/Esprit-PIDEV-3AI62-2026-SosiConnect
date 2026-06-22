@@ -13,6 +13,10 @@ class ContactUrgence
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'contactsUrgence')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $user = null;
+
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $nom = null;
 
@@ -74,6 +78,18 @@ class ContactUrgence
     public function setEmail(?string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

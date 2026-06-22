@@ -71,6 +71,9 @@ class SupportTicket
     #[ORM\Column(name: 'attachment_name', length: 255, nullable: true)]
     private ?string $attachmentName = null;
 
+    /**
+     * @var Collection<int, ChatMessage>
+     */
     #[ORM\OneToMany(mappedBy: 'ticket', targetEntity: ChatMessage::class, cascade: ['persist'])]
     private Collection $messages;
 
@@ -205,6 +208,9 @@ class SupportTicket
         return $this->resolvedAt;
     }
 
+    /**
+     * @return Collection<int, ChatMessage>
+     */
     public function getMessages(): Collection
     {
         return $this->messages;

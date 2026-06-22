@@ -230,7 +230,7 @@ class VideoTutorial
             return $matches ? 'https://www.youtube.com/embed/' . $matches[1] : $this->videoUrl;
         }
         if (strpos($this->videoUrl, 'youtu.be') !== false) {
-            $id = basename(parse_url($this->videoUrl, PHP_URL_PATH));
+            $id = basename((string)parse_url($this->videoUrl, PHP_URL_PATH));
             return 'https://www.youtube.com/embed/' . $id;
         }
         return $this->videoUrl;
@@ -244,7 +244,7 @@ class VideoTutorial
 
         if (strpos($this->videoUrl, 'youtube.com') !== false || strpos($this->videoUrl, 'youtu.be') !== false) {
             preg_match('/v=([^&]+)/', $this->videoUrl, $matches);
-            $id = $matches ? $matches[1] : basename(parse_url($this->videoUrl, PHP_URL_PATH));
+            $id = $matches ? $matches[1] : basename((string)parse_url($this->videoUrl, PHP_URL_PATH));
             return 'https://img.youtube.com/vi/' . $id . '/maxresdefault.jpg';
         }
 

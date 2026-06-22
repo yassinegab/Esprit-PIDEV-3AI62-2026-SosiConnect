@@ -1,195 +1,207 @@
 {% extends 'layout/front-layout.html.twig' %}
 
-{% block title %}Contacts d'Urgence{% endblock %}
+{% block title %}Contacts d'Urgence — Sosi{% endblock %}
 
 {% block stylesheets %}
 {{ parent() }}
-<link rel="stylesheet" href="/css/modern-styles.css">
 <style>
 .contact-card {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .contact-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
 }
 .avatar-gradient {
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
 }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="space-y-8 animate-fadeIn">
-    <div class="flex justify-between items-center">
+    {# ── Header ── #}
+    <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>
-            <h1 class="text-3xl font-bold text-gray-800" style="font-family: 'Poppins', sans-serif;">
-                📞 Contacts d'Urgence
+            <h1 class="page-title">
+                <i class="fas fa-phone-alt text-primary me-2"></i> Contacts d'Urgence
             </h1>
-            <p class="text-gray-500 mt-1">Gérez vos contacts qui recevront vos alertes d'urgence</p>
+            <p class="page-subtitle">Gérez vos contacts qui recevront vos alertes d'urgence</p>
         </div>
-        <div class="text-sm text-gray-500 bg-white px-4 py-2 rounded-xl shadow">
-            {{ contacts|length }} contact(s)
+        <div class="bg-white px-4 py-2 rounded-xl border border-border shadow-sm flex items-center gap-2">
+            <span class="w-2.5 h-2.5 bg-red-500 rounded-full"></span>
+            <span class="font-bold text-sm" style="color:var(--foreground);">{{ contacts|length }} contact(s) enregistrés</span>
         </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {# ── Contact List ── #}
         <div class="lg:col-span-2 space-y-6">
             {% if contacts|length > 0 %}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {% for contact in contacts %}
-                <div class="contact-card bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                <div class="contact-card card" style="padding:1.5rem;">
                     <div class="flex items-start gap-4">
-                        <div class="w-14 h-14 avatar-gradient rounded-2xl flex items-center justify-center text-white text-xl font-bold shadow-lg">
+                        <div class="w-14 h-14 avatar-gradient rounded-2xl flex items-center justify-center text-white text-xl font-bold">
                             {{ contact.nom|first|upper }}
                         </div>
-                        <div class="flex-1">
-                            <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-gray-800 text-lg">{{ contact.nom }}</h3>
-                                <span class="px-2 py-0.5 bg-orange-100 text-orange-700 rounded-full text-xs font-medium">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
+                                <h3 class="font-bold truncate" style="color:var(--foreground); font-size:1.05rem;">{{ contact.nom }}</h3>
+                                <span class="px-2 py-0.5 rounded-full font-bold text-primary" 
+                                      style="background:rgba(239,68,68,.1); font-size:.65rem; border:1px solid rgba(239,68,68,.15);">
                                     {{ contact.lien }}
                                 </span>
                             </div>
-                            <p class="text-gray-500 text-sm mt-1">{{ contact.telephone }}</p>
+                            <p style="color:var(--muted-fg); font-size:.9rem;"><i class="fas fa-phone-alt me-1 opacity-50"></i> {{ contact.telephone }}</p>
                             {% if contact.email %}
-                            <p class="text-gray-400 text-sm mt-1">📧 {{ contact.email }}</p>
+                            <p style="color:var(--muted-fg); font-size:.85rem; margin-top:.25rem;"><i class="fas fa-envelope me-1 opacity-50"></i> {{ contact.email }}</p>
                             {% endif %}
                         </div>
                     </div>
                     
-                    <div class="flex gap-2 mt-4 pt-4 border-t border-gray-100">
+                    <div class="flex gap-2 mt-5 pt-4 border-t border-border">
                         <a href="tel:{{ contact.telephone }}" 
-                           class="flex-1 flex items-center justify-center gap-2 py-2 bg-green-100 text-green-700 rounded-xl hover:bg-green-200 transition text-sm font-medium">
-                            📞 Appeler
+                           class="flex-1 btn-secondary flex items-center justify-center gap-2 py-2" style="color:#16a34a; background:#f0fdf4; border-color:#dcfce7;">
+                            <i class="fas fa-phone"></i> Appeler
                         </a>
                         <a href="sms:{{ contact.telephone }}" 
-                           class="flex-1 flex items-center justify-center gap-2 py-2 bg-blue-100 text-blue-700 rounded-xl hover:bg-blue-200 transition text-sm font-medium">
-                            💬 SMS
+                           class="flex-1 btn-secondary flex items-center justify-center gap-2 py-2">
+                            <i class="fas fa-comment-alt"></i> SMS
                         </a>
                         {% if contact.email %}
                         <a href="mailto:{{ contact.email }}" 
-                           class="flex-1 flex items-center justify-center gap-2 py-2 bg-purple-100 text-purple-700 rounded-xl hover:bg-purple-200 transition text-sm font-medium">
-                            📧 Email
+                           class="flex-1 btn-secondary flex items-center justify-center gap-2 py-2">
+                            <i class="fas fa-envelope"></i> Email
                         </a>
                         {% endif %}
                     </div>
                     
                     <div class="flex gap-2 mt-3">
                         <a href="{{ path('contact_urgence_edit', {id: contact.id}) }}" 
-                           class="flex-1 text-center py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition text-sm">
-                            ✏️ Modifier
+                           class="flex-1 text-center py-2 font-bold hover:bg-muted rounded-xl transition text-xs" style="color:var(--muted-fg); border:1px solid transparent;">
+                            <i class="fas fa-edit me-1"></i> Modifier
                         </a>
                         <a href="{{ path('contact_urgence_delete', {id: contact.id}) }}" 
                            onclick="return confirm('Supprimer ce contact ?')"
-                           class="flex-1 text-center py-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition text-sm">
-                            🗑 Supprimer
+                           class="flex-1 text-center py-2 font-bold hover:bg-red-50 rounded-xl transition text-xs" style="color:#ef4444;">
+                            <i class="fas fa-trash-alt me-1"></i> Supprimer
                         </a>
                     </div>
                 </div>
                 {% endfor %}
             </div>
             {% else %}
-            <div class="bg-white rounded-2xl p-12 shadow-lg border border-gray-100 text-center">
-                <div class="text-6xl mb-4">📱</div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Aucun contact enregistré</h3>
-                <p class="text-gray-500 mb-6">Ajoutez vos premiers contacts d'urgence pour pouvoir les alerter en cas de besoin.</p>
-                <button onclick="document.getElementById('addContactForm').classList.toggle('hidden')"
-                        class="bg-gradient-to-r from-orange-500 to-rose-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition">
-                    ➕ Ajouter un contact
+            <div class="card text-center" style="padding:4rem 1.5rem;">
+                <div class="empty-state-icon mx-auto mb-4" style="width:4.5rem; height:4.5rem; font-size:1.5rem;">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h3 class="font-bold text-lg" style="color:var(--foreground);">Aucun contact enregistré</h3>
+                <p style="color:var(--muted-fg); margin-top:.5rem; margin-bottom:2rem;">Ajoutez vos premiers contacts d'urgence pour pouvoir les alerter en cas de besoin.</p>
+                <button onclick="document.getElementById('addContactFormScroll').scrollIntoView({behavior:'smooth'})"
+                        class="btn-primary shadow-lg">
+                    <i class="fas fa-plus me-1"></i> Ajouter un contact
                 </button>
             </div>
             {% endif %}
         </div>
 
-        <div class="space-y-6">
-            <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100" id="addContactForm">
+        {# ── Sidebar: Add Form ── #}
+        <div class="space-y-6" id="addContactFormScroll">
+            <div class="card" style="padding:1.5rem;">
                 <div class="flex items-center gap-3 mb-6">
-                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-2xl">
-                        ➕
+                    <div class="empty-state-icon" style="width:2.5rem; height:2.5rem; font-size:1rem;">
+                        <i class="fas fa-plus"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-gray-800">Ajouter un contact</h3>
-                        <p class="text-gray-500 text-sm">Qui prévenir en cas d'urgence ?</p>
+                        <h3 class="font-bold" style="color:var(--foreground);">Ajouter un contact</h3>
+                        <p style="color:var(--muted-fg); font-size:.8rem;">Qui prévenir en cas d'urgence ?</p>
                     </div>
                 </div>
 
-                {{ form_start(form, { attr: { class: 'space-y-4' } }) }}
+                {{ form_start(form, { attr: { class: 'space-y-5' } }) }}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nom complet</label>
+                        <label class="block text-sm font-bold mb-2" style="color:var(--foreground);">Nom complet</label>
                         {{ form_widget(form.nom, { attr: { 
-                            class: 'w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition',
+                            class: 'input-field',
                             placeholder: 'Ex: Ahmed Ben Ali'
                         } }) }}
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Lien / Relation</label>
+                        <label class="block text-sm font-bold mb-2" style="color:var(--foreground);">Lien / Relation</label>
                         {{ form_widget(form.lien, { attr: { 
-                            class: 'w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition',
+                            class: 'input-field',
                             placeholder: 'Ex: Père, Mère, Frère...'
                         } }) }}
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
+                        <label class="block text-sm font-bold mb-2" style="color:var(--foreground);">Téléphone</label>
                         {{ form_widget(form.telephone, { attr: { 
-                            class: 'w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition',
+                            class: 'input-field',
                             placeholder: 'Ex: XX XXX XXX'
                         } }) }}
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Email (optionnel)</label>
+                        <label class="block text-sm font-bold mb-2" style="color:var(--foreground);">Email (optionnel)</label>
                         {{ form_widget(form.email, { attr: { 
-                            class: 'w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition',
+                            class: 'input-field',
                             placeholder: 'Ex: contact@email.com'
                         } }) }}
                     </div>
 
-                    <p id="formError" class="hidden text-sm text-red-600 bg-red-50 p-3 rounded-lg"></p>
+                    <p id="formError" class="hidden text-xs font-bold text-red-600 bg-red-50 p-3 rounded-xl border border-red-100"></p>
 
-                    <button type="submit" class="w-full bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition flex items-center justify-center gap-2">
-                        <span>💾</span> Enregistrer le contact
+                    <button type="submit" class="btn-primary w-full py-4 shadow-lg flex items-center justify-center gap-2">
+                        <i class="fas fa-save"></i> Enregistrer le contact
                     </button>
                 {{ form_end(form) }}
             </div>
 
-            <div class="bg-gradient-to-br from-orange-50 to-rose-50 rounded-2xl p-6 border border-orange-100">
-                <h3 class="font-bold text-orange-800 mb-3 flex items-center gap-2">
-                    <span>💡</span> Conseil
+            <div class="card border-red-100" style="background:rgba(239,68,68,.02); padding:1.25rem;">
+                <h3 class="font-bold text-primary mb-3 flex items-center gap-2">
+                    <i class="fas fa-lightbulb"></i> Conseil
                 </h3>
-                <p class="text-sm text-orange-700">
+                <p style="font-size:.85rem; color:var(--muted-fg); line-height:1.6;">
                     Ajoutez au moins <strong>2-3 contacts de confiance</strong> qui pourront être alertés en cas d'urgence. 
-                    Ils recevront un SMS avec votre position GPS.
+                    Ils recevront un SMS avec votre position GPS précise.
                 </p>
             </div>
 
-            <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-                <h3 class="font-bold text-gray-800 mb-4">📊 Répartition</h3>
+            <div class="card" style="padding:1.25rem;">
+                <h3 class="section-title mb-4">📊 Répartition</h3>
                 <div class="space-y-3">
                     {% set seen_liens = [] %}
                     {% for contact in contacts %}
                         {% if contact.lien and contact.lien not in seen_liens %}
                             {% set seen_liens = seen_liens|merge([contact.lien]) %}
                             <div class="flex items-center justify-between">
-                                <span class="text-gray-600">{{ contact.lien }}</span>
-                                <span class="font-semibold text-gray-800">{{ contacts|filter(c => c.lien == contact.lien)|length }}</span>
+                                <span style="color:var(--muted-fg); font-size:.9rem;">{{ contact.lien }}</span>
+                                <span class="font-bold" style="color:var(--foreground);">{{ contacts|filter(c => c.lien == contact.lien)|length }}</span>
                             </div>
                         {% endif %}
                     {% else %}
-                        <p class="text-gray-400 text-sm text-center">Aucune donnée</p>
+                        <p style="color:var(--muted-fg); font-size:.8rem; text-align:center;">Aucune donnée</p>
                     {% endfor %}
                 </div>
             </div>
 
             <a href="{{ path('urgence_index') }}" 
-               class="block bg-gradient-to-r from-red-500 to-rose-500 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition group">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="font-bold text-lg">🚨 Déclencher Urgence</h3>
-                        <p class="text-red-100 text-sm mt-1">Envoyer votre position GPS</p>
+               class="block card border-none shadow-xl hover:shadow-2xl transition-all group overflow-hidden relative"
+               style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); text-decoration:none; padding:1.5rem;">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform">
+                    <i class="fas fa-ambulance text-6xl text-white"></i>
+                </div>
+                <div class="relative z-10">
+                    <h3 class="font-bold text-xl text-white">🚨 Déclencher Urgence</h3>
+                    <p style="color:rgba(255,255,255,.8); font-size:.85rem; margin-top:.25rem;">Envoyer votre position GPS à tous vos contacts</p>
+                    <div class="mt-4 inline-flex items-center gap-2 text-white font-bold text-sm">
+                        <span>Accéder maintenant</span>
+                        <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                     </div>
-                    <span class="text-2xl group-hover:scale-110 transition">→</span>
                 </div>
             </a>
         </div>
@@ -199,12 +211,14 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
+    if (!form) return;
     const phoneInput = form.querySelector('input[name*="telephone"]');
     const errorDiv = document.getElementById('formError');
     
     form.addEventListener('submit', function(e) {
+        if (!phoneInput) return;
         const phone = phoneInput.value.replace(/\s/g, '');
-        if (phone && !/^[0-9]{8,15}$/.test(phone)) {
+        if (phone && !/^[0-9+]{8,15}$/.test(phone)) {
             e.preventDefault();
             errorDiv.textContent = 'Le numéro de téléphone doit contenir entre 8 et 15 chiffres';
             errorDiv.classList.remove('hidden');

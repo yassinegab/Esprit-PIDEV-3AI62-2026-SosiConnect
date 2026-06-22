@@ -59,6 +59,7 @@ return [
             [['_route' => 'cycle_stats', '_controller' => 'App\\Controller\\CycleController::stats'], null, null, null, false, false, null],
             [['_route' => 'admin_stats_index', '_controller' => 'App\\Controller\\StatsController::index'], null, null, null, true, false, null],
         ],
+        '/cycle/export/pdf' => [[['_route' => 'cycle_export_pdf', '_controller' => 'App\\Controller\\CycleExportController::exportPdf'], null, null, null, false, false, null]],
         '/phases' => [[['_route' => 'cycle_phases', '_controller' => 'App\\Controller\\CyclePhasePageController::index'], null, null, null, false, false, null]],
         '/phases/events' => [[['_route' => 'cycle_phases_events', '_controller' => 'App\\Controller\\CyclePhasePageController::events'], null, null, null, false, false, null]],
         '/admin/dashboard/event' => [[['_route' => 'admin_events_index', '_controller' => 'App\\Controller\\EventController::index'], null, null, null, false, false, null]],
@@ -96,6 +97,7 @@ return [
         '/wellbeing' => [[['_route' => 'user_wellbeing_index', '_controller' => 'App\\Controller\\Front_office\\GestionWellBeing\\UserWellBeingDataFrontController::index'], null, null, null, true, false, null]],
         '/wellbeing/statistics' => [[['_route' => 'user_wellbeing_statistics', '_controller' => 'App\\Controller\\Front_office\\GestionWellBeing\\UserWellBeingDataFrontController::statistics'], null, null, null, false, false, null]],
         '/wellbeing/new' => [[['_route' => 'user_wellbeing_new', '_controller' => 'App\\Controller\\Front_office\\GestionWellBeing\\UserWellBeingDataFrontController::new'], null, null, null, false, false, null]],
+        '/hopitaux' => [[['_route' => 'frontoffice_hopitaux', '_controller' => 'App\\Controller\\Front_office\\HopitalController::index'], null, ['GET' => 0], null, false, false, null]],
         '/login' => [[['_route' => 'app_login', '_controller' => 'App\\Controller\\Front_office\\Login\\SecurityController::login'], null, null, null, false, false, null]],
         '/logout' => [[['_route' => 'app_logout', '_controller' => 'App\\Controller\\Front_office\\Login\\SecurityController::logout'], null, null, null, false, false, null]],
         '/medecin/profile' => [[['_route' => 'medecin_profile', '_controller' => 'App\\Controller\\Front_office\\MedecinController::profile'], null, null, null, false, false, null]],
@@ -110,7 +112,7 @@ return [
         '/dashboard/patient' => [[['_route' => 'patient_dashboard', '_controller' => 'App\\Controller\\Front_office\\UserController::patient'], null, null, null, false, false, null]],
         '/analyse/a/i' => [[['_route' => 'app_analyse_a_i_index', '_controller' => 'App\\Controller\\AnalyseAIController::index'], null, ['GET' => 0], null, false, false, null]],
         '/analyse/a/i/new' => [[['_route' => 'app_analyse_a_i_new', '_controller' => 'App\\Controller\\AnalyseAIController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        '/hopitaux/hopitaux' => [[['_route' => 'frontoffice_hopitaux', '_controller' => 'App\\Controller\\HopitalController::index'], null, null, null, false, false, null]],
+        '/old_hopitaux/hopitaux' => [[['_route' => 'old_frontoffice_hopitaux', '_controller' => 'App\\Controller\\HopitalController::index'], null, null, null, false, false, null]],
         '/cycle/export-pdf' => [[['_route' => 'export_cycle_pdf', '_controller' => 'App\\Controller\\PdfController::exportCyclePdf'], null, null, null, false, false, null]],
         '/rendez-vous/rendez-vous' => [[['_route' => 'frontoffice_rendez_vous', '_controller' => 'App\\Controller\\RendezVousController::index'], null, null, null, false, false, null]],
         '/rendez-vous/rendez-vous/new' => [[['_route' => 'frontoffice_rendez_vous_new', '_controller' => 'App\\Controller\\RendezVousController::new'], null, null, null, false, false, null]],
@@ -324,15 +326,16 @@ return [
                     .'|/edit(*:2351)'
                     .'|(*:2360)'
                 .')'
-                .'|/hopitaux/([^/]++)(*:2388)'
+                .'|/hopitaux/(\\d+)(*:2385)'
+                .'|/old_hopitaux/([^/]++)(*:2416)'
                 .'|/rendez\\-vous/([^/]++)(?'
-                    .'|(*:2422)'
+                    .'|(*:2450)'
                     .'|/(?'
-                        .'|modifier(*:2443)'
-                        .'|supprimer(*:2461)'
+                        .'|modifier(*:2471)'
+                        .'|supprimer(*:2489)'
                     .')'
                 .')'
-                .'|/symptome/([^/]++)/edit(*:2495)'
+                .'|/symptome/([^/]++)/edit(*:2523)'
             .')/?$}sDu',
     ],
     [ // $dynamicRoutes
@@ -430,11 +433,12 @@ return [
         2313 => [[['_route' => 'user_meal_show', '_controller' => 'App\\Controller\\Front_office\\GestionWellBeing\\MealFrontController::show'], ['id'], ['GET' => 0], null, false, true, null]],
         2351 => [[['_route' => 'user_wellbeing_edit', '_controller' => 'App\\Controller\\Front_office\\GestionWellBeing\\UserWellBeingDataFrontController::edit'], ['id'], null, null, false, false, null]],
         2360 => [[['_route' => 'user_wellbeing_delete', '_controller' => 'App\\Controller\\Front_office\\GestionWellBeing\\UserWellBeingDataFrontController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        2388 => [[['_route' => 'app_hopital_show', '_controller' => 'App\\Controller\\HopitalController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        2422 => [[['_route' => 'app_rendez_vous_show', '_controller' => 'App\\Controller\\RendezVousController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        2443 => [[['_route' => 'app_rendez_vous_edit', '_controller' => 'App\\Controller\\RendezVousController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        2461 => [[['_route' => 'app_rendez_vous_delete', '_controller' => 'App\\Controller\\RendezVousController::delete'], ['id'], ['POST' => 0], null, false, false, null]],
-        2495 => [
+        2385 => [[['_route' => 'app_hopital_show', '_controller' => 'App\\Controller\\Front_office\\HopitalController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        2416 => [[['_route' => 'old_app_hopital_show', '_controller' => 'App\\Controller\\HopitalController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        2450 => [[['_route' => 'app_rendez_vous_show', '_controller' => 'App\\Controller\\RendezVousController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        2471 => [[['_route' => 'app_rendez_vous_edit', '_controller' => 'App\\Controller\\RendezVousController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        2489 => [[['_route' => 'app_rendez_vous_delete', '_controller' => 'App\\Controller\\RendezVousController::delete'], ['id'], ['POST' => 0], null, false, false, null]],
+        2523 => [
             [['_route' => 'symptome_edit', '_controller' => 'App\\Controller\\SymptomeController::edit'], ['id'], null, null, false, false, null],
             [null, null, null, null, false, false, 0],
         ],

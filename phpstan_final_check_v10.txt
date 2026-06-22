@@ -1,0 +1,15 @@
+﻿ ------ --------------- 
+  Line   Security\Logi  
+         nSuccessHandl  
+         er.php         
+ ------ --------------- 
+  :25    Syntax error,  
+         unexpected     
+         T_LNUMBER,     
+         expecting ')'  
+         on line 25     
+ ------ --------------- 
+
+
+ [ERROR] Found 1 error 
+

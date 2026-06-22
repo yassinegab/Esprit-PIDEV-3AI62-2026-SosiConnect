@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class DonAdminController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager
     ) {}
 
     #[Route('', name: 'admin_don')]
@@ -60,7 +60,7 @@ class DonAdminController extends AbstractController
     #[Route('/validate/{id}', name: 'admin_don_validate', methods: ['POST'])]
     public function validate(Don $don, Request $request): Response
     {
-        if (!$this->isCsrfTokenValid('validate' . $don->getId(), $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('approve' . $don->getId(), (string)$request->request->get('_token'))) {
             $this->addFlash('error', 'Token de sécurité invalide');
             return $this->redirectToRoute('admin_don_list');
         }
@@ -76,7 +76,7 @@ class DonAdminController extends AbstractController
     #[Route('/reject/{id}', name: 'admin_don_reject', methods: ['POST'])]
     public function reject(Don $don, Request $request): Response
     {
-        if (!$this->isCsrfTokenValid('reject' . $don->getId(), $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('refuse' . $don->getId(), (string)$request->request->get('_token'))) {
             $this->addFlash('error', 'Token de sécurité invalide');
             return $this->redirectToRoute('admin_don_list');
         }
@@ -92,7 +92,7 @@ class DonAdminController extends AbstractController
     #[Route('/delete/{id}', name: 'admin_don_delete', methods: ['POST'])]
     public function delete(Don $don, Request $request): Response
     {
-        if (!$this->isCsrfTokenValid('delete' . $don->getId(), $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('complete' . $don->getId(), (string)$request->request->get('_token'))) {
             $this->addFlash('error', 'Token de sécurité invalide');
             return $this->redirectToRoute('admin_don_list');
         }
@@ -116,7 +116,7 @@ class DonAdminController extends AbstractController
             return $this->redirectToRoute('admin_don_list');
         }
 
-        if (!$this->isCsrfTokenValid('bulk_action', $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('bulk_action', (string)$request->request->get('_token'))) {
             $this->addFlash('error', 'Token de sécurité invalide');
             return $this->redirectToRoute('admin_don_list');
         }
@@ -124,6 +124,7 @@ class DonAdminController extends AbstractController
         $dons = $repository->findBy(['id' => $ids]);
 
         foreach ($dons as $don) {
+            /** @var Don $don */
             match ($action) {
                 'validate' => $don->setStatut('VALIDÉ'),
                 'reject' => $don->setStatut('REFUSÉ'),

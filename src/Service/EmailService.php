@@ -140,6 +140,81 @@ HTML;
 
         $this->mailer->send($email);
     }
+
+    /**
+     * ✅ Envoie une notification d'urgence (Modèle Premium inspiré de la version Java)
+     */
+    public function sendUrgencyNotification(
+        string $toEmail, 
+        string $message, 
+        string $patientName, 
+        float $lat = 0, 
+        float $lng = 0
+    ): void {
+        $timeSent = date('H:i:s');
+        $mapsLink = "https://www.google.com/maps?q={$lat},{$lng}";
+
+        $htmlContent = <<<HTML
+<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 25px; border: 3px solid #ef4444; border-radius: 15px; max-width: 600px; margin: auto; background-color: #ffffff;">
+    <div style="text-align: center; margin-bottom: 20px;">
+        <span style="font-size: 50px;">🚨</span>
+        <h2 style="color: #ef4444; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px;">Alerte d'Urgence Critique</h2>
+    </div>
+    
+    <p style="font-size: 16px; color: #1f2937;">Attention, <strong>{$patientName}</strong> vient de déclencher une alerte de détresse via SosiConnect.</p>
+    
+    <div style="background-color: #fef2f2; padding: 20px; border-radius: 10px; margin: 20px 0;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <td style="padding: 10px 0; color: #4b5563; font-weight: 600;">📝 Message :</td>
+                <td style="padding: 10px 0; color: #b91c1c; font-weight: bold;">{$message}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px 0; color: #4b5563; font-weight: 600;">⏰ Heure :</td>
+                <td style="padding: 10px 0; color: #1f2937;">{$timeSent}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px 0; color: #4b5563; font-weight: 600;">📍 Position :</td>
+                <td style="padding: 10px 0; color: #1f2937;">{$lat}, {$lng}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="text-align: center; margin-top: 25px;">
+        <a href="{$mapsLink}" style="background-color: #ef4444; color: white; padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);">
+            📍 VOIR LA POSITION SUR MAPS
+        </a>
+    </div>
+
+    <p style="margin-top: 35px; font-size: 12px; color: #9ca3af; text-align: center; border-top: 1px solid #e5e7eb; padding-top: 15px;">
+        Ceci est une notification automatique de sécurité générée par SosiConnect.<br>
+        Merci de ne pas répondre à cet email.
+    </p>
+</div>
+HTML;
+
+        $email = (new Email())
+            ->from('emergency@smarthealth.ai')
+            ->to($toEmail)
+            ->subject("🚨 URGENT : Alerte de détresse pour {$patientName}")
+            ->html($htmlContent);
+
+        $this->mailer->send($email);
+    }
+
+    /**
+     * ✅ Envoie un email de test
+     */
+    public function sendTestEmail(string $toEmail): void
+    {
+        $email = (new Email())
+            ->from('test@smarthealth.ai')
+            ->to($toEmail)
+            ->subject("Test Email")
+            ->text("Ceci est un email de test.");
+
+        $this->mailer->send($email);
+    }
 }
 
 

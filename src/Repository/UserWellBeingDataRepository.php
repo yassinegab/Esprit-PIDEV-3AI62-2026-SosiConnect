@@ -15,6 +15,9 @@ class UserWellBeingDataRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, UserWellBeingData::class);
     }
+    /**
+     * @return array<int, UserWellBeingData>
+     */
     public function searchByTerm(?string $term): array
     {
         $qb = $this->createQueryBuilder('u');
@@ -30,10 +33,11 @@ class UserWellBeingDataRepository extends ServiceEntityRepository
                 ->setParameter('term', '%' . $term . '%');
         }
 
-        return $qb->orderBy('u.createdAt', 'DESC');
+        return $qb->orderBy('u.createdAt', 'DESC')->getQuery()->getResult();
     }
     
     /**
+     * @param array<string, string> $sort
      * @return \Doctrine\ORM\QueryBuilder
      */
     public function findBySearchAndSortQueryBuilder(?string $term, ?array $sort = []): \Doctrine\ORM\QueryBuilder
@@ -68,10 +72,17 @@ class UserWellBeingDataRepository extends ServiceEntityRepository
         return $qb;
     }
 
+    /**
+     * @param array<string, string>|null $sort
+     * @return array<int, UserWellBeingData>
+     */
     public function findBySearchAndSort(?string $term, ?array $sort = []): array
     {
         return $this->findBySearchAndSortQueryBuilder($term, $sort)->getQuery()->getResult();
     }
+    /**
+     * @return array<string, mixed>
+     */
     public function getStatistics(?string $searchTerm = null): array
     {
         $qb = $this->createQueryBuilder('u');
@@ -86,6 +97,7 @@ class UserWellBeingDataRepository extends ServiceEntityRepository
                 ->setParameter('term', '%' . $searchTerm . '%');
         }
 
+        /** @var array<int, UserWellBeingData> $users */
         $users = $qb->getQuery()->getResult();
 
         $totalUsers = count($users);

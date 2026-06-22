@@ -29,6 +29,9 @@ class Conversation
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
 
+    /**
+     * @var Collection<int, Message>
+     */
     #[ORM\OneToMany(mappedBy: 'conversation', targetEntity: Message::class, cascade: ['persist', 'remove'])]
     private Collection $messages;
 
@@ -88,6 +91,9 @@ class Conversation
         return $this;
     }
 
+    /**
+     * @return Collection<int, Message>
+     */
     public function getMessages(): Collection
     {
         return $this->messages;

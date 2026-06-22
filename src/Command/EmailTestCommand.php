@@ -18,7 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class EmailTestCommand extends Command
 {
     public function __construct(
-        private readonly EmailService $emailService
+        private EmailService $emailService
     ) {
         parent::__construct();
     }
@@ -39,16 +39,11 @@ class EmailTestCommand extends Command
         $io->text(sprintf('Sending test email to: %s', $email));
 
         try {
-            $success = $this->emailService->sendTestEmail($email);
+            $this->emailService->sendTestEmail($email);
 
-            if ($success) {
-                $io->success('✅ Email sent successfully! Check your Mailtrap inbox.');
-                $io->note('Mailtrap URL: https://mailtrap.io/inboxes');
-                return Command::SUCCESS;
-            } else {
-                $io->error('❌ Failed to send email. Check your MAILER_DSN configuration.');
-                return Command::FAILURE;
-            }
+            $io->success('✅ Email sent successfully! Check your Mailtrap inbox.');
+            $io->note('Mailtrap URL: https://mailtrap.io/inboxes');
+            return Command::SUCCESS;
         } catch (\Exception $e) {
             $io->error(sprintf('❌ Error: %s', $e->getMessage()));
             return Command::FAILURE;

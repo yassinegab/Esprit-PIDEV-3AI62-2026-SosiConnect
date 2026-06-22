@@ -33,6 +33,9 @@ class UserSession
     #[ORM\Column(length: 255)]
     private ?string $userAgent = null;
 
+    /**
+     * @var Collection<int, Conversation>
+     */
     #[ORM\OneToMany(mappedBy: 'userSession', targetEntity: Conversation::class, cascade: ['persist', 'remove'])]
     private Collection $conversations;
 
@@ -102,6 +105,9 @@ class UserSession
         return $this;
     }
 
+    /**
+     * @return Collection<int, Conversation>
+     */
     public function getConversations(): Collection
     {
         return $this->conversations;

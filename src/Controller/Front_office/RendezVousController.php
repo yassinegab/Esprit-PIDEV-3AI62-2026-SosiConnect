@@ -118,14 +118,17 @@ class RendezVousController extends AbstractController
             try {
                 $patient = $rendezVous->getPatient();
                 if ($patient && $patient->getEmail()) {
+                    $rendezVousDate = $rendezVous->getDateRendezVous();
                     $emailService->sendRdvConfirmation(
-                        $patient->getEmail(),
+                        (string)$patient->getEmail(),
                         $patient->getPrenom() . ' ' . $patient->getNom(),
                         $rendezVous->getMedecin()
                             ? 'Dr. ' . $rendezVous->getMedecin()->getPrenom() . ' ' . $rendezVous->getMedecin()->getNom()
                             : 'Non assigné',
-                        $rendezVous->getHopital() ? $rendezVous->getHopital()->getNom() : 'Non assigné',
-                        $rendezVous->getDateRendezVous(),
+                        $rendezVous->getHopital() ? (string)$rendezVous->getHopital()->getNom() : 'Non assigné',
+                        $rendezVousDate instanceof \DateTimeImmutable 
+                            ? \DateTime::createFromImmutable($rendezVousDate) 
+                            : ($rendezVousDate ?? new \DateTime()),
                         $rendezVous->getTypeConsultation() ?? 'Consultation'
                     );
                     $this->addFlash('success', 'Rendez-vous créé ! Un email de confirmation a été envoyé.');
@@ -154,15 +157,15 @@ class RendezVousController extends AbstractController
         $qrCode = null;
         try {
             $qrCode = $qrCodeService->generateRdvQrCode(
-                $rendezVous->getId(),
+                (int)($rendezVous->getId() ?? 0),
                 $rendezVous->getPatient()
                     ? $rendezVous->getPatient()->getPrenom() . ' ' . $rendezVous->getPatient()->getNom()
                     : 'Non assigné',
                 $rendezVous->getMedecin()
                     ? 'Dr. ' . $rendezVous->getMedecin()->getPrenom() . ' ' . $rendezVous->getMedecin()->getNom()
                     : 'Non assigné',
-                $rendezVous->getHopital() ? $rendezVous->getHopital()->getNom() : 'Non assigné',
-                $rendezVous->getDateRendezVous() ? $rendezVous->getDateRendezVous()->format('d/m/Y H:i') : 'Non définie',
+                (string)($rendezVous->getHopital() ? $rendezVous->getHopital()->getNom() : 'Non assigné'),
+                (string)($rendezVous->getDateRendezVous() ? $rendezVous->getDateRendezVous()->format('d/m/Y H:i') : 'Non définie'),
                 $rendezVous->getTypeConsultation() ?? 'Consultation'
             );
         } catch (\Exception $e) {
@@ -202,7 +205,7 @@ class RendezVousController extends AbstractController
     #[Route('/{id}', name: 'app_rendez_vous_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
     public function delete(Request $request, RendezVous $rendezVous, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $rendezVous->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $rendezVous->getId(), (string)$request->request->get('_token'))) {
             $entityManager->remove($rendezVous);
             $entityManager->flush();
             $this->addFlash('success', 'Rendez-vous supprimé avec succès !');

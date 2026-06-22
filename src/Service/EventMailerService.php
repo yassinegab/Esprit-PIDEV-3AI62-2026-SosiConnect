@@ -24,16 +24,16 @@ class EventMailerService
         if ($user) {
             $body = sprintf(
                 "Bonjour,\n\n%s (%s) s'est inscrit à l'événement '%s' prévu le %s.\n\nMerci !\n",
-                $user->getUsername(),
+                $user->getUserIdentifier(),
                 $user->getEmail(),
                 $event->getTitle(),
-                $event->getDate()->format('d/m/Y H:i')
+                ($date = $event->getDate()) ? $date->format('d/m/Y H:i') : 'Date inconnue'
             );
         } else {
             $body = sprintf(
                 "Bonjour,\n\nVous êtes inscrit à l'événement '%s' prévu le %s.\n\nMerci !\n",
                 $event->getTitle(),
-                $event->getDate()->format('d/m/Y H:i')
+                ($date = $event->getDate()) ? $date->format('d/m/Y H:i') : 'Date inconnue'
             );
         }
 

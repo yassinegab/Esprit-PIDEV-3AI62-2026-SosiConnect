@@ -99,7 +99,7 @@ class HopitalController extends AbstractController
             return $this->redirectToRoute('admin_rendez_vous_index');
         }
 
-        if ($this->isCsrfTokenValid('delete'.$hopital->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $hopital->getId(), (string)$request->request->get('_token'))) {
             $entityManager->remove($hopital);
             $entityManager->flush();
 

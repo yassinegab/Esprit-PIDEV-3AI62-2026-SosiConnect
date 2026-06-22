@@ -6,6 +6,9 @@ use App\Entity\ChatMessage;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<ChatMessage>
+ */
 class ChatMessageRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -13,6 +16,9 @@ class ChatMessageRepository extends ServiceEntityRepository
         parent::__construct($registry, ChatMessage::class);
     }
 
+    /**
+     * @return ChatMessage[]
+     */
     public function findUnreadByTicket(int $ticketId): array
     {
         return $this->createQueryBuilder('m')

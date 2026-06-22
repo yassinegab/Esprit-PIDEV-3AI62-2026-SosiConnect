@@ -31,16 +31,16 @@ class RendezVousController extends AbstractController
         if ($search) {
             if ($filter === 'rdv') {
                 // Rechercher uniquement dans les rendez-vous
-                $rendezVous = $rendezVousRepository->search($search);
+                $rendezVous = $rendezVousRepository->search((string)$search);
                 $hopitaux = [];
             } elseif ($filter === 'hopital') {
                 // Rechercher uniquement dans les hôpitaux
                 $rendezVous = [];
-                $hopitaux = $hopitalRepository->search($search);
+                $hopitaux = $hopitalRepository->search((string)$search);
             } else {
                 // Rechercher dans les deux
-                $rendezVous = $rendezVousRepository->search($search);
-                $hopitaux = $hopitalRepository->search($search);
+                $hopitaux = $hopitalRepository->search((string)$search);
+$rendezVous = $rendezVousRepository->search((string)$search);
             }
         } else {
             // Afficher tout
@@ -109,7 +109,7 @@ class RendezVousController extends AbstractController
     #[Route('/{id}', name: 'admin_rendez_vous_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
     public function delete(Request $request, RendezVous $rendezVous, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$rendezVous->getId(), $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('approve' . $rendezVous->getId(), (string)$request->request->get('_token'))) {
             $entityManager->remove($rendezVous);
             $entityManager->flush();
             
@@ -140,7 +140,7 @@ class RendezVousController extends AbstractController
     #[Route('/{id}/confirmer', name: 'admin_rendez_vous_confirmer', methods: ['POST'], requirements: ['id' => '\d+'])]
     public function confirmer(Request $request, RendezVous $rendezVous, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('confirmer'.$rendezVous->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('confirmer'.$rendezVous->getId(), (string)$request->request->get('_token'))) {
             $rendezVous->setStatut('Confirmé');
             $entityManager->flush();
             
@@ -155,7 +155,7 @@ class RendezVousController extends AbstractController
     #[Route('/{id}/annuler', name: 'admin_rendez_vous_annuler', methods: ['POST'], requirements: ['id' => '\d+'])]
     public function annuler(Request $request, RendezVous $rendezVous, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('annuler'.$rendezVous->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('annuler'.$rendezVous->getId(), (string)$request->request->get('_token'))) {
             $rendezVous->setStatut('Annulé');
             $entityManager->flush();
             

@@ -1,346 +1,226 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Analyse Hugging Face — Dossier #{{ dossier_medical.id }}{% endblock %}
+{% block title %}Analyse Hugging Face — Dossier #{{ dossier_medical.id }} - Sosi{% endblock %}
 
 {% block body %}
-<div class="flex min-h-screen bg-gray-50">
-    <div class="flex flex-1 flex-col">
-        {% include 'components/top-nav.html.twig' %}
+<div class="flex flex-col min-h-screen">
+    {% include 'components/top-nav.html.twig' %}
 
-        <main class="flex-1 overflow-auto pb-12">
-            <div class="mx-auto max-w-5xl space-y-6 p-4 lg:p-8">
+    <main class="flex-1 animate-page-enter pb-12">
+        <div class="mx-auto max-w-5xl space-y-8 p-4 lg:p-8">
 
-                {# ══════════════════════════════════════
-                   HEADER
-                ══════════════════════════════════════ #}
-                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                    {# Barre orange top #}
-                    <div class="h-1 w-full bg-gradient-to-r from-orange-400 via-orange-500 to-cyan-500"></div>
-                    <div class="p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <div>
-                            {# Badges #}
-                            <div class="flex flex-wrap gap-2 mb-3">
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-50 text-orange-600 text-xs font-bold rounded-full border border-orange-200">
-                                    🤗 API EXTERNE — Hugging Face
-                                </span>
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-cyan-50 text-cyan-700 text-xs font-bold rounded-full border border-cyan-200">
-                                    IA 2 / 2
-                                </span>
-                                {% if api_key_valide %}
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 text-xs font-bold rounded-full border border-green-200">
-                                        ✅ Clé API active
-                                    </span>
-                                {% else %}
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-red-50 text-red-600 text-xs font-bold rounded-full border border-red-200">
-                                        ❌ Clé manquante
-                                    </span>
-                                {% endif %}
-                            </div>
-                            {# Titre #}
-                            <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                                🤗 Analyse Hugging Face
-                                <span class="text-orange-500">— Classification Médicale Zéro-Shot</span>
-                            </h1>
-                            <p class="text-sm text-gray-500 mt-1">
-                                Modèle :
-                                <span class="font-semibold text-cyan-600">{{ model_name|default('distilbert-base-uncased') }}</span>
-                                &nbsp;·&nbsp; Dossier
-                                <span class="font-semibold text-orange-500">#{{ dossier_medical.id }}</span>
-                            </p>
+            {# ── Header Card ── #}
+            <div class="card p-0 overflow-hidden border-primary/20">
+                <div class="h-1.5 w-full bg-gradient-to-r from-primary via-primary-dark to-foreground/80"></div>
+                <div class="p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                    <div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="badge-muted bg-primary/5 text-primary border-primary/10">🤗 API EXTERNE</span>
+                            <span class="badge-muted">IA CLASSIFICATION</span>
+                            {% if api_key_valide %}
+                                <span class="badge-success"><i class="fas fa-check-circle mr-1"></i> API ACTIVE</span>
+                            {% else %}
+                                <span class="badge-danger"><i class="fas fa-times-circle mr-1"></i> CLÉ MANQUANTE</span>
+                            {% endif %}
                         </div>
-                        {# Boutons nav #}
-                        <div class="flex flex-col gap-2 flex-shrink-0">
-                            <a href="{{ path('dossier_medical_ai_analysis', {'id': dossier_medical.id}) }}"
-                               class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm font-semibold rounded-xl hover:bg-purple-700 transition shadow-sm">
-                                🤖 Analyse Groq (IA 1)
-                            </a>
-                            <a href="{{ path('dossier_medical_show', {'id': dossier_medical.id}) }}"
-                               class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-200 transition">
-                                <i class="fas fa-arrow-left text-xs"></i> Retour au dossier
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                {# ══════════════════════════════════════
-                   DONNÉES ANALYSÉES
-                ══════════════════════════════════════ #}
-                {% if texte_analyse %}
-                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-                    <div class="flex items-center gap-2 mb-4">
-                        <div class="w-8 h-8 bg-cyan-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-file-medical text-cyan-600 text-sm"></i>
-                        </div>
-                        <h2 class="text-base font-bold text-gray-900">Données médicales envoyées à l'API Hugging Face</h2>
-                    </div>
-                    <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 border-l-4 border-l-cyan-400">
-                        <p class="text-sm text-gray-700 leading-relaxed italic">
-                            "{{ texte_analyse }}"
+                        <h1 class="page-title flex items-center gap-3">
+                            <span class="stat-icon w-10 h-10 text-lg bg-primary/10 text-primary"><i class="fas fa-microchip"></i></span>
+                            Analyse Hugging Face
+                        </h1>
+                        <p class="page-subtitle mt-2">
+                            Modèle : <span class="font-black text-foreground">{{ model_name|default('distilbert-base-uncased') }}</span>
+                            &nbsp;•&nbsp; Dossier <span class="text-primary font-black">#{{ dossier_medical.id }}</span>
                         </p>
                     </div>
-                    <div class="flex flex-wrap gap-3 mt-3">
-                        <span class="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-500 text-xs rounded-lg font-mono">
-                            {{ texte_analyse|length }} caractères
-                        </span>
-                        <span class="inline-flex items-center gap-1 px-3 py-1 bg-cyan-50 text-cyan-600 text-xs rounded-lg font-mono">
-                            → POST api-inference.huggingface.co/models/{{ model_name }}
-                        </span>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <a href="{{ path('dossier_medical_ai_analysis', {'id': dossier_medical.id}) }}" class="btn-primary bg-indigo-600 hover:bg-indigo-700 shadow-indigo-200">
+                            <i class="fas fa-robot mr-2"></i> Groq (IA 1)
+                        </a>
+                        <a href="{{ path('dossier_medical_show', {'id': dossier_medical.id}) }}" class="btn-secondary">
+                            <i class="fas fa-arrow-left mr-2"></i> Retour
+                        </a>
                     </div>
                 </div>
-                {% endif %}
+            </div>
 
-                {# ══════════════════════════════════════
-                   ERREUR / DIAGNOSTIC
-                ══════════════════════════════════════ #}
-                {% if hf_error %}
-                <div class="bg-white rounded-2xl border border-red-200 shadow-sm overflow-hidden">
-                    <div class="bg-red-50 px-6 py-4 border-b border-red-100 flex items-center gap-3">
-                        <div class="w-9 h-9 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-exclamation-triangle text-red-500"></i>
+            {# ── Analyzed Text ── #}
+            {% if texte_analyse %}
+            <div class="card p-8 bg-muted/20 border-dashed">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="stat-icon w-10 h-10 bg-muted text-muted-foreground text-lg">
+                        <i class="fas fa-quote-left"></i>
+                    </div>
+                    <h2 class="section-title">Données traitées par l'IA</h2>
+                </div>
+                <div class="bg-white border border-border rounded-2xl p-6 shadow-inner relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-primary/30"></div>
+                    <p class="text-foreground/80 text-sm leading-relaxed italic font-medium">
+                        "{{ texte_analyse }}"
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-4 mt-6">
+                    <span class="text-[10px] font-black text-muted-foreground uppercase tracking-widest bg-muted/50 px-3 py-1.5 rounded-lg border border-border">
+                        <i class="fas fa-text-height mr-2 opacity-50"></i> {{ texte_analyse|length }} CARACTÈRES
+                    </span>
+                    <span class="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10">
+                        <i class="fas fa-link mr-2 opacity-50"></i> {{ model_name }}
+                    </span>
+                </div>
+            </div>
+            {% endif %}
+
+            {# ── Error Handling ── #}
+            {% if hf_error %}
+            <div class="card p-0 border-primary/30 overflow-hidden">
+                <div class="bg-primary/5 px-8 py-4 border-b border-primary/10 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="stat-icon w-10 h-10 bg-primary/20 text-primary text-lg">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h2 class="section-title text-primary">Diagnostic de l'erreur</h2>
+                    </div>
+                    {% if http_code %}
+                        <span class="font-black font-mono text-primary bg-primary/10 px-3 py-1 rounded-lg">HTTP {{ http_code }}</span>
+                    {% endif %}
+                </div>
+                <div class="p-8 space-y-6">
+                    <div class="flex items-start gap-4 p-6 bg-primary/5 rounded-2xl border border-primary/20">
+                        <i class="fas fa-bug text-primary text-2xl mt-1"></i>
+                        <p class="text-sm font-bold text-primary tracking-tight leading-relaxed">{{ hf_error }}</p>
+                    </div>
+
+                    {% if http_code == 503 %}
+                    <div class="card p-6 border-amber-200 bg-amber-50">
+                        <p class="text-sm font-black text-amber-800 mb-2 flex items-center gap-2">
+                            <i class="fas fa-clock animate-spin-slow"></i> MODÈLE EN COURS DE CHARGEMENT
+                        </p>
+                        <p class="text-xs text-amber-700/80 mb-6 leading-relaxed font-medium">Le serveur Hugging Face alloue des ressources pour ce modèle. Cela peut prendre environ 20-30 secondes.</p>
+                        <button onclick="location.reload()" class="btn-primary bg-amber-600 hover:bg-amber-700 shadow-amber-200 w-full sm:w-auto">
+                            <i class="fas fa-sync-alt mr-2"></i> RÉESSAYER MAINTENANT
+                        </button>
+                    </div>
+                    {% endif %}
+
+                    {% if not api_key_valide or http_code == 401 or http_code == 403 %}
+                    <div class="card p-6 border-indigo-200 bg-indigo-50">
+                        <p class="text-sm font-black text-indigo-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-key"></i> CONFIGURATION REQUISE
+                        </p>
+                        <div class="bg-gray-900 rounded-xl p-5 font-mono text-[11px] shadow-2xl">
+                            <p class="text-muted-foreground/50 mb-2"># .env.local</p>
+                            <p class="text-green-400">HUGGINGFACE_API_KEY=<span class="text-white">hf_your_token_here</span></p>
+                        </div>
+                        <a href="https://huggingface.co/settings/tokens" target="_blank" class="btn-ghost text-indigo-600 font-black text-[10px] tracking-widest mt-6 flex items-center justify-center gap-2 border border-indigo-200 bg-white">
+                            GÉNÉRER UNE CLÉ API <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            {# ── Classification Scores ── #}
+            {% if hf_result %}
+            <div class="card p-0 border-border overflow-hidden">
+                <div class="px-8 py-6 border-b border-border bg-muted/20 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="stat-icon w-10 h-10 bg-muted text-muted-foreground">
+                            <i class="fas fa-chart-bar"></i>
                         </div>
                         <div>
-                            <h2 class="text-base font-bold text-red-800">Diagnostic de l'erreur</h2>
-                            {% if http_code %}
-                                <span class="text-xs font-mono text-red-500">Code HTTP : {{ http_code }}</span>
-                            {% endif %}
+                            <h2 class="section-title">Scores de Classification</h2>
+                            <p class="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">Analyse probabiliste par IA</p>
                         </div>
                     </div>
-                    <div class="p-6 space-y-4">
-                        <div class="flex items-start gap-3 p-4 bg-red-50 rounded-xl border border-red-100">
-                            <span class="text-2xl">⚠️</span>
-                            <p class="text-sm font-semibold text-red-700">{{ hf_error }}</p>
-                        </div>
-
-                        {# Solution selon code erreur #}
-                        {% if http_code == 503 %}
-                        <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
-                            <p class="text-sm font-bold text-yellow-800 mb-2">⏳ Modèle en cours de démarrage</p>
-                            <p class="text-sm text-yellow-700 mb-3">Le modèle Hugging Face démarre sur leurs serveurs. Attendez 20 secondes puis réessayez.</p>
-                            <button onclick="location.reload()"
-                                    class="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white text-sm font-semibold rounded-xl hover:bg-yellow-600 transition">
-                                <i class="fas fa-sync-alt"></i> Réessayer
-                            </button>
-                        </div>
-                        {% endif %}
-
-                        {% if not api_key_valide or http_code == 401 or http_code == 403 %}
-                        <div class="p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                            <p class="text-sm font-bold text-blue-800 mb-3">🔑 Configuration de la clé API</p>
-                            <div class="bg-gray-800 rounded-xl p-4 font-mono text-xs space-y-1">
-                                <p class="text-gray-400"># Dans votre fichier .env :</p>
-                                <p class="text-green-400">HUGGINGFACE_API_KEY=<span class="text-yellow-300">hf_xxxxxxxxxxxxxxxxxxxx</span></p>
-                            </div>
-                            <a href="https://huggingface.co/settings/tokens" target="_blank"
-                               class="inline-flex items-center gap-1 mt-3 text-sm text-blue-600 font-semibold hover:underline">
-                                <i class="fas fa-external-link-alt text-xs"></i>
-                                Obtenir une clé gratuite sur huggingface.co
-                            </a>
-                        </div>
-                        {% endif %}
-
-                        {% if http_code == 410 %}
-                        <div class="p-4 bg-orange-50 border border-orange-200 rounded-xl">
-                            <p class="text-sm font-bold text-orange-800 mb-3">🔄 Modèle obsolète — Alternatives</p>
-                            <div class="space-y-2">
-                                {% for m in ['typeform/distilbert-base-uncased-mnli', 'MoritzLaurer/deberta-v3-large-zeroshot-v1', 'facebook/bart-large-mnli'] %}
-                                <div class="flex items-center gap-2 p-3 bg-white border border-orange-200 rounded-lg">
-                                    <i class="fas fa-check-circle text-green-500 text-xs"></i>
-                                    <span class="text-sm font-mono text-gray-700">{{ m }}</span>
+                    <span class="badge-muted">{{ hf_result|length }} catégories</span>
+                </div>
+                
+                <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6" id="scores-container">
+                    {% set idx = 0 %}
+                    {% for label, score in hf_result %}
+                        {% set pct = (score * 100)|round(1) %}
+                        {% set isDominant = idx == 0 %}
+                        
+                        <div class="card p-6 transition-all hover:scale-[1.02] duration-300 group
+                            {{ isDominant ? 'border-primary/50 bg-primary/[0.03] ring-4 ring-primary/5' : 'border-border hover:border-primary/20 bg-white' }}">
+                            
+                            <div class="flex justify-between items-start mb-6">
+                                <div class="flex items-center gap-3">
+                                    <div class="stat-icon w-8 h-8 text-sm {{ isDominant ? 'bg-primary text-white shadow-lg' : 'bg-muted text-muted-foreground' }}">
+                                        {{ isDominant ? '<i class="fas fa-bolt"></i>'|raw : '<i class="fas fa-tag"></i>'|raw }}
+                                    </div>
+                                    <span class="font-black text-foreground uppercase tracking-tight {{ isDominant ? 'text-lg' : 'text-sm' }}">{{ label }}</span>
                                 </div>
-                                {% endfor %}
+                                <span class="text-2xl font-black font-mono {{ isDominant ? 'text-primary' : 'text-muted-foreground' }}">{{ pct }}%</span>
+                            </div>
+
+                            <div class="w-full bg-muted/40 rounded-full h-2.5 overflow-hidden">
+                                <div class="h-2.5 rounded-full transition-all duration-1000 ease-out {{ isDominant ? 'bg-primary' : 'bg-muted-foreground/30' }}"
+                                     style="width: 0%"
+                                     data-target="{{ pct }}">
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 flex justify-between items-center text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-50">
+                                <span>Confiance statistique</span>
+                                <span>{{ pct }} / 100</span>
                             </div>
                         </div>
-                        {% endif %}
-                    </div>
+                        {% set idx = idx + 1 %}
+                    {% endfor %}
                 </div>
-                {% endif %}
+            </div>
 
-                {# ══════════════════════════════════════
-                   SCORES DE CLASSIFICATION
-                ══════════════════════════════════════ #}
-                {% if hf_result %}
-                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-                        <div class="w-9 h-9 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-chart-bar text-orange-500"></i>
+            {# ── Clinical Interpretation ── #}
+            {% set topLabel = hf_result|keys|first %}
+            {% set topScore = hf_result|first %}
+            {% set topPct = (topScore * 100)|round(1) %}
+
+            <div class="card p-0 overflow-hidden border-none shadow-2xl">
+                <div class="bg-foreground text-background p-8 md:p-12 flex flex-col md:flex-row items-center gap-12">
+                    <div class="text-8xl flex-shrink-0 animate-bounce-slow">
+                        {{ topPct > 35 ? '🚨' : (topPct > 18 ? '⚠️' : '✅') }}
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="stat-icon w-6 h-6 text-[10px] bg-primary text-white border-none"><i class="fas fa-star"></i></span>
+                            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Interprétation Prioritaire</span>
                         </div>
-                        <div>
-                            <h2 class="text-base font-bold text-gray-900">
-                                Scores de Classification Médicale
-                            </h2>
-                            <p class="text-xs text-gray-500">
-                                Modèle <span class="font-semibold text-orange-500">{{ model_name }}</span> — {{ hf_result|length }} catégories analysées
+                        <h2 class="text-4xl font-black tracking-tighter mb-4">{{ topLabel }}</h2>
+                        
+                        <div class="flex items-baseline gap-2 mb-8">
+                            <span class="text-5xl font-black text-primary font-mono">{{ topPct }}%</span>
+                            <span class="text-sm font-bold text-muted-foreground uppercase tracking-widest">Niveau de certitude</span>
+                        </div>
+
+                        <div class="p-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
+                            <p class="text-sm font-medium leading-relaxed opacity-80">
+                                {% if topPct > 35 %}
+                                    Le modèle détecte une condition nécessitant une attention médicale <span class="text-primary font-black uppercase underline decoration-2 underline-offset-4">prioritaire</span>. Une consultation immédiate est fortement préconisée pour confirmer ce diagnostic probabiliste.
+                                {% elseif topPct > 18 %}
+                                    Le modèle suggère un suivi médical attentif. Il est conseillé de planifier une consultation spécialisée dans les prochaines semaines pour approfondir ces résultats.
+                                {% else %}
+                                    Le modèle indique une condition globalement stable. Poursuivez vos protocoles de santé habituels et maintenez votre suivi de routine.
+                                {% endif %}
                             </p>
                         </div>
-                    </div>
-                    <div class="p-6 space-y-4" id="scores-container">
-                        {% set idx = 0 %}
-                        {% for label, score in hf_result %}
-                            {% set pct = (score * 100)|round(1) %}
 
-                            {% if pct > 35 %}
-                                {% set barColor = 'bg-red-500' %}
-                                {% set textColor = 'text-red-600' %}
-                                {% set bgCard = 'bg-red-50 border-red-200' %}
-                                {% set icon = '🚨' %}
-                                {% set labelColor = 'text-red-700' %}
-                            {% elseif pct > 18 %}
-                                {% set barColor = 'bg-orange-400' %}
-                                {% set textColor = 'text-orange-500' %}
-                                {% set bgCard = 'bg-orange-50 border-orange-200' %}
-                                {% set icon = '⚠️' %}
-                                {% set labelColor = 'text-orange-700' %}
-                            {% else %}
-                                {% set barColor = 'bg-green-400' %}
-                                {% set textColor = 'text-green-600' %}
-                                {% set bgCard = 'bg-green-50 border-green-200' %}
-                                {% set icon = '✅' %}
-                                {% set labelColor = 'text-green-700' %}
-                            {% endif %}
-
-                            <div class="rounded-xl border p-4 transition-all hover:shadow-md
-                                {{ idx == 0 ? 'bg-orange-50 border-orange-300 ring-2 ring-orange-200' : bgCard }}">
-
-                                {% if idx == 0 %}
-                                <div class="mb-2">
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-orange-500 text-white text-xs font-bold rounded-full">
-                                        ⚡ Risque dominant
-                                    </span>
-                                </div>
-                                {% endif %}
-
-                                <div class="flex items-center justify-between mb-3 gap-2 flex-wrap">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-lg">{{ icon }}</span>
-                                        <span class="text-sm font-bold {{ idx == 0 ? 'text-orange-800' : labelColor }}">
-                                            {{ label }}
-                                        </span>
-                                    </div>
-                                    <span class="text-2xl font-bold font-mono {{ idx == 0 ? 'text-orange-600' : textColor }}">
-                                        {{ pct }}%
-                                    </span>
-                                </div>
-
-                                {# Barre de progression #}
-                                <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                                    <div class="h-3 rounded-full transition-all duration-1000 ease-out {{ idx == 0 ? 'bg-orange-500' : barColor }}"
-                                         style="width: 0%"
-                                         data-target="{{ pct }}">
-                                    </div>
-                                </div>
-                                <p class="text-xs text-gray-400 mt-1.5 font-mono">
-                                    Score de confiance : {{ pct }} / 100
-                                </p>
-                            </div>
-                            {% set idx = idx + 1 %}
-                        {% endfor %}
-                    </div>
-                </div>
-
-                {# ══════════════════════════════════════
-                   INTERPRÉTATION CLINIQUE
-                ══════════════════════════════════════ #}
-                {% set topLabel = hf_result|keys|first %}
-                {% set topScore = hf_result|first %}
-                {% set topPct = (topScore * 100)|round(1) %}
-
-                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-                        <div class="w-9 h-9 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-lightbulb text-blue-500"></i>
-                        </div>
-                        <h2 class="text-base font-bold text-gray-900">Interprétation Clinique</h2>
-                    </div>
-                    <div class="p-6">
-                        <div class="rounded-xl border p-6
-                            {% if topPct > 35 %}bg-red-50 border-red-200
-                            {% elseif topPct > 18 %}bg-orange-50 border-orange-200
-                            {% else %}bg-green-50 border-green-200{% endif %}">
-
-                            <div class="flex items-start gap-5 flex-wrap">
-                                {# Icone statut #}
-                                <div class="text-6xl">
-                                    {{ topPct > 35 ? '🚨' : (topPct > 18 ? '⚠️' : '✅') }}
-                                </div>
-                                <div class="flex-1 min-w-52">
-                                    <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">
-                                        Catégorie dominante
-                                    </p>
-                                    <p class="text-lg font-bold text-gray-900 mb-1 leading-tight">
-                                        {{ topLabel }}
-                                    </p>
-                                    <p class="text-3xl font-bold font-mono mb-3
-                                        {{ topPct > 35 ? 'text-red-600' : (topPct > 18 ? 'text-orange-500' : 'text-green-600') }}">
-                                        {{ topPct }}%
-                                        <span class="text-sm font-normal text-gray-400">de confiance</span>
-                                    </p>
-                                    <div class="border-l-4 pl-4
-                                        {{ topPct > 35 ? 'border-red-400' : (topPct > 18 ? 'border-orange-400' : 'border-green-400') }}">
-                                        <p class="text-sm text-gray-700 leading-relaxed">
-                                            {% if topPct > 35 %}
-                                                <strong class="text-red-700">Attention :</strong>
-                                                Le modèle IA détecte une condition nécessitant une attention médicale prioritaire.
-                                                Une consultation rapide est fortement recommandée.
-                                                Consultez l'analyse Groq pour les médecins spécialistes suggérés.
-                                            {% elseif topPct > 18 %}
-                                                <strong class="text-orange-700">Suivi recommandé :</strong>
-                                                Le modèle suggère un suivi médical régulier.
-                                                Consultez un spécialiste dans les prochaines semaines pour une évaluation approfondie.
-                                            {% else %}
-                                                <strong class="text-green-700">Condition stable :</strong>
-                                                Le modèle indique une condition relativement stable.
-                                                Continuez les traitements prescrits et maintenez un suivi médical régulier.
-                                            {% endif %}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {# Boutons d'action #}
-                        <div class="flex flex-wrap gap-3 mt-5">
-                            <a href="{{ path('dossier_medical_ai_analysis', {'id': dossier_medical.id}) }}"
-                               class="inline-flex items-center gap-2 px-5 py-2.5 bg-purple-600 text-white text-sm font-semibold rounded-xl hover:bg-purple-700 transition shadow-sm">
-                                🤖 Analyse Groq complète (IA 1)
+                        <div class="flex flex-wrap gap-4 mt-10">
+                            <a href="{{ path('dossier_medical_ai_analysis', {'id': dossier_medical.id}) }}" class="btn-primary bg-white text-foreground hover:bg-muted py-3 px-8 text-xs font-black">
+                                <i class="fas fa-robot mr-2"></i> ANALYSE GROQ COMPLÈTE
                             </a>
-                            <a href="{{ path('dossier_medical_export_pdf', {'id': dossier_medical.id}) }}"
-                               class="inline-flex items-center gap-2 px-5 py-2.5 bg-red-600 text-white text-sm font-semibold rounded-xl hover:bg-red-700 transition shadow-sm">
-                                <i class="fas fa-file-pdf"></i> Export PDF
-                            </a>
-                            <a href="{{ path('dossier_medical_send_email', {'id': dossier_medical.id}) }}"
-                               class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition shadow-sm">
-                                <i class="fas fa-envelope"></i> Envoyer email
-                            </a>
-                            <a href="{{ path('dossier_medical_index') }}"
-                               class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-100 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-200 transition">
-                                <i class="fas fa-arrow-left text-xs"></i> Mes dossiers
+                            <a href="{{ path('dossier_medical_export_pdf', {'id': dossier_medical.id}) }}" class="btn-ghost text-white border-white/20 hover:bg-white/10 py-3 px-8 text-xs font-black">
+                                <i class="fas fa-file-pdf mr-2"></i> EXPORT PDF
                             </a>
                         </div>
                     </div>
                 </div>
-                {% endif %}
-
-
             </div>
-        </main>
-    </div>
-</div>
+            {% endif %}
 
-<style>
-@keyframes fadeSlideUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-.mx-auto > * {
-    animation: fadeSlideUp 0.5s ease forwards;
-}
-.mx-auto > *:nth-child(1) { animation-delay: 0.05s; }
-.mx-auto > *:nth-child(2) { animation-delay: 0.12s; }
-.mx-auto > *:nth-child(3) { animation-delay: 0.20s; }
-.mx-auto > *:nth-child(4) { animation-delay: 0.28s; }
-.mx-auto > *:nth-child(5) { animation-delay: 0.36s; }
-.mx-auto > *:nth-child(6) { animation-delay: 0.44s; }
-</style>
+        </div>
+    </main>
+</div>
 {% endblock %}
 
 {% block javascripts %}
@@ -352,9 +232,9 @@ document.addEventListener('DOMContentLoaded', () => {
         bars.forEach((bar, i) => {
             setTimeout(() => {
                 bar.style.width = bar.dataset.target + '%';
-            }, 300 + i * 120);
+            }, 300 + i * 150);
         });
-    }, 200);
+    }, 400);
 });
 </script>
 {% endblock %}

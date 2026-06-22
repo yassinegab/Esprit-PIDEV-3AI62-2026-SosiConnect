@@ -24,6 +24,7 @@ class DossierMedicalController extends AbstractController
     #[Route('/', name: 'dossier_medical_index', methods: ['GET'])]
     public function index(DossierMedicalRepository $dossierMedicalRepository): Response
     {
+        /** @var \App\Entity\User|null $user */
         $user = $this->getUser();
         if (!$user) return $this->redirectToRoute('app_login');
         $dossiers = $dossierMedicalRepository->findBy(['user' => $user]);
@@ -33,6 +34,7 @@ class DossierMedicalController extends AbstractController
     #[Route('/new', name: 'dossier_medical_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        /** @var \App\Entity\User|null $user */
         $user = $this->getUser();
         if (!$user) return $this->redirectToRoute('app_login');
         $dossierMedical = new DossierMedical();
@@ -80,7 +82,7 @@ class DossierMedicalController extends AbstractController
     public function delete(Request $request, DossierMedical $dossierMedical, EntityManagerInterface $entityManager): Response
     {
         if ($dossierMedical->getUser() !== $this->getUser()) throw $this->createAccessDeniedException();
-        if ($this->isCsrfTokenValid('delete'.$dossierMedical->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$dossierMedical->getId(), (string)$request->request->get('_token', ''))) {
             $entityManager->remove($dossierMedical);
             $entityManager->flush();
             $this->addFlash('success', 'Dossier médical supprimé avec succès !');
@@ -163,7 +165,7 @@ public function analyzeWithHuggingFace(DossierMedical $dossierMedical): Response
                 'Authorization: Bearer ' . $hfApiKey,
                 'Content-Type: application/json',
             ],
-            CURLOPT_POSTFIELDS => json_encode([
+            CURLOPT_POSTFIELDS => (string)json_encode([
                 "inputs" => $texte,
                 "parameters" => [
                     "candidate_labels" => [
@@ -188,19 +190,21 @@ public function analyzeWithHuggingFace(DossierMedical $dossierMedical): Response
         $curlError = curl_error($ch);
         curl_close($ch);
 
-       if ($httpCode === 200) {
+       if ($httpCode === 200 && is_string($response)) {
 
     $data = json_decode($response, true);
 
     if (is_array($data)) {
 
         if (isset($data['labels']) && isset($data['scores'])) {
-            $hfResult = array_combine($data['labels'], $data['scores']);
+            $hfResult = array_combine((array)$data['labels'], (array)$data['scores']);
         } else {
             $hfError = '❌ Données labels/scores manquantes : ' . substr($response, 0, 300);
         }
 
-        arsort($hfResult);
+        if (is_array($hfResult)) {
+            arsort($hfResult);
+        }
 
     } else {
         $hfError = '❌ Format inattendu : ' . substr($response, 0, 300);
@@ -288,7 +292,9 @@ public function analyzeWithHuggingFace(DossierMedical $dossierMedical): Response
             $mail->CharSet    = 'UTF-8';
 
             $mail->setFrom('smarthealth@noreply.com', 'SmartHealth AI');
-            $mail->addAddress($user->getEmail(), $user->getNom() . ' ' . $user->getPrenom());
+            if ($user instanceof \App\Entity\User) {
+                $mail->addAddress((string)$user->getEmail(), (string)$user->getNom() . ' ' . (string)$user->getPrenom());
+            }
             $mail->isHTML(true);
             $mail->Subject = '📋 Votre Dossier Médical #' . $dossierMedical->getId() . ' — SmartHealth AI';
             $mail->Body    = $this->renderView('Front_office/dossier_medical/email_dossier.html.twig', [
@@ -297,7 +303,9 @@ public function analyzeWithHuggingFace(DossierMedical $dossierMedical): Response
             ]);
 
             $mail->send();
-            $this->addFlash('success', '✅ Dossier envoyé à ' . $user->getEmail() . ' via PHPMailer !');
+            if ($user instanceof \App\Entity\User) {
+                $this->addFlash('success', '✅ Dossier envoyé à ' . (string)$user->getEmail() . ' via PHPMailer !');
+            }
         } catch (PHPMailerException $e) {
             $this->addFlash('error', '❌ Erreur PHPMailer : ' . $mail->ErrorInfo);
         }

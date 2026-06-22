@@ -1,60 +1,66 @@
 {% extends 'layout/front-layout.html.twig' %}
 
-{% block title %}Demande de Don{% endblock %}
-
-{% block stylesheets %}
-{{ parent() }}
-<link rel="stylesheet" href="/css/modern-styles.css">
-{% endblock %}
+{% block title %}Demande de Don - Sosi{% endblock %}
 
 {% block content %}
-<div class="space-y-6 animate-fadeIn">
-    <div class="flex items-center gap-4">
-        <a href="{{ path('don') }}" class="text-gray-500 hover:text-gray-700 transition">
-            ← Retour
+<div class="space-y-8 animate-page-enter">
+    {# ── Header ── #}
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 class="page-title flex items-center gap-3">
+                <span class="stat-icon w-10 h-10 text-lg"><i class="fas fa-hand-holding-heart"></i></span>
+                Demande de Don
+            </h1>
+            <p class="page-subtitle mt-1">Soumettez une demande pour vous-même ou pour un proche</p>
+        </div>
+        <a href="{{ path('don') }}" class="btn-ghost text-muted-foreground hover:text-foreground">
+            <i class="fas fa-arrow-left mr-2"></i> Retour au module
         </a>
-        <h1 class="text-2xl font-bold text-gray-800">📥 Demande de Don</h1>
     </div>
 
+    {# ── Messages ── #}
     {% for message in app.flashes('success') %}
-    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded-lg">
-        ✅ {{ message }}
+    <div class="animate-fade-in bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl shadow-sm flex items-center gap-3">
+        <i class="fas fa-check-circle text-lg"></i>
+        <span class="font-medium">{{ message }}</span>
     </div>
     {% endfor %}
 
     {% for message in app.flashes('error') %}
-    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg">
-        ❌ {{ message }}
+    <div class="animate-fade-in bg-red-50 border border-primary/20 text-primary px-4 py-3 rounded-xl shadow-sm flex items-center gap-3">
+        <i class="fas fa-exclamation-circle text-lg"></i>
+        <span class="font-medium">{{ message }}</span>
     </div>
     {% endfor %}
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
-            <div class="flex items-center gap-4 mb-6">
-                <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-3xl">
-                    📥
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {# ── Request Form ── #}
+        <div class="card p-8">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="stat-icon w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center text-2xl">
+                    <i class="fas fa-paper-plane"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl font-bold text-gray-800">Nouvelle Demande</h2>
-                    <p class="text-gray-500">Soumettez votre demande de don</p>
+                    <h2 class="text-xl font-black text-foreground tracking-tight">Nouvelle Demande</h2>
+                    <p class="section-title">Formulaire de demande</p>
                 </div>
             </div>
 
-            <form method="post" class="space-y-5">
+            <form method="post" class="space-y-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Type de don *</label>
+                    <label class="form-label">Type de don *</label>
                     <select name="type_demande" required id="typeDemande"
-                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                            class="input-field appearance-none cursor-pointer">
                         <option value="">Sélectionner...</option>
                         <option value="sang">🩸 Sang</option>
                         <option value="organe">🫀 Organe</option>
                     </select>
                 </div>
 
-                <div id="sanguinField" class="hidden">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Groupe Sanguin *</label>
+                <div id="sanguinField" class="hidden animate-fade-in">
+                    <label class="form-label">Groupe Sanguin *</label>
                     <select name="type_sanguin"
-                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                            class="input-field appearance-none cursor-pointer">
                         <option value="">Sélectionner...</option>
                         <option value="A+">A+</option>
                         <option value="A-">A-</option>
@@ -67,10 +73,10 @@
                     </select>
                 </div>
 
-                <div id="organeField" class="hidden">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Type d'organe *</label>
+                <div id="organeField" class="hidden animate-fade-in">
+                    <label class="form-label">Type d'organe *</label>
                     <select name="type_organe"
-                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                            class="input-field appearance-none cursor-pointer">
                         <option value="">Sélectionner...</option>
                         <option value="rein">Rein</option>
                         <option value="foie">Foie</option>
@@ -82,113 +88,129 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Région *</label>
+                    <label class="form-label">Région *</label>
                     <input type="text" name="region" required
-                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                           class="input-field"
                            placeholder="Ex: Tunis, Sfax...">
                 </div>
 
-                <div class="flex items-center gap-3 p-4 bg-orange-50 rounded-xl border border-orange-200">
+                <div class="flex items-center gap-3 p-4 bg-primary/5 rounded-xl border border-primary/20 transition-colors hover:bg-primary/10">
                     <input type="checkbox" name="urgence" value="1" id="urgenceCheck"
-                           class="w-5 h-5 text-orange-600 rounded border-orange-300">
-                    <label for="urgenceCheck" class="text-sm font-medium text-orange-800">
-                        🚨 Cas urgent - Prioritaire
+                           class="w-5 h-5 text-primary rounded border-border focus:ring-primary/30">
+                    <label for="urgenceCheck" class="text-sm font-bold text-primary flex items-center gap-2">
+                        <i class="fas fa-exclamation-triangle"></i> Cas urgent - Prioritaire
                     </label>
                 </div>
 
-                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-4 rounded-xl font-semibold transition shadow-lg">
-                    📥 Envoyer la demande
+                <button type="submit" class="btn-primary w-full py-4 text-base shadow-xl shadow-primary/20">
+                    <i class="fas fa-paper-plane mr-2"></i> Envoyer la demande
                 </button>
             </form>
         </div>
 
-        <div class="space-y-4">
-            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
-                <h3 class="font-semibold text-blue-800 mb-3">📋 Comment ça marche ?</h3>
-                <ol class="text-sm text-blue-700 space-y-3">
-                    <li class="flex items-start gap-3">
-                        <span class="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
-                        <span>Remplissez le formulaire avec vos besoins</span>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <span class="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
-                        <span>Notre système trouve les donneurs compatibles</span>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <span class="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
-                        <span>Vous êtes mis en contact avec les donneurs</span>
-                    </li>
-                </ol>
+        <div class="space-y-6">
+            <div class="card bg-muted/30 border-dashed p-8">
+                <h3 class="font-bold text-foreground mb-6 flex items-center gap-2">
+                    <i class="fas fa-question-circle text-primary"></i> Comment ça marche ?
+                </h3>
+                <div class="space-y-6">
+                    <div class="flex items-start gap-4">
+                        <span class="stat-icon w-8 h-8 rounded-lg font-bold text-xs">1</span>
+                        <div>
+                            <p class="font-bold text-foreground text-sm">Soumission</p>
+                            <p class="text-xs text-muted-foreground leading-relaxed">Remplissez le formulaire avec les détails médicaux requis.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <span class="stat-icon w-8 h-8 bg-muted text-muted-foreground rounded-lg font-bold text-xs">2</span>
+                        <div>
+                            <p class="font-bold text-foreground text-sm">Matching AI</p>
+                            <p class="text-xs text-muted-foreground leading-relaxed">Notre système trouve instantanément les donneurs compatibles.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <span class="stat-icon w-8 h-8 bg-muted text-muted-foreground rounded-lg font-bold text-xs">3</span>
+                        <div>
+                            <p class="font-bold text-foreground text-sm">Mise en contact</p>
+                            <p class="text-xs text-muted-foreground leading-relaxed">Vous êtes mis en relation sécurisée avec les donneurs volontaires.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-                <h3 class="font-semibold text-gray-800 mb-3">⏰ Délais de réponse</h3>
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Cas standard</span>
-                        <span class="font-medium">48-72h</span>
+            <div class="card p-6">
+                <h3 class="font-bold text-foreground mb-4 flex items-center gap-2">
+                    <i class="fas fa-clock text-primary"></i> Délais de réponse
+                </h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center p-3 bg-muted/40 rounded-xl">
+                        <span class="text-sm font-medium text-muted-foreground">Cas standard</span>
+                        <span class="badge-muted">48-72h</span>
                     </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Cas urgent</span>
-                        <span class="font-medium text-orange-600">6-12h</span>
+                    <div class="flex justify-between items-center p-3 bg-primary/5 rounded-xl border border-primary/10">
+                        <span class="text-sm font-bold text-primary">Cas urgent</span>
+                        <span class="badge-danger">6-12h</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-lg font-bold text-gray-800">📋 Mes Demandes</h2>
-            <span class="text-sm text-gray-500">{{ demandes|length }} demande(s)</span>
+    {# ── My Requests List ── #}
+    <div class="card p-0 overflow-hidden">
+        <div class="p-5 border-b border-border bg-muted/30 flex justify-between items-center">
+            <h2 class="font-bold text-foreground flex items-center gap-2">
+                <i class="fas fa-clipboard-list text-primary"></i> Mes Demandes
+            </h2>
+            <span class="badge-muted">{{ demandes|length }} demande(s)</span>
         </div>
 
-        <div class="space-y-3">
+        <div class="divide-y divide-border">
             {% for demande in demandes %}
-            <div class="p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
-                <div class="flex justify-between items-start">
+            <div class="p-6 hover:bg-muted/30 transition-colors animate-fade-in">
+                <div class="flex flex-col md:flex-row justify-between md:items-center gap-6">
                     <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 {{ demande.typeDemande == 'sang' ? 'bg-red-100' : 'bg-purple-100' }} rounded-xl flex items-center justify-center text-2xl">
-                            {{ demande.typeDemande == 'sang' ? '🩸' : '🫀' }}
+                        <div class="stat-icon w-12 h-12 text-xl {{ demande.typeDemande == 'sang' ? '' : 'bg-muted text-muted-foreground' }}">
+                            <i class="fas {{ demande.typeDemande == 'sang' ? 'fa-tint' : 'fa-dna' }}"></i>
                         </div>
                         <div>
-                            <div class="flex items-center gap-2">
-                                <span class="font-semibold text-gray-800">{{ demande.typeDemande|upper }}</span>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="font-black text-foreground text-base tracking-tight">{{ demande.typeDemande|upper }}</span>
                                 {% if demande.typeSanguin %}
-                                    <span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-xs font-bold">{{ demande.typeSanguin }}</span>
+                                    <span class="badge-primary px-2.5 py-0.5">{{ demande.typeSanguin }}</span>
                                 {% elseif demande.typeOrgane %}
-                                    <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-xs">{{ demande.typeOrgane }}</span>
+                                    <span class="badge-muted px-2.5 py-0.5">{{ demande.typeOrgane|title }}</span>
                                 {% endif %}
                                 {% if demande.urgence %}
-                                    <span class="bg-orange-100 text-orange-700 px-2 py-0.5 rounded text-xs font-bold">URGENT</span>
+                                    <span class="badge-danger px-2.5 py-0.5 animate-pulse shadow-sm">URGENT</span>
                                 {% endif %}
                             </div>
-                            <p class="text-sm text-gray-500 mt-1">
-                                📍 {{ demande.region }} • 📅 {{ demande.dateDemande|date('d/m/Y H:i') }}
-                            </p>
-                            <p class="text-xs text-gray-400 mt-1">
-                                Rang d'attente: #{{ demande.rangAttente }}
-                            </p>
+                            <div class="text-xs text-muted-foreground mt-2 flex items-center gap-3">
+                                <span class="flex items-center gap-1"><i class="fas fa-map-marker-alt opacity-50"></i> {{ demande.region }}</span>
+                                <span class="flex items-center gap-1"><i class="fas fa-calendar-alt opacity-50"></i> {{ demande.dateDemande|date('d/m/Y H:i') }}</span>
+                                <span class="flex items-center gap-1 font-bold text-primary bg-primary/5 px-2 py-0.5 rounded">Rang: #{{ demande.rangAttente }}</span>
+                            </div>
                         </div>
                     </div>
-<div class="flex gap-2">
+                    
+                    <div class="flex items-center gap-3">
                         <a href="{{ path('demande_don_view', {id: demande.id}) }}" 
-                           class="px-3 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 transition">
-                            🤝 Répondre
+                           class="btn-primary py-2 px-5 text-xs font-bold">
+                            <i class="fas fa-handshake mr-2"></i> RÉPONDRE
                         </a>
                         <form method="post" action="{{ path('demande_delete', {id: demande.id}) }}"
-                            onsubmit="return confirm('Supprimer cette demande ?');">
-                            <button type="submit" class="p-2 text-red-500 hover:bg-red-100 rounded-lg transition">
-                                🗑
+                            onsubmit="return confirm('Annuler cette demande de don ?');">
+                            <button type="submit" class="btn-danger p-2.5 rounded-xl">
+                                <i class="fas fa-trash-alt"></i>
                             </button>
                         </form>
                     </div>
                 </div>
             </div>
             {% else %}
-            <div class="p-8 text-center text-gray-400">
-                <div class="text-3xl mb-2">📭</div>
-                <p>Aucune demande enregistrée</p>
+            <div class="empty-state py-16">
+                <div class="empty-state-icon"><i class="fas fa-folder-open"></i></div>
+                <p class="text-sm text-muted-foreground">Vous n'avez aucune demande en cours.</p>
             </div>
             {% endfor %}
         </div>
@@ -197,8 +219,15 @@
 
 <script>
 document.getElementById('typeDemande').addEventListener('change', function() {
-    document.getElementById('sanguinField').classList.toggle('hidden', this.value !== 'sang');
-    document.getElementById('organeField').classList.toggle('hidden', this.value !== 'organe');
+    const type = this.value;
+    const sanguin = document.getElementById('sanguinField');
+    const organe = document.getElementById('organeField');
+    
+    sanguin.classList.add('hidden');
+    organe.classList.add('hidden');
+    
+    if (type === 'sang') sanguin.classList.remove('hidden');
+    if (type === 'organe') organe.classList.remove('hidden');
 });
 </script>
 {% endblock %}

@@ -3,7 +3,7 @@
 {% block title %}Modifier Hôpital #{{ hopital.id }} - Admin{% endblock %}
 
 {% block body %}
-<div class="flex min-h-screen bg-gray-50" x-data="{ sidebarOpen: false }">
+<div class="flex min-h-screen bg-slate-50">
 
     {# Sidebar Admin #}
     {% include 'admin/components/sidebar.html.twig' %}
@@ -13,158 +13,159 @@
         {# Top Nav #}
         {% include 'admin/components/top-nav.html.twig' %}
 
-        <main class="flex-1 overflow-auto">
-            <div class="mx-auto max-w-4xl space-y-6 p-4 lg:p-8">
+        <main class="flex-1 animate-page-enter pb-12">
+            <div class="mx-auto max-w-4xl space-y-8 p-4 lg:p-8">
 
-                {# Header #}
-                <div class="flex items-center justify-between">
+                {# ── Page Header ── #}
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 class="text-3xl font-bold text-gray-900">
-                            <i class="fas fa-hospital text-blue-600 mr-2"></i>
-                            Modifier Hôpital #{{ hopital.id }}
+                        <h1 class="page-title flex items-center gap-3">
+                            <span class="stat-icon w-10 h-10 text-lg bg-primary/10 text-primary"><i class="fas fa-edit"></i></span>
+                            Modifier l'Établissement
                         </h1>
-                        <p class="text-gray-600 mt-2">
-                            Modifiez les informations de l’hôpital
-                        </p>
+                        <p class="page-subtitle mt-1">Mise à jour des informations pour <span class="text-foreground font-black">#{{ hopital.id }}</span></p>
                     </div>
-
-                    <a href="{{ path('admin_rendez_vous_index') }}"
-                       class="px-4 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300">
-                        <i class="fas fa-arrow-left mr-2"></i>Retour
+                    <a href="{{ path('admin_rendez_vous_index') }}" class="btn-secondary">
+                        <i class="fas fa-arrow-left mr-2"></i> Retour
                     </a>
                 </div>
 
-                {# Flash messages #}
-                {% for message in app.flashes('success') %}
-                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg flex gap-2">
-                        <i class="fas fa-check-circle"></i>
-                        {{ message }}
+                {# ── Current Info Preview ── #}
+                <div class="card p-6 bg-foreground text-background border-none shadow-2xl shadow-foreground/20">
+                    <div class="flex items-center gap-5">
+                        <div class="stat-icon w-12 h-12 bg-primary text-white text-xl shadow-lg shadow-primary/30">
+                            <i class="fas fa-hospital"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-black uppercase tracking-widest text-background/50">Aperçu Actuel</p>
+                            <h3 class="text-lg font-black tracking-tight">{{ hopital.nom }}</h3>
+                            <p class="text-[11px] font-medium opacity-70 mt-1 flex items-center gap-2">
+                                <i class="fas fa-map-marker-alt text-primary"></i> {{ hopital.adresse }}
+                            </p>
+                        </div>
                     </div>
-                {% endfor %}
-
-                {% for message in app.flashes('error') %}
-                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg flex gap-2">
-                        <i class="fas fa-exclamation-circle"></i>
-                        {{ message }}
-                    </div>
-                {% endfor %}
-
-                {# Info actuelle #}
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <h3 class="font-semibold text-blue-900 mb-2">
-                        Informations actuelles
-                    </h3>
-                    <p class="text-sm text-blue-800">
-                        <strong>Nom :</strong> {{ hopital.nom }} <br>
-                        <strong>Adresse :</strong> {{ hopital.adresse }} <br>
-                        <strong>Téléphone :</strong> {{ hopital.tel }}
-                    </p>
                 </div>
 
-                {# Formulaire #}
-                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                    {{ form_start(form, {
-                        attr: {
-                            class: 'space-y-6',
-                            novalidate: 'novalidate'
-                        }
-                    }) }}
+                {# ── Notifications ── #}
+                {% for message in app.flashes('error') %}
+                    <div class="animate-shake bg-primary/10 border border-primary/20 text-primary px-6 py-4 rounded-2xl flex items-center gap-3">
+                        <i class="fas fa-exclamation-circle text-lg"></i>
+                        <span class="font-bold text-sm uppercase tracking-tight">{{ message }}</span>
+                    </div>
+                {% endfor %}
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {# ── Form Card ── #}
+                <div class="card p-8 sm:p-12">
+                   {{ form_start(form, { attr: { novalidate: 'novalidate', class: 'space-y-10' } }) }}
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
 
                         {# Nom #}
-                        <div>
-                            {{ form_label(form.nom, 'Nom', {
-                                label_attr: { class: 'block text-sm font-semibold text-gray-700 mb-2' }
-                            }) }}
-                            {{ form_widget(form.nom, {
-                                attr: { class: 'w-full px-4 py-2.5 border rounded-lg bg-gray-50' }
-                            }) }}
-                            {{ form_errors(form.nom) }}
+                        <div class="md:col-span-2">
+                            <label class="form-label uppercase tracking-widest text-[10px] flex items-center gap-2">
+                                <i class="fas fa-heading text-primary"></i>
+                                Nom de l’établissement
+                            </label>
+                            {{ form_widget(form.nom, { attr: { class: 'input-field h-14 text-lg font-black tracking-tight' } }) }}
+                            <div class="text-primary text-[10px] font-black uppercase mt-2">
+                                {{ form_errors(form.nom) }}
+                            </div>
                         </div>
 
                         {# Téléphone #}
                         <div>
-                            {{ form_label(form.tel, 'Téléphone', {
-                                label_attr: { class: 'block text-sm font-semibold text-gray-700 mb-2' }
-                            }) }}
-                            {{ form_widget(form.tel, {
-                                attr: { class: 'w-full px-4 py-2.5 border rounded-lg bg-gray-50' }
-                            }) }}
-                            {{ form_errors(form.tel) }}
-                        </div>
-
-                        {# Adresse #}
-                        <div class="md:col-span-2">
-                            {{ form_label(form.adresse, 'Adresse', {
-                                label_attr: { class: 'block text-sm font-semibold text-gray-700 mb-2' }
-                            }) }}
-                            {{ form_widget(form.adresse, {
-                                attr: {
-                                    class: 'w-full px-4 py-2.5 border rounded-lg bg-gray-50',
-                                    rows: 3
-                                }
-                            }) }}
-                            {{ form_errors(form.adresse) }}
+                            <label class="form-label uppercase tracking-widest text-[10px] flex items-center gap-2">
+                                <i class="fas fa-phone text-primary"></i>
+                                Téléphone
+                            </label>
+                            {{ form_widget(form.tel, { attr: { class: 'input-field' } }) }}
+                            <div class="text-primary text-[10px] font-black uppercase mt-2">
+                                {{ form_errors(form.tel) }}
+                            </div>
                         </div>
 
                         {# Capacité #}
                         <div>
-                            {{ form_label(form.capacite, 'Capacité (lits)', {
-                                label_attr: { class: 'block text-sm font-semibold text-gray-700 mb-2' }
-                            }) }}
-                            {{ form_widget(form.capacite, {
-                                attr: { class: 'w-full px-4 py-2.5 border rounded-lg bg-gray-50' }
-                            }) }}
-                            {{ form_errors(form.capacite) }}
+                            <label class="form-label uppercase tracking-widest text-[10px] flex items-center gap-2">
+                                <i class="fas fa-bed text-primary"></i>
+                                Capacité (Lits)
+                            </label>
+                            {{ form_widget(form.capacite, { attr: { class: 'input-field' } }) }}
+                            <div class="text-primary text-[10px] font-black uppercase mt-2">
+                                {{ form_errors(form.capacite) }}
+                            </div>
+                        </div>
+
+                        {# Adresse #}
+                        <div class="md:col-span-2">
+                            <label class="form-label uppercase tracking-widest text-[10px] flex items-center gap-2">
+                                <i class="fas fa-map-marker-alt text-primary"></i>
+                                Adresse physique
+                            </label>
+                            {{ form_widget(form.adresse, { attr: { class: 'input-field min-h-[100px] py-4' } }) }}
+                            <div class="text-primary text-[10px] font-black uppercase mt-2">
+                                {{ form_errors(form.adresse) }}
+                            </div>
+                        </div>
+
+                        {# Géo-localisation Grid #}
+                        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-muted/20 rounded-2xl border border-dashed border-border">
+                            <div class="md:col-span-2">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4">Coordonnées GPS</p>
+                            </div>
+                            <div>
+                                <label class="form-label text-[9px] uppercase tracking-widest text-muted-foreground">Latitude</label>
+                                {{ form_widget(form.latitude, { attr: { class: 'input-field bg-white' } }) }}
+                            </div>
+                            <div>
+                                <label class="form-label text-[9px] uppercase tracking-widest text-muted-foreground">Longitude</label>
+                                {{ form_widget(form.longitude, { attr: { class: 'input-field bg-white' } }) }}
+                            </div>
+                        </div>
+
+                         {# Image Upload #}
+                        <div class="md:col-span-2">
+                            <label class="form-label uppercase tracking-widest text-[10px] flex items-center gap-2">
+                                <i class="fas fa-camera text-primary"></i>
+                                Photo de l'établissement
+                            </label>
+                            {% if hopital.imageName %}
+                                <div class="mt-4 mb-4 relative w-32 h-32 rounded-2xl overflow-hidden border-2 border-primary/20 shadow-lg">
+                                    <img src="{{ asset('uploads/hopitaux/' ~ hopital.imageName) }}" alt="{{ hopital.nom }}" class="w-full h-full object-cover">
+                                </div>
+                            {% endif %}
+                            <div class="p-8 border-2 border-dashed border-border rounded-2xl bg-muted/5 flex flex-col items-center justify-center group hover:border-primary/30 transition-colors">
+                                <div class="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                {{ form_widget(form.imageFile, { attr: { class: 'text-xs text-muted-foreground font-medium file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-primary file:text-white hover:file:bg-primary/80 cursor-pointer' } }) }}
+                            </div>
                         </div>
 
                         {# Urgences #}
-                        <div>
-                            {{ form_label(form.serviceUrgenceDispo, 'Service d’urgence', {
-                                label_attr: { class: 'block text-sm font-semibold text-gray-700 mb-2' }
-                            }) }}
-                            {{ form_widget(form.serviceUrgenceDispo, {
-                                attr: { class: 'w-full px-4 py-2.5 border rounded-lg bg-gray-50' }
-                            }) }}
-                            {{ form_errors(form.serviceUrgenceDispo) }}
-                        </div>
-
-                        {# Latitude #}
-                        <div>
-                            {{ form_label(form.latitude, 'Latitude', {
-                                label_attr: { class: 'block text-sm font-semibold text-gray-700 mb-2' }
-                            }) }}
-                            {{ form_widget(form.latitude, {
-                                attr: { class: 'w-full px-4 py-2.5 border rounded-lg bg-gray-50' }
-                            }) }}
-                            {{ form_errors(form.latitude) }}
-                        </div>
-
-                        {# Longitude #}
-                        <div>
-                            {{ form_label(form.longitude, 'Longitude', {
-                                label_attr: { class: 'block text-sm font-semibold text-gray-700 mb-2' }
-                            }) }}
-                            {{ form_widget(form.longitude, {
-                                attr: { class: 'w-full px-4 py-2.5 border rounded-lg bg-gray-50' }
-                            }) }}
-                            {{ form_errors(form.longitude) }}
+                        <div class="md:col-span-2">
+                             <div class="relative flex items-center p-6 border border-border rounded-2xl bg-muted/5 hover:bg-muted/10 transition-colors cursor-pointer group" onclick="document.getElementById('{{ form.serviceUrgenceDispo.vars.id }}').click()">
+                                <div class="flex h-6 items-center">
+                                    {{ form_widget(form.serviceUrgenceDispo, { attr: { class: 'h-6 w-6 rounded-lg border-muted text-primary focus:ring-primary/20 cursor-pointer' } }) }}
+                                </div>
+                                <div class="ml-4">
+                                    <label class="text-xs font-black text-foreground uppercase tracking-tight select-none cursor-pointer group-hover:text-primary transition-colors">Service d'urgence disponible</label>
+                                    <p class="text-[9px] text-muted-foreground font-bold uppercase tracking-widest mt-0.5">Cochez si l'établissement accepte les admissions en urgence 24/7.</p>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
 
-                    {# Boutons #}
-                    <div class="flex gap-4 pt-6 border-t">
-                        <a href="{{ path('admin_rendez_vous_index') }}"
-                           class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold">
-                            <i class="fas fa-times mr-2"></i>Annuler
-                        </a>
-
-                        <button type="submit"
-                                class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
-                            <i class="fas fa-save mr-2"></i>Enregistrer
+                    {# Actions #}
+                    <div class="flex flex-col sm:flex-row gap-4 pt-10 border-t border-border">
+                        <button type="submit" class="btn-primary flex-1 py-5 text-sm font-black uppercase tracking-[0.2em] shadow-2xl shadow-primary/20">
+                            <i class="fas fa-save mr-2"></i>
+                            Enregistrer les modifications
                         </button>
+                        <a href="{{ path('admin_rendez_vous_index') }}" class="btn-secondary py-5 px-10 text-sm font-black uppercase tracking-[0.2em]">
+                            Annuler
+                        </a>
                     </div>
 
                     {{ form_end(form) }}

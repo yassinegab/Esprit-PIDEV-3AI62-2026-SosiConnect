@@ -111,6 +111,9 @@ class Hopital
     // Relation OneToMany avec RendezVous
     // ====================================================
 
+    /**
+     * @var Collection<int, RendezVous>
+     */
     #[ORM\OneToMany(targetEntity: RendezVous::class, mappedBy: 'hopital', orphanRemoval: true)]
     private Collection $rendezVous;
 
@@ -253,6 +256,9 @@ class Hopital
         return $this;
     }
 
+    /**
+     * @return string[]
+     */
     public function getSpecialitesArray(): array
     {
         if (empty($this->specialites)) {

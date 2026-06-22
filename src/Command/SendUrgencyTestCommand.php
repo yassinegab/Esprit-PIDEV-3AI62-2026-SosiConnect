@@ -18,7 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class SendUrgencyTestCommand extends Command
 {
     public function __construct(
-        private readonly EmailService $emailService
+        private EmailService $emailService
     ) {
         parent::__construct();
     }
@@ -44,7 +44,9 @@ class SendUrgencyTestCommand extends Command
             $urgence->setStatut('EN_ATTENTE');
             $urgence->setDateUrgence(new \DateTime());
 
-            $this->emailService->sendUrgencyNotification($email, 'Test Contact', $urgence);
+            $patientName = 'Test Patient';
+            $message = $urgence->getMessage() ?? 'Urgence signalée';
+            $this->emailService->sendUrgencyNotification($email, $message, $patientName);
 
             $io->success('Test urgency email sent successfully');
             $io->note('Check your inbox and and spam folder');

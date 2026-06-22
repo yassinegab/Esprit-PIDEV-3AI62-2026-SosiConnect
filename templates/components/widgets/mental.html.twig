@@ -1,39 +1,48 @@
-<div class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-all hover:shadow-md">
-    <div class="mb-4 flex items-center justify-between">
-        <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider">Santé Mentale</h3>
-        <i class="fas fa-brain text-purple-400"></i>
+<div class="card">
+    <div class="mb-5 flex items-center justify-between">
+        <h3 class="section-title">Santé Mentale</h3>
+        <i class="fas fa-brain text-primary/60"></i>
     </div>
 
     {% if latestWellBeing %}
-        <div class="flex flex-col items-center justify-center py-4">
-            <div class="relative mb-6 flex h-32 w-32 items-center justify-center">
-                {# Simple circular progress simulation #}
-                <svg class="h-full w-full" viewBox="0 0 100 100">
-                    <circle class="text-gray-100" stroke-width="8" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50"/>
-                    <circle class="{{ latestWellBeing.anxietyTension > 3 ? 'text-red-500' : (latestWellBeing.anxietyTension > 1 ? 'text-yellow-500' : 'text-green-500') }}" 
-                            stroke-width="8" stroke-dasharray="{{ latestWellBeing.anxietyTension * 20 * 2.51 }}, 251.2" stroke-linecap="round" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" transform="rotate(-90 50 50)"/>
+        <div class="flex flex-col items-center justify-center py-2">
+            {# Circular stress gauge #}
+            <div class="relative mb-5 flex h-32 w-32 items-center justify-center">
+                <svg class="h-full w-full -rotate-90" viewBox="0 0 100 100">
+                    <circle stroke-width="8" stroke="currentColor" fill="transparent"
+                            r="40" cx="50" cy="50" class="text-muted"/>
+                    <circle
+                        stroke-width="8"
+                        stroke-dasharray="{{ latestWellBeing.anxietyTension * 20 * 2.51 }}, 251.2"
+                        stroke-linecap="round"
+                        stroke="currentColor"
+                        fill="transparent"
+                        r="40" cx="50" cy="50"
+                        class="{{ latestWellBeing.anxietyTension > 3 ? 'text-primary' : (latestWellBeing.anxietyTension > 1 ? 'text-primary/60' : 'text-slate-300') }}"/>
                 </svg>
                 <div class="absolute flex flex-col items-center">
-                    <span class="text-2xl font-bold text-gray-900">{{ latestWellBeing.anxietyTension * 20 }}%</span>
-                    <span class="text-[10px] uppercase text-gray-500">Tension</span>
+                    <span class="text-2xl font-bold text-foreground">{{ latestWellBeing.anxietyTension * 20 }}%</span>
+                    <span class="text-[10px] uppercase tracking-wider text-muted-foreground">Tension</span>
                 </div>
             </div>
 
-            <div class="w-full space-y-3">
-                <div class="flex items-center justify-between rounded-lg bg-gray-50 p-3">
-                    <span class="text-xs text-gray-600">Irritabilité</span>
-                    <span class="text-xs font-bold text-gray-900">{{ latestWellBeing.irritability }}/5</span>
+            <div class="w-full space-y-2">
+                <div class="flex items-center justify-between rounded-xl bg-muted px-4 py-2.5">
+                    <span class="text-xs text-muted-foreground">Irritabilité</span>
+                    <span class="text-xs font-bold text-foreground">{{ latestWellBeing.irritability }}/5</span>
                 </div>
-                <div class="flex items-center justify-between rounded-lg bg-gray-50 p-3">
-                    <span class="text-xs text-gray-600">Confiance</span>
-                    <span class="text-xs font-bold text-gray-900">{{ latestWellBeing.subjectConfidence }}/5</span>
+                <div class="flex items-center justify-between rounded-xl bg-muted px-4 py-2.5">
+                    <span class="text-xs text-muted-foreground">Confiance</span>
+                    <span class="text-xs font-bold text-foreground">{{ latestWellBeing.subjectConfidence }}/5</span>
                 </div>
             </div>
         </div>
     {% else %}
-        <div class="flex flex-col items-center justify-center py-8 text-center text-gray-400">
-            <i class="fas fa-spa text-3xl mb-3 opacity-20"></i>
-            <p class="text-xs italic">Prenez un moment pour vous aujourd'hui.</p>
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fas fa-spa text-muted-foreground/50"></i>
+            </div>
+            <p class="text-xs italic text-muted-foreground">Prenez un moment pour vous aujourd'hui.</p>
         </div>
     {% endif %}
 </div>

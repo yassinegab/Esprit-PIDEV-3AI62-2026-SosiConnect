@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class FAQAdminController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager
     ) {}
 
     #[Route('', name: 'admin_faq')]
@@ -34,9 +34,9 @@ class FAQAdminController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $faq = new FAQ();
-            $faq->setQuestion($request->request->get('question'));
-            $faq->setAnswer($request->request->get('answer'));
-            $faq->setCategory($request->request->get('category', 'general'));
+            $faq->setQuestion((string)$request->request->get('question', ''));
+            $faq->setAnswer((string)$request->request->get('answer', ''));
+            $faq->setCategory((string)$request->request->get('category', 'general'));
             $faq->setDisplayOrder((int) $request->request->get('displayOrder', 0));
             $faq->setIsPublished($request->request->getBoolean('isPublished', true));
 
@@ -56,9 +56,9 @@ class FAQAdminController extends AbstractController
     public function edit(FAQ $faq, Request $request): Response
     {
         if ($request->isMethod('POST')) {
-            $faq->setQuestion($request->request->get('question'));
-            $faq->setAnswer($request->request->get('answer'));
-            $faq->setCategory($request->request->get('category', 'general'));
+            $faq->setQuestion((string)$request->request->get('question', ''));
+            $faq->setAnswer((string)$request->request->get('answer', ''));
+            $faq->setCategory((string)$request->request->get('category', 'general'));
             $faq->setDisplayOrder((int) $request->request->get('displayOrder', 0));
             $faq->setIsPublished($request->request->getBoolean('isPublished', true));
             $faq->setUpdatedAt(new \DateTime());
@@ -77,7 +77,7 @@ class FAQAdminController extends AbstractController
     #[Route('/{id}/delete', name: 'admin_faq_delete', methods: ['POST'])]
     public function delete(FAQ $faq, Request $request): Response
     {
-        if (!$this->isCsrfTokenValid('delete' . $faq->getId(), $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete' . $faq->getId(), (string)$request->request->get('_token'))) {
             $this->addFlash('error', 'Token invalide');
             return $this->redirectToRoute('admin_faq');
         }

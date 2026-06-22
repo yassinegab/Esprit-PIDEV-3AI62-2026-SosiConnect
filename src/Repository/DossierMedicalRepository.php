@@ -86,6 +86,9 @@ class DossierMedicalRepository extends ServiceEntityRepository
     /**
      * Version alternative : tous les dossiers triés par nom patient
      */
+    /**
+     * @return DossierMedical[]
+     */
     public function findAllDossiers(): array
     {
         return $this->createQueryBuilder('d')
@@ -132,6 +135,9 @@ class DossierMedicalRepository extends ServiceEntityRepository
 
     /**
      * Récupérer uniquement les dossiers des patients
+     */
+    /**
+     * @return DossierMedical[]
      */
     public function findPatientDossiers(): array
     {

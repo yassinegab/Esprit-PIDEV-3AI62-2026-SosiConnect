@@ -1,68 +1,117 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Gestion des Hôpitaux{% endblock %}
+{% block title %}Gestion des Hôpitaux - Admin{% endblock %}
 
 {% block body %}
-<div class="flex min-h-screen bg-gray-50">
+<div class="flex min-h-screen bg-slate-50">
 
+    {# Admin Sidebar #}
     {% include 'admin/components/sidebar.html.twig' %}
 
     <div class="flex flex-1 flex-col lg:ml-64">
 
+        {# Admin Top Nav #}
         {% include 'admin/components/top-nav.html.twig' %}
 
-        <main class="flex-1 overflow-auto p-6">
+        <main class="flex-1 animate-page-enter p-6 lg:p-10">
 
-            <div class="flex items-center justify-between mb-6">
-                <h1 class="text-3xl font-bold text-gray-900">
-                    <i class="fas fa-hospital text-red-600 mr-2"></i>
-                    Liste des hôpitaux
-                </h1>
+            {# ── Page Header ── #}
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-10">
+                <div>
+                    <h1 class="page-title flex items-center gap-3">
+                        <span class="stat-icon w-12 h-12 text-xl bg-primary/10 text-primary"><i class="fas fa-hospital"></i></span>
+                        Réseau Hospitalier
+                    </h1>
+                    <p class="page-subtitle mt-1">Gestion des établissements et centres de soins partenaires</p>
+                </div>
 
-                <a href="{{ path('admin_hopital_new') }}"
-                   class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-                    <i class="fas fa-plus mr-2"></i>Ajouter
+                <a href="{{ path('admin_hopital_new') }}" class="btn-primary py-4 px-8 text-xs font-black uppercase tracking-widest shadow-xl shadow-primary/20">
+                    <i class="fas fa-plus mr-2 text-[10px]"></i> Ajouter un Établissement
                 </a>
             </div>
 
-            <div class="bg-white rounded-xl shadow border">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="p-4">Nom</th>
-                            <th class="p-4">Téléphone</th>
-                            <th class="p-4">Urgence</th>
-                            <th class="p-4 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for hopital in hopitaux %}
-                            <tr class="border-t hover:bg-gray-50">
-                                <td class="p-4 font-semibold">{{ hopital.nom }}</td>
-                                <td class="p-4">{{ hopital.tel }}</td>
-                                <td class="p-4">
-                                    {% if hopital.serviceUrgenceDispo %}
-                                        <span class="text-green-600 font-bold">Oui</span>
-                                    {% else %}
-                                        <span class="text-red-600 font-bold">Non</span>
-                                    {% endif %}
-                                </td>
-                                <td class="p-4 text-right space-x-2">
-                                    <a href="{{ path('admin_hopital_show', {'id': hopital.id}) }}"
-                                       class="text-blue-600 hover:underline">Voir</a>
-                                    <a href="{{ path('admin_hopital_edit', {'id': hopital.id}) }}"
-                                       class="text-green-600 hover:underline">Éditer</a>
-                                </td>
+            {# ── Main Table ── #}
+            <div class="card overflow-hidden border-none shadow-xl shadow-foreground/5">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-muted/30 border-b border-border">
+                                <th class="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Établissement</th>
+                                <th class="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Contact</th>
+                                <th class="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Urgences</th>
+                                <th class="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Capacité</th>
+                                <th class="p-6 text-right text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Actions</th>
                             </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="4" class="p-6 text-center text-gray-500">
-                                    Aucun hôpital trouvé
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody class="divide-y divide-border">
+                            {% for hopital in hopitaux %}
+                                <tr class="group hover:bg-muted/5 transition-colors">
+                                    <td class="p-6">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex items-center justify-center border border-border group-hover:border-primary/20 transition-colors">
+                                                {% if hopital.imageName %}
+                                                    <img src="{{ asset('uploads/hopitaux/' ~ hopital.imageName) }}" alt="{{ hopital.nom }}" class="w-full h-full object-cover">
+                                                {% else %}
+                                                    <i class="fas fa-hospital text-muted-foreground/30 text-xl"></i>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <p class="font-black text-foreground text-sm tracking-tight">{{ hopital.nom }}</p>
+                                                <p class="text-[10px] text-muted-foreground font-bold uppercase tracking-tighter mt-0.5 truncate max-w-[200px]">
+                                                    <i class="fas fa-map-marker-alt text-primary/40 mr-1"></i> {{ hopital.adresse }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="p-6">
+                                        <p class="text-xs font-bold text-foreground">{{ hopital.tel }}</p>
+                                        <p class="text-[9px] text-muted-foreground font-black uppercase mt-0.5">Ligne Directe</p>
+                                    </td>
+                                    <td class="p-6">
+                                        {% if hopital.serviceUrgenceDispo %}
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 text-[9px] font-black uppercase tracking-widest">
+                                                <span class="w-1 h-1 rounded-full bg-green-500 mr-2 animate-pulse"></span>
+                                                Disponible
+                                            </span>
+                                        {% else %}
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full bg-red-100 text-red-700 text-[9px] font-black uppercase tracking-widest opacity-60">
+                                                Non Dispo
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="p-6">
+                                        <p class="text-xs font-black text-foreground">{{ hopital.capacite|default('N/A') }}</p>
+                                        <p class="text-[9px] text-muted-foreground font-bold uppercase mt-0.5">Lits Total</p>
+                                    </td>
+                                    <td class="p-6 text-right">
+                                        <div class="flex justify-end gap-2">
+                                            <a href="{{ path('admin_hopital_edit', {'id': hopital.id}) }}" class="w-8 h-8 rounded-lg flex items-center justify-center bg-muted/30 text-muted-foreground hover:bg-primary hover:text-white transition-all shadow-sm">
+                                                <i class="fas fa-edit text-[10px]"></i>
+                                            </a>
+                                            <a href="{{ path('admin_hopital_show', {'id': hopital.id}) }}" class="w-8 h-8 rounded-lg flex items-center justify-center bg-muted/30 text-muted-foreground hover:bg-foreground hover:text-white transition-all shadow-sm">
+                                                <i class="fas fa-eye text-[10px]"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="p-20 text-center">
+                                        <div class="flex flex-col items-center gap-4">
+                                            <div class="w-20 h-20 rounded-full bg-muted/20 flex items-center justify-center text-muted-foreground/30 text-3xl">
+                                                <i class="fas fa-hospital-alt"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-black text-foreground uppercase tracking-widest">Aucun établissement</p>
+                                                <p class="text-[10px] text-muted-foreground font-bold mt-1">Commencez par ajouter votre premier hôpital partenaire.</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
         </main>

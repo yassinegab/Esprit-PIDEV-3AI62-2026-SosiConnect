@@ -7,6 +7,9 @@ use App\Entity\DemandeDon;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<ReponseDon>
+ */
 class ReponseDonRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -14,6 +17,9 @@ class ReponseDonRepository extends ServiceEntityRepository
         parent::__construct($registry, ReponseDon::class);
     }
 
+    /**
+     * @return ReponseDon[]
+     */
     public function findByDemande(DemandeDon $demande): array
     {
         return $this->createQueryBuilder('r')
@@ -24,6 +30,9 @@ class ReponseDonRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return ReponseDon[]
+     */
     public function findByEmail(string $email): array
     {
         return $this->createQueryBuilder('r')
@@ -36,7 +45,7 @@ class ReponseDonRepository extends ServiceEntityRepository
 
     public function countByDemande(DemandeDon $demande): int
     {
-        return $this->createQueryBuilder('r')
+        return (int) $this->createQueryBuilder('r')
             ->select('COUNT(r.id)')
             ->where('r.demande = :demande')
             ->setParameter('demande', $demande)
@@ -46,7 +55,7 @@ class ReponseDonRepository extends ServiceEntityRepository
 
     public function getPendingCountByDemande(DemandeDon $demande): int
     {
-        return $this->createQueryBuilder('r')
+        return (int) $this->createQueryBuilder('r')
             ->select('COUNT(r.id)')
             ->where('r.demande = :demande')
             ->andWhere('r.status = :status')
